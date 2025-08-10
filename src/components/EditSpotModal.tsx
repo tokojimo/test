@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { X, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -16,17 +16,36 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: Spot; onClose: 
   const [last, setLast] = useState(spot.last || new Date().toISOString().slice(0, 10));
   const [location, setLocation] = useState(spot.location || "");
   const [photos, setPhotos] = useState<string[]>(spot.photos || [spot.cover].filter(Boolean));
+  const photoUrlsRef = useRef<string[]>([]);
   const { t } = useT();
 
   const importImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
     const urls = files.map((f) => URL.createObjectURL(f));
+    photoUrlsRef.current.push(...urls);
     setPhotos((p) => [...p, ...urls]);
   };
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) onClose();
   };
+
+  useEffect(() => {
+    const current = new Set(photos);
+    photoUrlsRef.current = photoUrlsRef.current.filter((url) => {
+      if (!current.has(url)) {
+        URL.revokeObjectURL(url);
+        return false;
+      }
+      return true;
+    });
+  }, [photos]);
+
+  useEffect(() => {
+    return () => {
+      photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   return (
     <div ref={overlayRef} onClick={handleOutside} className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-3">

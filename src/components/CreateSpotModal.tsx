@@ -18,6 +18,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const [last, setLast] = useState(today);
   const [location, setLocation] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
+  const photoUrlsRef = useRef<string[]>([]);
 
   useEffect(() => {
     if (!name) {
@@ -29,8 +30,26 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
     const urls = files.map((f) => URL.createObjectURL(f));
+    photoUrlsRef.current.push(...urls);
     setPhotos((p) => [...p, ...urls]);
   };
+
+  useEffect(() => {
+    const current = new Set(photos);
+    photoUrlsRef.current = photoUrlsRef.current.filter((url) => {
+      if (!current.has(url)) {
+        URL.revokeObjectURL(url);
+        return false;
+      }
+      return true;
+    });
+  }, [photos]);
+
+  useEffect(() => {
+    return () => {
+      photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) onClose();
