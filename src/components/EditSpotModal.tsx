@@ -1,5 +1,5 @@
 import React, { useState, useRef } from "react";
-import { X, Images } from "lucide-react";
+import { X, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MUSHROOMS } from "../data/mushrooms";
@@ -103,8 +103,8 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: (
             <div className={`text-sm ${T_PRIMARY}`}>{t("Photos")}</div>
             <label className="inline-flex items-center">
               <input type="file" accept="image/*" multiple className="hidden" onChange={importImages} />
-              <Button type="button" className={BTN}>
-                <Images className="w-4 h-4 mr-2" />
+                <Button type="button" className={BTN}>
+                  <Image className="w-4 h-4 mr-2" />
                 {t("Importer des photos")}
               </Button>
             </label>

@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, Calendar, Trees, CloudSun, Info, ChefHat, Sandwich, TriangleAlert, Compass, MapPin } from "lucide-react";
+import { ChevronLeft, Calendar, Trees, CloudSun, Info, ChefHat, Sandwich, AlertTriangle, Compass, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { InfoBlock } from "../components/InfoBlock";
@@ -47,7 +47,7 @@ export default function MushroomScene({ item, onSeeZones, onBack }: { item: any;
         />
         <InfoBlock icon={<Sandwich className="w-4 h-4" />} title={t("Exemples de plats")} text={item.dishes.join(" • ")} />
         <InfoBlock
-          icon={<TriangleAlert className="w-4 h-4" />}
+          icon={<AlertTriangle className="w-4 h-4" />}
           title={t("Confusions possibles")}
           text={item.confusions.join(" • ")}
         />
