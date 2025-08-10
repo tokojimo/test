@@ -10,7 +10,6 @@ import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import mapboxgl from "mapbox-gl";
-import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 
 export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }: { onZone: (z: any) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
@@ -18,7 +17,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
   const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
-  const { state } = useAppContext();
   const { t } = useT();
 
   useEffect(() => {
@@ -86,10 +84,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
             📍
           </Button>
           <div className="bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-300 dark:border-neutral-800 flex items-center gap-2">
-            <span className={`text-xs ${T_PRIMARY}`}>
-              {t("Légende")} J{state.day >= 0 ? "+" : ""}
-              {state.day}
-            </span>
+            <span className={`text-xs ${T_PRIMARY}`}>{t("Légende")}</span>
             {LEGEND.map((l, i) => (
               <div key={i} className="flex items-center gap-1">
                 <div className={classNames("w-3 h-3 rounded", l.color)} />
