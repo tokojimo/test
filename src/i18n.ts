@@ -1,0 +1,202 @@
+export const TRANSLATIONS: Record<string, { fr: string; en: string }> = {
+  "Réglages": { fr: "Réglages", en: "Settings" },
+  "Carte téléchargée et prête hors‑ligne": {
+    fr: "Carte téléchargée et prête hors‑ligne",
+    en: "Map downloaded and ready offline",
+  },
+  "Créé": { fr: "Créé", en: "Created" },
+  "Coin ajouté": { fr: "Coin ajouté", en: "Spot added" },
+  "Espace insuffisant. Libérez {n} Mo": {
+    fr: "Espace insuffisant. Libérez {n} Mo",
+    en: "Not enough space. Free {n} MB",
+  },
+  "Retour": { fr: "Retour", en: "Back" },
+  "Mes coins": { fr: "Mes coins", en: "My spots" },
+  "Nouveau coin": { fr: "Nouveau coin", en: "New spot" },
+  "Aucun coin enregistré.": { fr: "Aucun coin enregistré.", en: "No spot saved." },
+  "modifier": { fr: "modifier", en: "edit" },
+  "Espèces :": { fr: "Espèces :", en: "Species:" },
+  "Dernière visite :": { fr: "Dernière visite :", en: "Last visit:" },
+  "Itinéraire": { fr: "Itinéraire", en: "Route" },
+  "Données stockées localement. Accès hors‑ligne.": {
+    fr: "Données stockées localement. Accès hors‑ligne.",
+    en: "Data stored locally. Offline access.",
+  },
+  "Sélectionnez une zone…": { fr: "Sélectionnez une zone…", en: "Select a zone…" },
+  "Icônes météo (démo)": { fr: "Icônes météo (démo)", en: "Weather icons (demo)" },
+  "Comestibles probables": { fr: "Comestibles probables", en: "Likely edibles" },
+  "Score {sc}%": { fr: "Score {sc}%", en: "Score {sc}%" },
+  "Y aller": { fr: "Y aller", en: "Go" },
+  "Ajouter à mes coins": { fr: "Ajouter à mes coins", en: "Add to my spots" },
+  "Prévisions locales hors‑ligne (7 jours) disponibles pour 3 champignons inclus.": {
+    fr: "Prévisions locales hors‑ligne (7 jours) disponibles pour 3 champignons inclus.",
+    en: "Offline local forecasts (7 days) available for 3 included mushrooms.",
+  },
+  "Modifier le coin": { fr: "Modifier le coin", en: "Edit spot" },
+  "Nom": { fr: "Nom", en: "Name" },
+  "Localisation": { fr: "Localisation", en: "Location" },
+  "Note": { fr: "Note", en: "Rating" },
+  "Champignons trouvés": { fr: "Champignons trouvés", en: "Found mushrooms" },
+  "supprimer": { fr: "supprimer", en: "remove" },
+  "Ajouter un champignon…": { fr: "Ajouter un champignon…", en: "Add a mushroom…" },
+  "Dernière visite": { fr: "Dernière visite", en: "Last visit" },
+  "Photos": { fr: "Photos", en: "Photos" },
+  "Importer des photos": { fr: "Importer des photos", en: "Import photos" },
+  "Annuler": { fr: "Annuler", en: "Cancel" },
+  "Enregistrer": { fr: "Enregistrer", en: "Save" },
+  "Rechercher un lieu…": { fr: "Rechercher un lieu…", en: "Search a place…" },
+  "GPS": { fr: "GPS", en: "GPS" },
+  "Ma position": { fr: "Ma position", en: "My location" },
+  "Légende": { fr: "Légende", en: "Legend" },
+  "Hors ligne : affichage des zones optimales Cèpe, Girolle, Morille.": {
+    fr: "Hors ligne : affichage des zones optimales Cèpe, Girolle, Morille.",
+    en: "Offline: display optimal zones for Porcini, Chanterelle, Morel.",
+  },
+  "Historique du coin": { fr: "Historique du coin", en: "Spot history" },
+  "Carte du coin": { fr: "Carte du coin", en: "Spot map" },
+  "La carte affiche l'historique complet avec détails.": {
+    fr: "La carte affiche l'historique complet avec détails.",
+    en: "The map shows full history with details.",
+  },
+  "Visites": { fr: "Visites", en: "Visits" },
+  "Ajouter une cueillette": { fr: "Ajouter une cueillette", en: "Add a harvest" },
+  "Aucune visite enregistrée.": { fr: "Aucune visite enregistrée.", en: "No visit recorded." },
+  "Note:": { fr: "Note:", en: "Rating:" },
+  "Galerie": { fr: "Galerie", en: "Gallery" },
+  "Aucune photo.": { fr: "Aucune photo.", en: "No photo." },
+  "photos": { fr: "photos", en: "photos" },
+  "Mon nouveau coin": { fr: "Mon nouveau coin", en: "My new spot" },
+  "Création": { fr: "Création", en: "Creation" },
+  "Nom du coin": { fr: "Nom du coin", en: "Spot name" },
+  "Localisation (coordonnées ou lieu)": {
+    fr: "Localisation (coordonnées ou lieu)",
+    en: "Location (coordinates or place)",
+  },
+  "forêt brumeuse": { fr: "forêt brumeuse", en: "misty forest" },
+  "Trouvez vos coins à champignons comestibles, même sans réseau.": {
+    fr: "Trouvez vos coins à champignons comestibles, même sans réseau.",
+    en: "Find your edible mushroom spots, even offline.",
+  },
+  "Voir la carte": { fr: "Voir la carte", en: "See map" },
+  "Les champignons": { fr: "Les champignons", en: "Mushrooms" },
+  "Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.": {
+    fr: "Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.",
+    en: "Mini offline pack included: topo map (50 km) + sheets Porcini, Chanterelle, Morel.",
+  },
+  "Sélectionnez un champignon…": { fr: "Sélectionnez un champignon…", en: "Select a mushroom…" },
+  "comestible": { fr: "comestible", en: "edible" },
+  "toxique": { fr: "toxique", en: "toxic" },
+  "Saison": { fr: "Saison", en: "Season" },
+  "Habitat": { fr: "Habitat", en: "Habitat" },
+  "Météo idéale": { fr: "Météo idéale", en: "Ideal weather" },
+  "Description rapide": { fr: "Description rapide", en: "Quick description" },
+  "Valeur culinaire + conseils": { fr: "Valeur culinaire + conseils", en: "Culinary value + tips" },
+  "Exemples de plats": { fr: "Exemples de plats", en: "Dish examples" },
+  "Confusions possibles": { fr: "Confusions possibles", en: "Possible confusions" },
+  "Conseils cueillette": { fr: "Conseils cueillette", en: "Picking tips" },
+  "Voir zones optimales": { fr: "Voir zones optimales", en: "See optimal zones" },
+  "Fiche complète consultable hors‑ligne.": {
+    fr: "Fiche complète consultable hors‑ligne.",
+    en: "Full sheet available offline.",
+  },
+  "Rechercher une zone…": { fr: "Rechercher une zone…", en: "Search a zone…" },
+  "Vue actuelle": { fr: "Vue actuelle", en: "Current view" },
+  "Taille estimée": { fr: "Taille estimée", en: "Estimated size" },
+  "Espace disponible": { fr: "Espace disponible", en: "Available space" },
+  "Temps estimé": { fr: "Temps estimé", en: "Estimated time" },
+  "Inclure relief / altitudes": { fr: "Inclure relief / altitudes", en: "Include relief / elevation" },
+  "Inclure prévisions météo locales": {
+    fr: "Inclure prévisions météo locales",
+    en: "Include local weather forecast",
+  },
+  "Télécharger": { fr: "Télécharger", en: "Download" },
+  "États possibles": { fr: "États possibles", en: "Possible states" },
+  "Succès → « Carte téléchargée et prête hors‑ligne »": {
+    fr: "Succès → « Carte téléchargée et prête hors‑ligne »",
+    en: "Success → 'Map downloaded and ready offline'",
+  },
+  "Échec réseau → « Téléchargement interrompu – reprendra automatiquement »": {
+    fr: "Échec réseau → « Téléchargement interrompu – reprendra automatiquement »",
+    en: "Network failure → 'Download interrupted – will resume automatically'",
+  },
+  "Manque d'espace → « Espace insuffisant. Libérez n Mo »": {
+    fr: "Manque d'espace → « Espace insuffisant. Libérez n Mo »",
+    en: "Not enough space → 'Not enough space. Free n MB'",
+  },
+  "Les cartes incluent les données des 3 champignons par défaut.": {
+    fr: "Les cartes incluent les données des 3 champignons par défaut.",
+    en: "Maps include data for the 3 default mushrooms.",
+  },
+  "Instructions étape par étape (démo) :": {
+    fr: "Instructions étape par étape (démo) :",
+    en: "Step-by-step instructions (demo):",
+  },
+  "Rejoindre parking": { fr: "Rejoindre parking", en: "Reach parking" },
+  "Sentier balisé": { fr: "Sentier balisé", en: "Marked trail" },
+  "Boussole sur 250 m": { fr: "Boussole sur 250 m", en: "Compass for 250 m" },
+  "Marquer véhicule": { fr: "Marquer véhicule", en: "Mark vehicle" },
+  "Retour carte": { fr: "Retour carte", en: "Back to map" },
+  "Navigation piéton/boussole disponible hors‑ligne si la zone est téléchargée.": {
+    fr: "Navigation piéton/boussole disponible hors‑ligne si la zone est téléchargée.",
+    en: "Pedestrian/compass navigation available offline if the zone is downloaded.",
+  },
+  "J": { fr: "J", en: "D" },
+  "Optimum prévu": { fr: "Optimum prévu", en: "Optimum forecast" },
+  "Nouvelle zone proche": { fr: "Nouvelle zone proche", en: "New nearby zone" },
+  "Cartes hors‑ligne": { fr: "Cartes hors‑ligne", en: "Offline maps" },
+  "Pack initial (50 km)": { fr: "Pack initial (50 km)", en: "Initial pack (50 km)" },
+  "Topo + Cèpe/Girolle/Morille": {
+    fr: "Topo + Cèpe/Girolle/Morille",
+    en: "Topo + Porcini/Chanterelle/Morel",
+  },
+  "Télécharger une zone": { fr: "Télécharger une zone", en: "Download a zone" },
+  "Alertes": { fr: "Alertes", en: "Alerts" },
+  "Unités": { fr: "Unités", en: "Units" },
+  "métriques": { fr: "métriques", en: "metric" },
+  "impériales": { fr: "impériales", en: "imperial" },
+  "Thème": { fr: "Thème", en: "Theme" },
+  "auto": { fr: "auto", en: "auto" },
+  "clair": { fr: "clair", en: "light" },
+  "sombre": { fr: "sombre", en: "dark" },
+  "Langue": { fr: "Langue", en: "Language" },
+  "français": { fr: "français", en: "French" },
+  "anglais": { fr: "anglais", en: "English" },
+  "« À propos » • « Conseils de cueillette »": {
+    fr: "« À propos » • « Conseils de cueillette »",
+    en: '"About" • "Picking tips"',
+  },
+  "Rechercher un champignon…": { fr: "Rechercher un champignon…", en: "Search a mushroom…" },
+  "Toutes saisons": { fr: "Toutes saisons", en: "All seasons" },
+  "Printemps": { fr: "Printemps", en: "Spring" },
+  "Été": { fr: "Été", en: "Summer" },
+  "Automne": { fr: "Automne", en: "Autumn" },
+  "Toute valeur": { fr: "Toute valeur", en: "Any value" },
+  "Excellente": { fr: "Excellente", en: "Excellent" },
+  "Bonne": { fr: "Bonne", en: "Good" },
+  "Moyenne": { fr: "Moyenne", en: "Average" },
+  "Saison :": { fr: "Saison :", en: "Season:" },
+  "Hors‑ligne : Cèpe, Girolle et Morille apparaissent par défaut.": {
+    fr: "Hors‑ligne : Cèpe, Girolle et Morille apparaissent par défaut.",
+    en: "Offline: Porcini, Chanterelle and Morel appear by default.",
+  },
+  "⬈ amélioration": { fr: "⬈ amélioration", en: "⬈ improving" },
+  "⬊ en baisse": { fr: "⬊ en baisse", en: "⬊ decreasing" },
+  "→ stable": { fr: "→ stable", en: "→ stable" },
+};
+
+import { useAppContext } from "./context/AppContext";
+
+export function useT() {
+  const { state } = useAppContext();
+  const lang = state.prefs.lang;
+  const t = (key: string, vars?: Record<string, any>) => {
+    let str = TRANSLATIONS[key]?.[lang] ?? key;
+    if (vars) {
+      Object.keys(vars).forEach((k) => {
+        str = str.replace(`{${k}}`, String(vars[k]));
+      });
+    }
+    return str;
+  };
+  return { t, lang };
+}
