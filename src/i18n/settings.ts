@@ -1,0 +1,28 @@
+export default {
+  "Cartes hors‑ligne": { fr: "Cartes hors‑ligne", en: "Offline maps" },
+  "Pack initial (50 km)": { fr: "Pack initial (50 km)", en: "Initial pack (50 km)" },
+  "Topo + Cèpe/Girolle/Morille": {
+    fr: "Topo + Cèpe/Girolle/Morille",
+    en: "Topo + Porcini/Chanterelle/Morel",
+  },
+  "Télécharger une zone": { fr: "Télécharger une zone", en: "Download a zone" },
+  "Alertes": { fr: "Alertes", en: "Alerts" },
+  "Optimum prévu": { fr: "Optimum prévu", en: "Optimum forecast" },
+  "Nouvelle zone proche": { fr: "Nouvelle zone proche", en: "New nearby zone" },
+  "Préférences": { fr: "Préférences", en: "Preferences" },
+  "Unités": { fr: "Unités", en: "Units" },
+  "métriques": { fr: "métriques", en: "metric" },
+  "impériales": { fr: "impériales", en: "imperial" },
+  "Thème": { fr: "Thème", en: "Theme" },
+  "auto": { fr: "auto", en: "auto" },
+  "clair": { fr: "clair", en: "light" },
+  "sombre": { fr: "sombre", en: "dark" },
+  "GPS": { fr: "GPS", en: "GPS" },
+  "Langue": { fr: "Langue", en: "Language" },
+  "français": { fr: "français", en: "French" },
+  "anglais": { fr: "anglais", en: "English" },
+  "« À propos » • « Conseils de cueillette »": {
+    fr: "« À propos » • « Conseils de cueillette »",
+    en: '"About" • "Picking tips"',
+  },
+};
