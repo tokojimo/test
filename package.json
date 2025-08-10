@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "start": "ts-node src/App.tsx",
+    "start": "tsx -r tsconfig-paths/register src/App.tsx",
     "test": "echo \"No tests specified\" && exit 0"
   },
   "dependencies": {
@@ -23,6 +23,8 @@
     "@types/react-dom": "^18.2.0",
     "@types/mapbox-gl": "^2.3.0",
     "@types/recharts": "^1.8.24",
-    "@types/node": "^20.5.7"
+    "@types/node": "^20.5.7",
+    "tsx": "^4.20.3",
+    "tsconfig-paths": "^4.2.0"
   }
 }
