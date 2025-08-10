@@ -49,7 +49,7 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
         {spots.map(s => (
           <Card key={s.id} className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl overflow-hidden relative">
             <button onClick={() => setDetails(s)} className="block text-left">
-              <img src={s.cover || s.photo} className="w-full h-40 object-cover" />
+              <img src={s.cover || s.photos?.[0]} className="w-full h-40 object-cover" />
             </button>
             <button
               onClick={() => setEditing(s)}

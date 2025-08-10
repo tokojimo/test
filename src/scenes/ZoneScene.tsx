@@ -53,7 +53,7 @@ export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: {
           <div className="mt-4">
             <div className={`text-sm mb-2 ${T_PRIMARY}`}>{t("Comestibles probables")}</div>
             <div className="flex flex-wrap gap-2">
-              {Object.entries(zone.species).filter(([_, v]) => v > 0).map(([id, sc]) => {
+              {Object.entries(zone.species as Record<string, number>).filter(([_, v]) => v > 0).map(([id, sc]) => {
                 const m = MUSHROOMS.find(m => m.id === id);
                 return (
                   <button key={id} onClick={() => onOpenShroom(id)} className={`bg-neutral-200 border border-neutral-300 hover:bg-neutral-300 dark:bg-neutral-800 dark:border-neutral-700 dark:hover:bg-neutral-700 rounded-xl p-2 ${T_PRIMARY}`}>
