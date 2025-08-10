@@ -79,6 +79,13 @@ function AppContent() {
     return () => media.removeEventListener("change", applyTheme);
   }, [state.prefs.theme]);
 
+  useEffect(() => {
+    if (toast) {
+      const id = setTimeout(() => setToast(null), 2500);
+      return () => clearTimeout(id);
+    }
+  }, [toast]);
+
   const filteredMushrooms = useMemo(
     () => MUSHROOMS.filter((m) => m.name.toLowerCase().includes(search.toLowerCase())),
     [search]
@@ -92,7 +99,6 @@ function AppContent() {
             "fixed top-4 left-1/2 -translate-x-1/2 z-50 rounded-xl px-4 py-2 shadow-xl",
             toast.type === "success" ? "bg-emerald-600 " + T_PRIMARY : "bg-amber-600 " + T_PRIMARY
           )}
-          onAnimationEnd={() => setTimeout(() => setToast(null), 2500)}
         >
           {toast.text}
         </div>
