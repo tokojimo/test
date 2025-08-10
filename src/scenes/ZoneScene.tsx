@@ -9,10 +9,12 @@ import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tok
 import { MUSHROOMS } from "../data/mushrooms";
 import { generateForecast } from "../utils";
 import { useT } from "../i18n";
+import { useAppContext } from "../context/AppContext";
 
 export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: { zone: any; onGo: () => void; onAdd: () => void; onOpenShroom: (id: string) => void; onBack: () => void }) {
   const { t } = useT();
-  const data = useMemo(() => generateForecast(), [zone?.id]);
+  const { state } = useAppContext();
+  const data = useMemo(() => generateForecast(state.prefs.lang), [zone?.id, state.prefs.lang]);
   if (!zone)
     return <div className={`p-6 ${T_PRIMARY}`}>{t("Sélectionnez une zone…")}</div>;
   return (
