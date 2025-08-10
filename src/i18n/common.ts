@@ -1,4 +1,4 @@
-export const TRANSLATIONS: Record<string, { fr: string; en: string }> = {
+export default {
   "Réglages": { fr: "Réglages", en: "Settings" },
   "Carte téléchargée et prête hors‑ligne": {
     fr: "Carte téléchargée et prête hors‑ligne",
@@ -72,17 +72,6 @@ export const TRANSLATIONS: Record<string, { fr: string; en: string }> = {
     fr: "Localisation (coordonnées ou lieu)",
     en: "Location (coordinates or place)",
   },
-  "forêt brumeuse": { fr: "forêt brumeuse", en: "misty forest" },
-  "Trouvez vos coins à champignons comestibles, même sans réseau.": {
-    fr: "Trouvez vos coins à champignons comestibles, même sans réseau.",
-    en: "Find your edible mushroom spots, even offline.",
-  },
-  "Voir la carte": { fr: "Voir la carte", en: "See map" },
-  "Les champignons": { fr: "Les champignons", en: "Mushrooms" },
-  "Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.": {
-    fr: "Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.",
-    en: "Mini offline pack included: topo map (50 km) + sheets Porcini, Chanterelle, Morel.",
-  },
   "Sélectionnez un champignon…": { fr: "Sélectionnez un champignon…", en: "Select a mushroom…" },
   "comestible": { fr: "comestible", en: "edible" },
   "toxique": { fr: "toxique", en: "toxic" },
@@ -141,30 +130,6 @@ export const TRANSLATIONS: Record<string, { fr: string; en: string }> = {
     en: "Pedestrian/compass navigation available offline if the zone is downloaded.",
   },
   "J": { fr: "J", en: "D" },
-  "Optimum prévu": { fr: "Optimum prévu", en: "Optimum forecast" },
-  "Nouvelle zone proche": { fr: "Nouvelle zone proche", en: "New nearby zone" },
-  "Cartes hors‑ligne": { fr: "Cartes hors‑ligne", en: "Offline maps" },
-  "Pack initial (50 km)": { fr: "Pack initial (50 km)", en: "Initial pack (50 km)" },
-  "Topo + Cèpe/Girolle/Morille": {
-    fr: "Topo + Cèpe/Girolle/Morille",
-    en: "Topo + Porcini/Chanterelle/Morel",
-  },
-  "Télécharger une zone": { fr: "Télécharger une zone", en: "Download a zone" },
-  "Alertes": { fr: "Alertes", en: "Alerts" },
-  "Unités": { fr: "Unités", en: "Units" },
-  "métriques": { fr: "métriques", en: "metric" },
-  "impériales": { fr: "impériales", en: "imperial" },
-  "Thème": { fr: "Thème", en: "Theme" },
-  "auto": { fr: "auto", en: "auto" },
-  "clair": { fr: "clair", en: "light" },
-  "sombre": { fr: "sombre", en: "dark" },
-  "Langue": { fr: "Langue", en: "Language" },
-  "français": { fr: "français", en: "French" },
-  "anglais": { fr: "anglais", en: "English" },
-  "« À propos » • « Conseils de cueillette »": {
-    fr: "« À propos » • « Conseils de cueillette »",
-    en: '"About" • "Picking tips"',
-  },
   "Rechercher un champignon…": { fr: "Rechercher un champignon…", en: "Search a mushroom…" },
   "Toutes saisons": { fr: "Toutes saisons", en: "All seasons" },
   "Printemps": { fr: "Printemps", en: "Spring" },
@@ -183,20 +148,3 @@ export const TRANSLATIONS: Record<string, { fr: string; en: string }> = {
   "⬊ en baisse": { fr: "⬊ en baisse", en: "⬊ decreasing" },
   "→ stable": { fr: "→ stable", en: "→ stable" },
 };
-
-import { useAppContext } from "./context/AppContext";
-
-export function useT() {
-  const { state } = useAppContext();
-  const lang = state.prefs.lang;
-  const t = (key: string, vars?: Record<string, any>) => {
-    let str = TRANSLATIONS[key]?.[lang] ?? key;
-    if (vars) {
-      Object.keys(vars).forEach((k) => {
-        str = str.replace(`{${k}}`, String(vars[k]));
-      });
-    }
-    return str;
-  };
-  return { t, lang };
-}
