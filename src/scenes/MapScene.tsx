@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,9 +9,42 @@ import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import mapboxgl from "mapbox-gl";
+import { useAppContext } from "../context/AppContext";
 
 export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }: { onZone: (z: any) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: (v: (p: boolean) => boolean | boolean) => void; onBack: () => void }) {
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
+  const [zoom, setZoom] = useState(5);
+  const mapContainer = useRef<HTMLDivElement>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const { state } = useAppContext();
+
+  useEffect(() => {
+    if (mapRef.current) return;
+    mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
+    if (mapContainer.current) {
+      mapRef.current = new mapboxgl.Map({
+        container: mapContainer.current,
+        style: "https://demotiles.maplibre.org/style.json",
+        center: [2.3522, 48.8566],
+        zoom,
+      });
+      mapRef.current.on("load", () => {
+        mapRef.current?.addSource("mock", {
+          type: "raster",
+          tiles: ["https://example.com/mock/{z}/{x}/{y}.png"],
+          tileSize: 256,
+        });
+        mapRef.current?.addLayer({ id: "mock", type: "raster", source: "mock" });
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (mapRef.current) {
+      mapRef.current.setZoom(zoom);
+    }
+  }, [zoom]);
   const zones = useMemo(() => (selectedSpecies.length === 0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id] || 0) > 50))), [selectedSpecies]);
 
   return (
@@ -28,12 +61,12 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       </div>
 
       <div className="relative h-[60vh] rounded-2xl border border-neutral-800 overflow-hidden">
-        <iframe title="Carte" className="absolute inset-0 w-full h-full" src="https://www.openstreetmap.org/export/embed.html"></iframe>
+        <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
 
         <div className="absolute top-3 left-3 flex flex-col gap-2">
           <Button variant="ghost" size="icon" onClick={() => setGpsFollow(true)} className={BTN_GHOST_ICON} aria-label="Ma position">📍</Button>
           <div className="bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-800 flex items-center gap-2">
-            <span className={`text-xs ${T_PRIMARY}`}>Légende</span>
+            <span className={`text-xs ${T_PRIMARY}`}>Légende J{state.day >= 0 ? "+" : ""}{state.day}</span>
             {LEGEND.map((l, i) => (
               <div key={i} className="flex items-center gap-1">
                 <div className={classNames("w-3 h-3 rounded", l.color)} />
@@ -58,6 +91,10 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="absolute bottom-3 right-3 bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-800">
+          <input type="range" min={1} max={14} value={zoom} onChange={(e) => setZoom(parseInt(e.target.value, 10))} />
         </div>
       </div>
 
