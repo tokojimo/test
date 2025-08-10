@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { X, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,13 +17,32 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const [last, setLast] = useState(today);
   const [location, setLocation] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
+  const photoUrlsRef = useRef<string[]>([]);
 
   const importImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
     const urls = files.map((f) => URL.createObjectURL(f));
+    photoUrlsRef.current.push(...urls);
     setPhotos((p) => [...p, ...urls]);
   };
+
+  useEffect(() => {
+    const current = new Set(photos);
+    photoUrlsRef.current = photoUrlsRef.current.filter((url) => {
+      if (!current.has(url)) {
+        URL.revokeObjectURL(url);
+        return false;
+      }
+      return true;
+    });
+  }, [photos]);
+
+  useEffect(() => {
+    return () => {
+      photoUrlsRef.current.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, []);
 
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) onClose();
