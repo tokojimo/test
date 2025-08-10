@@ -12,7 +12,7 @@ export default function RouteScene({ onBackToMap, onBack }: { onBackToMap: () =>
       <Button variant="ghost" size="icon" onClick={onBack} className={`${BTN_GHOST_ICON} mb-3`} aria-label={t("Retour")}>
         <ChevronLeft className="w-5 h-5" />
       </Button>
-      <div className="relative h-[60vh] rounded-2xl border border-neutral-800 overflow-hidden bg-neutral-900 grid">
+      <div className="relative h-[60vh] rounded-2xl border border-neutral-300 dark:border-neutral-800 overflow-hidden bg-neutral-100 dark:bg-neutral-900 grid">
         <div className={`p-3 text-sm ${T_MUTED}`}>
           {t("Instructions étape par étape (démo) :")}
           <br />🚗 {t("Rejoindre parking")} → 🚶 {t("Sentier balisé")} → 🧭 {t("Boussole sur 250 m")}

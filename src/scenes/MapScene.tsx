@@ -58,7 +58,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
         <div className="relative flex-1">
           <Input
             placeholder={t("Rechercher un lieu…")}
-            className={`pl-9 bg-neutral-900 border-neutral-800 ${T_PRIMARY}`}
+            className={`pl-9 bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
           />
           <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
         </div>
@@ -68,7 +68,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
         </Button>
       </div>
 
-      <div className="relative h-[60vh] rounded-2xl border border-neutral-800 overflow-hidden">
+      <div className="relative h-[60vh] rounded-2xl border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
         <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
 
         <div className="absolute top-3 left-3 flex flex-col gap-2">
@@ -81,7 +81,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
           >
             📍
           </Button>
-          <div className="bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-800 flex items-center gap-2">
+          <div className="bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-300 dark:border-neutral-800 flex items-center gap-2">
             <span className={`text-xs ${T_PRIMARY}`}>
               {t("Légende")} J{state.day >= 0 ? "+" : ""}
               {state.day}
@@ -97,7 +97,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
 
         <div className="absolute bottom-3 left-3 grid gap-2">
           {zones.map(z => (
-            <div key={z.id} onClick={() => onZone(z)} role="button" tabIndex={0} className="bg-neutral-900/80 hover:bg-neutral-800/80 border border-neutral-800 rounded-xl px-3 py-2 text-left cursor-pointer">
+            <div key={z.id} onClick={() => onZone(z)} role="button" tabIndex={0} className="bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/80 dark:hover:bg-neutral-800/80 border border-neutral-300 dark:border-neutral-800 rounded-xl px-3 py-2 text-left cursor-pointer">
               <div className="flex items-center justify-between">
                 <div className={`font-medium ${T_PRIMARY}`}>{z.name}</div>
                 <Badge variant={z.score > 85 ? "default" : "secondary"}>{z.score}%</Badge>
@@ -105,14 +105,14 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
               <div className={`text-xs ${T_MUTED}`}>{t(z.trend)}</div>
               <div className="mt-1 flex gap-1">
                 {Object.entries(z.species).map(([id, sc]) => (
-                  <span key={id} onClick={(e) => { e.stopPropagation(); onOpenShroom(id); }} className={`text-[10px] bg-neutral-800 border border-neutral-700 px-2 py-1 rounded-full hover:bg-neutral-700 ${T_PRIMARY} cursor-pointer`}>{MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0]} {sc}%</span>
+                  <span key={id} onClick={(e) => { e.stopPropagation(); onOpenShroom(id); }} className={`text-[10px] bg-neutral-200 border border-neutral-300 hover:bg-neutral-300 dark:bg-neutral-800 dark:border-neutral-700 dark:hover:bg-neutral-700 px-2 py-1 rounded-full ${T_PRIMARY} cursor-pointer`}>{MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0]} {sc}%</span>
                 ))}
               </div>
             </div>
           ))}
         </div>
 
-        <div className="absolute bottom-3 right-3 bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-800">
+        <div className="absolute bottom-3 right-3 bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-300 dark:border-neutral-800">
           <input type="range" min={1} max={14} value={zoom} onChange={(e) => setZoom(parseInt(e.target.value, 10))} />
         </div>
       </div>
