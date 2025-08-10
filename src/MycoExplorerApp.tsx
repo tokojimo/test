@@ -8,6 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
+import { useAppContext } from "./context/AppContext";
 
 // Palette & typographies adaptées au thème sombre
 const BTN = "rounded-xl bg-neutral-300 text-neutral-900 hover:bg-neutral-200";
@@ -64,17 +65,15 @@ export default function MycoExplorerApp(){
   const [search, setSearch] = useState("");
   const [selectedZone, setSelectedZone] = useState(null);
   const [selectedMushroom, setSelectedMushroom] = useState(null);
-  const [mySpots, setMySpots] = useState([]);
   const [downloading, setDownloading] = useState(false);
   const [dlProgress, setDlProgress] = useState(0);
   const [includeRelief, setIncludeRelief] = useState(true);
   const [includeWeather, setIncludeWeather] = useState(true);
-  const [alerts, setAlerts] = useState({ optimum: true, newZone: false });
-  const [prefs, setPrefs] = useState({ units:"métriques", theme:"auto", gps:true });
   const [packSize, setPackSize] = useState(180);
   const [deviceFree, setDeviceFree] = useState(2048);
   const [toast, setToast] = useState(null);
   const [gpsFollow, setGpsFollow] = useState(false);
+  const { dispatch } = useAppContext();
 
   const goToScene = useCallback((next) => {
     setScene(next);
@@ -120,12 +119,12 @@ export default function MycoExplorerApp(){
         <AnimatePresence mode="wait">
           {scene===1 && <Scene1 key="s1" onSeeMap={()=>goToScene(2)} onMySpots={()=>goToScene(4)} onOpenSettings={()=>goToScene(8)} onOpenPicker={()=>goToScene(6)} />}
           {scene===2 && <Scene2 key="s2" onBack={goBack} gpsFollow={gpsFollow} setGpsFollow={setGpsFollow} onZone={(z)=>{setSelectedZone(z); goToScene(3);}} onOpenShroom={(id)=>{setSelectedMushroom(MUSHROOMS.find(m=>m.id===id)); goToScene(7);}} />}
-          {scene===3 && <Scene3 key="s3" zone={selectedZone} onGo={()=> goToScene(5)} onAdd={()=>{ const today=new Date().toISOString().slice(0,10); setMySpots(s=>[{ id:Date.now(), cover:MUSHROOMS[1].photo, photos:[MUSHROOMS[1].photo], name:selectedZone?.name, species: Object.keys(selectedZone?.species||{}), rating:5, last:today, history:[{date:today, rating:5, note:"Créé", photos:[MUSHROOMS[1].photo]}] }, ...s]); setToast({ type:"success", text:"Coin ajouté"}); }} onOpenShroom={(id)=>{setSelectedMushroom(MUSHROOMS.find(m=>m.id===id)); goToScene(7);}} onBack={goBack} />}
-          {scene===4 && <Scene4 key="s4" spots={mySpots} onRoute={()=> goToScene(5)} onCreate={(spot)=> setMySpots(s=>[spot, ...s])} onBack={goBack} onUpdateSpot={(updated)=> setMySpots(list=> list.map(s=> s.id===updated.id? updated : s))} />}
+          {scene===3 && <Scene3 key="s3" zone={selectedZone} onGo={()=> goToScene(5)} onAdd={()=>{ const today=new Date().toISOString().slice(0,10); dispatch({ type:'ADD_SPOT', spot:{ id:Date.now(), cover:MUSHROOMS[1].photo, photos:[MUSHROOMS[1].photo], name:selectedZone?.name, species: Object.keys(selectedZone?.species||{}), rating:5, last:today, history:[{date:today, rating:5, note:"Créé", photos:[MUSHROOMS[1].photo]}] }}); setToast({ type:"success", text:"Coin ajouté"}); }} onOpenShroom={(id)=>{setSelectedMushroom(MUSHROOMS.find(m=>m.id===id)); goToScene(7);}} onBack={goBack} />}
+          {scene===4 && <Scene4 key="s4" onRoute={()=> goToScene(5)} onBack={goBack} />}
           {scene===5 && <Scene5 key="s5" onBackToMap={()=> goToScene(2)} onBack={goBack} />}
           {scene===6 && <Scene6 key="s6" items={filteredMushrooms} search={search} setSearch={setSearch} onPick={(m)=>{ setSelectedMushroom(m); goToScene(7); }} onBack={goBack} />}
           {scene===7 && <Scene7 key="s7" item={selectedMushroom} onSeeZones={()=> goToScene(2)} onBack={goBack} />}
-          {scene===8 && <Scene8 key="s8" alerts={alerts} setAlerts={setAlerts} prefs={prefs} setPrefs={setPrefs} onOpenPacks={()=> goToScene(9)} onBack={goBack} />}
+          {scene===8 && <Scene8 key="s8" onOpenPacks={()=> goToScene(9)} onBack={goBack} />}
           {scene===9 && <Scene9 key="s9" packSize={packSize} setPackSize={setPackSize} deviceFree={deviceFree} setDeviceFree={setDeviceFree} includeRelief={includeRelief} setIncludeRelief={setIncludeRelief} includeWeather={includeWeather} setIncludeWeather={setIncludeWeather} downloading={downloading} dlProgress={dlProgress} onStart={()=>{
               if(packSize>deviceFree){ setToast({ type:"warn", text:`Espace insuffisant. Libérez ${packSize-deviceFree} Mo`}); }
               else { setDownloading(true); setDlProgress(0); }
@@ -291,10 +290,14 @@ function Scene3({ zone, onGo, onAdd, onOpenShroom, onBack }){
 }
 
 // ---------- SCÈNE 4 refaite selon demandes ----------
-function Scene4({ spots, onRoute, onCreate, onBack, onUpdateSpot }){
+function Scene4({ onRoute, onBack }){
+  const { state, dispatch } = useAppContext();
+  const { mySpots } = state;
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState(null);
   const [details, setDetails] = useState(null);
+  const handleCreate = (spot: any) => dispatch({ type: 'ADD_SPOT', spot });
+  const handleUpdate = (u: any) => dispatch({ type: 'UPDATE_SPOT', spot: u });
 
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3 space-y-3">
@@ -314,8 +317,8 @@ function Scene4({ spots, onRoute, onCreate, onBack, onUpdateSpot }){
       )}
 
       <div className="grid md:grid-cols-2 gap-3">
-        {spots.length===0 && <div className={T_PRIMARY}>Aucun coin enregistré.</div>}
-        {spots.map(s=> (
+        {mySpots.length===0 && <div className={T_PRIMARY}>Aucun coin enregistré.</div>}
+        {mySpots.map(s=> (
           <Card key={s.id} className="bg-neutral-900 border-neutral-800 rounded-2xl overflow-hidden relative">
             <button onClick={()=> setDetails(s)} className="block text-left">
               <img src={s.cover||s.photo} className="w-full h-40 object-cover"/>
@@ -345,7 +348,7 @@ function Scene4({ spots, onRoute, onCreate, onBack, onUpdateSpot }){
       {createOpen && (
         <CreateSpotModal 
           onClose={()=> setCreateOpen(false)}
-          onCreate={(spot)=>{ onCreate(spot); setCreateOpen(false);} }
+          onCreate={(spot)=>{ handleCreate(spot); setCreateOpen(false);} }
         />
       )}
 
@@ -354,7 +357,7 @@ function Scene4({ spots, onRoute, onCreate, onBack, onUpdateSpot }){
         <EditSpotModal 
           spot={editing}
           onClose={()=> setEditing(null)}
-          onSave={(u)=>{ onUpdateSpot(u); setEditing(null); }}
+          onSave={(u)=>{ handleUpdate(u); setEditing(null); }}
         />
       )}
 
@@ -774,7 +777,9 @@ function InfoBlock({ icon, title, text }){
   );
 }
 
-function Scene8({ alerts, setAlerts, prefs, setPrefs, onOpenPacks, onBack }){
+function Scene8({ onOpenPacks, onBack }){
+  const { state, dispatch } = useAppContext();
+  const { alerts, prefs } = state;
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3 space-y-3">
       <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label="Retour">
@@ -796,17 +801,17 @@ function Scene8({ alerts, setAlerts, prefs, setPrefs, onOpenPacks, onBack }){
       <Card className="bg-neutral-900 border-neutral-800 rounded-2xl">
         <CardHeader><CardTitle className={T_PRIMARY}>Alertes</CardTitle></CardHeader>
         <CardContent className="space-y-2">
-          <ToggleRow label="Optimum prévu" checked={alerts.optimum} onChange={v=> setAlerts(a=>({...a, optimum:v}))} />
-          <ToggleRow label="Nouvelle zone proche" checked={alerts.newZone} onChange={v=> setAlerts(a=>({...a, newZone:v}))} />
+          <ToggleRow label="Optimum prévu" checked={alerts.optimum} onChange={v=> dispatch({ type:'SET_ALERTS', alerts:{ optimum:v }})} />
+          <ToggleRow label="Nouvelle zone proche" checked={alerts.newZone} onChange={v=> dispatch({ type:'SET_ALERTS', alerts:{ newZone:v }})} />
         </CardContent>
       </Card>
 
       <Card className="bg-neutral-900 border-neutral-800 rounded-2xl">
         <CardHeader><CardTitle className={T_PRIMARY}>Préférences</CardTitle></CardHeader>
         <CardContent className="space-y-2">
-          <SelectRow label="Unités" value={prefs.units} options={["métriques","impériales"]} onChange={v=> setPrefs(p=>({...p, units:v}))} />
-          <SelectRow label="Thème" value={prefs.theme} options={["auto","clair","sombre"]} onChange={v=> setPrefs(p=>({...p, theme:v}))} />
-          <ToggleRow label="GPS" checked={prefs.gps} onChange={v=> setPrefs(p=>({...p, gps:v}))} />
+          <SelectRow label="Unités" value={prefs.units} options={["métriques","impériales"]} onChange={v=> dispatch({ type:'SET_PREFS', prefs:{ units:v }})} />
+          <SelectRow label="Thème" value={prefs.theme} options={["auto","clair","sombre"]} onChange={v=> dispatch({ type:'SET_PREFS', prefs:{ theme:v }})} />
+          <ToggleRow label="GPS" checked={prefs.gps} onChange={v=> dispatch({ type:'SET_PREFS', prefs:{ gps:v }})} />
         </CardContent>
       </Card>
 
