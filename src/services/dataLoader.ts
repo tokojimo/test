@@ -15,31 +15,13 @@ export async function fetchJSON<T>(url: string, fallback?: T): Promise<T> {
   }
 }
 
-export const loadMushrooms = async () => {
-  try {
-    return await fetchJSON<Mushroom[]>("/data/mushrooms.json");
-  } catch (err) {
-    alert("Impossible de charger les champignons.");
-    return [];
-  }
-};
+export const loadMushrooms = () =>
+  fetchJSON<Mushroom[]>("/data/mushrooms.json");
 
-export const loadZones = async () => {
-  try {
-    return await fetchJSON<Zone[]>("/data/zones.json");
-  } catch (err) {
-    alert("Impossible de charger les zones.");
-    return [];
-  }
-};
+export const loadZones = () =>
+  fetchJSON<Zone[]>("/data/zones.json");
 
-export const loadLegend = async () => {
-  try {
-    return await fetchJSON<{ label: string; color: string }[]>("/data/legend.json");
-  } catch (err) {
-    alert("Impossible de charger la légende.");
-    return [];
-  }
-};
+export const loadLegend = () =>
+  fetchJSON<{ label: string; color: string }[]>("/data/legend.json");
 
 export default { loadMushrooms, loadZones, loadLegend };
