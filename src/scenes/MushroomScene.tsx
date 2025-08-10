@@ -6,8 +6,9 @@ import { Badge } from "@/components/ui/badge";
 import { InfoBlock } from "../components/InfoBlock";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
+import type { Mushroom } from "../types";
 
-export default function MushroomScene({ item, onSeeZones, onBack }: { item: any; onSeeZones: () => void; onBack: () => void }) {
+export default function MushroomScene({ item, onSeeZones, onBack }: { item: Mushroom; onSeeZones: () => void; onBack: () => void }) {
   const { t } = useT();
   if (!item) return <div className={`p-6 ${T_PRIMARY}`}>{t("Sélectionnez un champignon…")}</div>;
   return (

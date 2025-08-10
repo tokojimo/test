@@ -5,8 +5,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
+import type { Mushroom } from "../types";
 
-export default function PickerScene({ items, search, setSearch, onPick, onBack }: { items: any[]; search: string; setSearch: (v: string) => void; onPick: (m: any) => void; onBack: () => void }) {
+export default function PickerScene({ items, search, setSearch, onPick, onBack }: { items: Mushroom[]; search: string; setSearch: (v: string) => void; onPick: (m: Mushroom) => void; onBack: () => void }) {
   const [seasonFilter, setSeasonFilter] = useState("toutes");
   const [valueFilter, setValueFilter] = useState("toutes");
   const { t } = useT();

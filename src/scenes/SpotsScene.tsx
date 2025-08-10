@@ -9,13 +9,14 @@ import { EditSpotModal } from "../components/EditSpotModal";
 import { SpotDetailsModal } from "../components/SpotDetailsModal";
 import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
+import type { Spot } from "../types";
 
 export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; onBack: () => void }) {
   const { state, dispatch } = useAppContext();
   const spots = state.mySpots;
   const [createOpen, setCreateOpen] = useState(false);
-  const [editing, setEditing] = useState<any>(null);
-  const [details, setDetails] = useState<any>(null);
+  const [editing, setEditing] = useState<Spot | null>(null);
+  const [details, setDetails] = useState<Spot | null>(null);
   const { t } = useT();
 
   return (

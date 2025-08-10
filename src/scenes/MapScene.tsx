@@ -12,8 +12,9 @@ import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tok
 import mapboxgl from "mapbox-gl";
 import { useT } from "../i18n";
 import { NotificationStack, Notification } from "../components/NotificationStack";
+import type { Zone } from "../types";
 
-export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }: { onZone: (z: any) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
+export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
   const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -65,7 +66,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       mapRef.current.setZoom(zoom);
     }
   }, [zoom]);
-  const zones = useMemo(() => (selectedSpecies.length === 0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id] || 0) > 50))), [selectedSpecies]);
+  const zones = useMemo<Zone[]>(() => (selectedSpecies.length === 0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id] || 0) > 50))), [selectedSpecies]);
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
