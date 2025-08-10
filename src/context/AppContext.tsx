@@ -8,21 +8,18 @@ interface AppState {
   prefs: Prefs;
   alerts: Alerts;
   mySpots: Spot[];
-  day: number;
 }
 
 type Action =
   | { type: "setPrefs"; prefs: Partial<Prefs> }
   | { type: "setAlerts"; alerts: Partial<Alerts> }
   | { type: "addSpot"; spot: Spot }
-  | { type: "updateSpot"; spot: Spot }
-  | { type: "setDay"; day: number };
+  | { type: "updateSpot"; spot: Spot };
 
 const initialState: AppState = {
   prefs: { units: "métriques", theme: "auto", gps: true, lang: "fr" },
   alerts: { optimum: true, newZone: false },
   mySpots: [],
-  day: 0,
 };
 
 function reducer(state: AppState, action: Action): AppState {
@@ -38,8 +35,6 @@ function reducer(state: AppState, action: Action): AppState {
         ...state,
         mySpots: state.mySpots.map((s) => (s.id === action.spot.id ? action.spot : s)),
       };
-    case "setDay":
-      return { ...state, day: action.day };
     default:
       return state;
   }

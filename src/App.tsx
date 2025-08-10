@@ -14,7 +14,6 @@ import MushroomScene from "./scenes/MushroomScene";
 import SettingsScene from "./scenes/SettingsScene";
 import DownloadScene from "./scenes/DownloadScene";
 import { AppProvider, useAppContext } from "./context/AppContext";
-import DaySlider from "./components/DaySlider";
 import { useT } from "./i18n";
 
 export default function MycoExplorerApp() {
@@ -109,7 +108,6 @@ function AppContent() {
       )}
 
       <main>
-        <DaySlider />
         <AnimatePresence mode="wait">
           {scene === 1 && <LandingScene key="s1" onSeeMap={() => goToScene(2)} onMySpots={() => goToScene(4)} onOpenSettings={() => goToScene(8)} onOpenPicker={() => goToScene(6)} />}
           {scene === 2 && <MapScene key="s2" onBack={goBack} gpsFollow={gpsFollow} setGpsFollow={setGpsFollow} onZone={(z) => { setSelectedZone(z); goToScene(3); }} onOpenShroom={(id) => { setSelectedMushroom(MUSHROOMS.find((m) => m.id === id) || null); goToScene(7); }} />}
