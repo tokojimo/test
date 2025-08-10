@@ -9,14 +9,10 @@ import { Input } from "@/components/ui/input";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
 
-// Palette & typographies adaptées au thème sombre
-const BTN = "rounded-xl bg-neutral-300 text-neutral-900 hover:bg-neutral-200";
-const BTN_GHOST_ICON = "text-neutral-300 hover:bg-neutral-800";
-const T_PRIMARY = "text-neutral-100";
-const T_MUTED = "text-neutral-300";
-const T_SUBTLE = "text-neutral-400";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "./styles/tokens";
+import type { Mushroom, Zone, Spot } from "./types";
 
-function MushroomIcon(props){
+function MushroomIcon(props: { size?: number; className?: string }){
   return (
     <svg viewBox="0 0 24 24" width={props.size||40} height={props.size||40} fill="none" xmlns="http://www.w3.org/2000/svg" className={props.className}>
       <path d="M12 3c-5.5 0-9 3.2-9 6.5 0 1.4 1.3 2.5 2.8 2.5h12.4c1.5 0 2.8-1.1 2.8-2.5C21 6.2 17.5 3 12 3Z" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"/>
@@ -25,13 +21,13 @@ function MushroomIcon(props){
   );
 }
 
-const MUSHROOMS = [
+const MUSHROOMS: Mushroom[] = [
   { id: "cepe", name: "Cèpe de Bordeaux", latin: "Boletus edulis", edible: true, season: "Août – Novembre", habitat: "Feuillus & conifères, sols acides, 200–1200 m, lisières et clairières", weatherIdeal: "Pluies modérées suivies de 3–5 jours doux (12–20°C), vent faible", description: "Chapeau brun-noisette, pied ventru réticulé, tubes blancs devenant verdâtres, chair blanche", culinary: "Excellente. Poêlé, en fricassée, séchage possible", cookingTips: "Saisir à feu vif dans un peu de matière grasse, ne pas laver à grande eau (brosse + chiffon)", dishes: ["Omelette aux cèpes", "Poêlée de cèpes persillés", "Tagliatelles aux cèpes", "Cèpes rôtis au four"], confusions: ["Bolet amer (Tylopilus felleus)", "Bolets à pores rouges (toxiques)"], picking: "Couper au couteau, reboucher le trou, prélever raisonnablement", photo: "https://images.unsplash.com/photo-1603296196270-937b36cf47b1?q=80&w=1600&auto=format&fit=crop" },
   { id: "girolle", name: "Girolle (Chanterelle)", latin: "Cantharellus cibarius", edible: true, season: "Juin – Octobre", habitat: "Bois de conifères & feuillus, mousses, pentes bien drainées", weatherIdeal: "Alternance d'averses et de beaux jours, 14–22°C", description: "Chapeau jaune cône-ombiliqué, plis décurrents, odeur fruitée d'abricot", culinary: "Excellente. Sautés courts, risotto, pickles", cookingTips: "Déposer en fin de cuisson pour conserver le croquant, éviter l'excès d'eau", dishes: ["Risotto aux girolles", "Volaille sauce girolles", "Tartine forestière", "Pickles de girolles"], confusions: ["Clitocybe de l'olivier (toxique)", "Fausse girolle (Hygrophoropsis aurantiaca)"], picking: "Prélever les plus développées, laisser les jeunes", photo: "https://images.unsplash.com/photo-1631460615580-bbbc9efeb800?q=80&w=1600&auto=format&fit=crop" },
   { id: "morille", name: "Morille commune", latin: "Morchella esculenta", edible: true, season: "Mars – Mai", habitat: "Lisières, vergers, ripisylves, sols calcaires", weatherIdeal: "Redoux printanier après pluies, 8–18°C", description: "Chapeau alvéolé en nid d'abeille, pied blanc-creme, chair creuse", culinary: "Excellente mais TOUJOURS bien cuite", cookingTips: "Sécher possible. Réhydrater puis cuire longuement. Jamais crue", dishes: ["Morilles à la crème", "Poulet aux morilles", "Pâtes aux morilles", "Tartes salées aux morilles"], confusions: ["Gyromitre (toxique)", "Morillons (autres Morchella)"], picking: "Gants recommandés pour la cueillette; longue cuisson obligatoire", photo: "https://images.unsplash.com/photo-1587307360679-f20b5cbd9e03?q=80&w=1600&auto=format&fit=crop" }
 ];
 
-const DEMO_ZONES = [
+const DEMO_ZONES: Zone[] = [
   { id: "zone-alpage", name: "Clairière des Alpages", score: 88, species: { cepe: 90, girolle: 75, morille: 0 }, trend: "⬈ amélioration", coords: [45.9, 6.6] },
   { id: "zone-ripisylve", name: "Ripisylve du Vieux Pont", score: 72, species: { cepe: 40, girolle: 55, morille: 85 }, trend: "⬊ en baisse", coords: [45.7, 5.9] },
   { id: "zone-lisiere", name: "Grande Lisière Sud", score: 53, species: { cepe: 60, girolle: 50, morille: 15 }, trend: "→ stable", coords: [45.6, 6.1] }
@@ -45,7 +41,7 @@ const LEGEND = [
   { label: "34–25", color: "bg-red-600" }
 ];
 
-function classNames(...c){return c.filter(Boolean).join(" ");}
+function classNames(...c: (string | false | null | undefined)[]){return c.filter(Boolean).join(" ");}
 
 function generateForecast(){
   const days = [];
@@ -59,12 +55,12 @@ function generateForecast(){
 }
 
 export default function MycoExplorerApp(){
-  const [scene, setScene] = useState(1);
-  const [history, setHistory] = useState([1]);
+  const [scene, setScene] = useState<number>(1);
+  const [history, setHistory] = useState<number[]>([1]);
   const [search, setSearch] = useState("");
-  const [selectedZone, setSelectedZone] = useState(null);
-  const [selectedMushroom, setSelectedMushroom] = useState(null);
-  const [mySpots, setMySpots] = useState([]);
+  const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
+  const [selectedMushroom, setSelectedMushroom] = useState<Mushroom | null>(null);
+  const [mySpots, setMySpots] = useState<Spot[]>([]);
   const [downloading, setDownloading] = useState(false);
   const [dlProgress, setDlProgress] = useState(0);
   const [includeRelief, setIncludeRelief] = useState(true);
@@ -73,7 +69,7 @@ export default function MycoExplorerApp(){
   const [prefs, setPrefs] = useState({ units:"métriques", theme:"auto", gps:true });
   const [packSize, setPackSize] = useState(180);
   const [deviceFree, setDeviceFree] = useState(2048);
-  const [toast, setToast] = useState(null);
+  const [toast, setToast] = useState<{ type: "success" | "warn"; text: string } | null>(null);
   const [gpsFollow, setGpsFollow] = useState(false);
 
   const goToScene = useCallback((next) => {
