@@ -182,6 +182,8 @@ export const TRANSLATIONS: Record<string, { fr: string; en: string }> = {
   "⬈ amélioration": { fr: "⬈ amélioration", en: "⬈ improving" },
   "⬊ en baisse": { fr: "⬊ en baisse", en: "⬊ decreasing" },
   "→ stable": { fr: "→ stable", en: "→ stable" },
+  "Carte cliquée": { fr: "Carte cliquée", en: "Map clicked" },
+  "Zone {name} cliquée": { fr: "Zone {name} cliquée", en: "Zone {name} clicked" },
 };
 
 import { useAppContext } from "./context/AppContext";
