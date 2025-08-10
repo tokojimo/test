@@ -7,8 +7,11 @@ import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tok
 import { CreateSpotModal } from "../components/CreateSpotModal";
 import { EditSpotModal } from "../components/EditSpotModal";
 import { SpotDetailsModal } from "../components/SpotDetailsModal";
+import { useAppContext } from "../context/AppContext";
 
-export default function SpotsScene({ spots, onRoute, onCreate, onBack, onUpdateSpot }: { spots: any[]; onRoute: () => void; onCreate: (s: any) => void; onBack: () => void; onUpdateSpot: (s: any) => void }) {
+export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; onBack: () => void }) {
+  const { state, dispatch } = useAppContext();
+  const spots = state.mySpots;
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<any>(null);
   const [details, setDetails] = useState<any>(null);
@@ -57,7 +60,10 @@ export default function SpotsScene({ spots, onRoute, onCreate, onBack, onUpdateS
       {createOpen && (
         <CreateSpotModal
           onClose={() => setCreateOpen(false)}
-          onCreate={(spot) => { onCreate(spot); setCreateOpen(false); }}
+          onCreate={(spot) => {
+            dispatch({ type: "addSpot", spot });
+            setCreateOpen(false);
+          }}
         />
       )}
 
@@ -65,7 +71,10 @@ export default function SpotsScene({ spots, onRoute, onCreate, onBack, onUpdateS
         <EditSpotModal
           spot={editing}
           onClose={() => setEditing(null)}
-          onSave={(u) => { onUpdateSpot(u); setEditing(null); }}
+          onSave={(u) => {
+            dispatch({ type: "updateSpot", spot: u });
+            setEditing(null);
+          }}
         />
       )}
 
