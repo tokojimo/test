@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useReducer } from "react";
 import type { Spot } from "../types";
 
-type Prefs = { units: string; theme: string; gps: boolean };
+type Prefs = { units: string; theme: string; gps: boolean; lang: string };
 type Alerts = { optimum: boolean; newZone: boolean };
 
 interface AppState {
@@ -19,7 +19,7 @@ type Action =
   | { type: "setDay"; day: number };
 
 const initialState: AppState = {
-  prefs: { units: "métriques", theme: "auto", gps: true },
+  prefs: { units: "métriques", theme: "auto", gps: true, lang: "fr" },
   alerts: { optimum: true, newZone: false },
   mySpots: [],
   day: 0,

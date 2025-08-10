@@ -2,6 +2,7 @@ import React, { useRef, useState } from "react";
 import { X, MapPin, Plus, Pencil, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { useT } from "../i18n";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -10,6 +11,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
   const [history, setHistory] = useState(
     spot.history || (spot.visits || []).map((d: string) => ({ date: d, rating: spot.rating, note: "", photos: [] }))
   );
+  const { t } = useT();
 
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) onClose();
@@ -23,27 +25,35 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
     <div ref={overlayRef} onClick={handleOutside} className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-3">
       <div className="w-full max-w-3xl bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-3">
-          <div className={`text-lg font-semibold ${T_PRIMARY}`}>Historique du coin</div>
+          <div className={`text-lg font-semibold ${T_PRIMARY}`}>{t("Historique du coin")}</div>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100"><X className="w-5 h-5" /></button>
         </div>
 
         <div className="relative h-48 rounded-xl overflow-hidden border border-neutral-800 bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)]">
-          <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs bg-neutral-900/70 border border-neutral-800 ${T_PRIMARY}`}><MapPin className="w-3 h-3 inline mr-1" />Carte du coin</div>
+          <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs bg-neutral-900/70 border border-neutral-800 ${T_PRIMARY}`}>
+            <MapPin className="w-3 h-3 inline mr-1" />
+            {t("Carte du coin")}
+          </div>
         </div>
-        <p className={`text-xs mt-2 ${T_SUBTLE}`}>La carte affiche l'historique complet avec détails.</p>
+        <p className={`text-xs mt-2 ${T_SUBTLE}`}>{t("La carte affiche l'historique complet avec détails.")}</p>
 
         <div className="mt-3">
           <div className="flex items-center justify-between mb-2">
-            <div className={`text-sm ${T_PRIMARY}`}>Visites</div>
-            <Button onClick={addVisit} className={BTN}><Plus className="w-4 h-4 mr-2" />Ajouter une cueillette</Button>
+            <div className={`text-sm ${T_PRIMARY}`}>{t("Visites")}</div>
+            <Button onClick={addVisit} className={BTN}>
+              <Plus className="w-4 h-4 mr-2" />
+              {t("Ajouter une cueillette")}
+            </Button>
           </div>
           <div className="space-y-2">
-            {history.length === 0 && <div className={T_MUTED}>Aucune visite enregistrée.</div>}
+            {history.length === 0 && <div className={T_MUTED}>{t("Aucune visite enregistrée.")}</div>}
             {history.map((h, i) => (
               <div key={i} className="flex items-start justify-between bg-neutral-900 border border-neutral-800 rounded-xl p-2">
                 <div>
                   <div className={`text-sm ${T_PRIMARY}`}>{h.date}</div>
-                  <div className={`text-xs ${T_MUTED}`}>Note: {h.rating ?? "–"}/5 {h.note ? `• ${h.note}` : ""}</div>
+                  <div className={`text-xs ${T_MUTED}`}>
+                    {t("Note:")} {h.rating ?? "–"}/5 {h.note ? `• ${h.note}` : ""}
+                  </div>
                 </div>
                 <div className="flex items-center gap-2">
                   {h.photos && h.photos.length > 0 && (
@@ -53,7 +63,9 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
                       ))}
                     </div>
                   )}
-                  <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} aria-label="modifier"><Pencil className="w-4 h-4" /></Button>
+                  <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} aria-label={t("modifier")}>
+                    <Pencil className="w-4 h-4" />
+                  </Button>
                 </div>
               </div>
             ))}
@@ -61,9 +73,9 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
         </div>
 
         <div className="mt-3">
-          <div className={`text-sm mb-2 ${T_PRIMARY}`}>Galerie</div>
+          <div className={`text-sm mb-2 ${T_PRIMARY}`}>{t("Galerie")}</div>
           {photos.length === 0 ? (
-            <div className={T_MUTED}>Aucune photo.</div>
+            <div className={T_MUTED}>{t("Aucune photo.")}</div>
           ) : (
             <div className="grid grid-cols-3 gap-2">
               {photos.slice(0, 5).map((p: string, i: number) => (
@@ -75,7 +87,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
               ))}
               {photos.length > 5 && (
                 <button onClick={() => setLightbox({ open: true, index: 5 })} className="relative grid place-items-center rounded-xl border border-neutral-800 bg-neutral-900/60">
-                  <span className={`text-sm ${T_PRIMARY}`}>+{photos.length - 5} photos</span>
+                  <span className={`text-sm ${T_PRIMARY}`}>+{photos.length - 5} {t("photos")}</span>
                 </button>
               )}
             </div>

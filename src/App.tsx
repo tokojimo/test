@@ -15,6 +15,7 @@ import SettingsScene from "./scenes/SettingsScene";
 import DownloadScene from "./scenes/DownloadScene";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import DaySlider from "./components/DaySlider";
+import { useT } from "./i18n";
 
 export default function MycoExplorerApp() {
   return (
@@ -40,6 +41,7 @@ function AppContent() {
   const [gpsFollow, setGpsFollow] = useState(false);
 
   const { dispatch } = useAppContext();
+  const { t } = useT();
 
   const goToScene = useCallback((next: number) => {
     setScene(next);
@@ -64,7 +66,7 @@ function AppContent() {
             clearInterval(id);
             setTimeout(() => {
               setDownloading(false);
-              setToast({ type: "success", text: "Carte téléchargée et prête hors‑ligne" });
+              setToast({ type: "success", text: t("Carte téléchargée et prête hors‑ligne") });
               goToScene(2);
             }, 500);
           }
@@ -117,11 +119,11 @@ function AppContent() {
                       rating: 5,
                       last: today,
                       history: [
-                        { date: today, rating: 5, note: "Créé", photos: [MUSHROOMS[1].photo] },
+                        { date: today, rating: 5, note: t("Créé"), photos: [MUSHROOMS[1].photo] },
                       ],
                     } as Spot,
                   });
-                  setToast({ type: "success", text: "Coin ajouté" });
+                  setToast({ type: "success", text: t("Coin ajouté") });
                 }}
                 onOpenShroom={(id) => {
                   setSelectedMushroom(
@@ -137,7 +139,34 @@ function AppContent() {
           {scene === 6 && <PickerScene key="s6" items={filteredMushrooms} search={search} setSearch={setSearch} onPick={(m) => { setSelectedMushroom(m); goToScene(7); }} onBack={goBack} />}
           {scene === 7 && <MushroomScene key="s7" item={selectedMushroom} onSeeZones={() => goToScene(2)} onBack={goBack} />}
             {scene === 8 && <SettingsScene key="s8" onOpenPacks={() => goToScene(9)} onBack={goBack} />}
-          {scene === 9 && <DownloadScene key="s9" packSize={packSize} setPackSize={setPackSize} deviceFree={deviceFree} setDeviceFree={setDeviceFree} includeRelief={includeRelief} setIncludeRelief={setIncludeRelief} includeWeather={includeWeather} setIncludeWeather={setIncludeWeather} downloading={downloading} dlProgress={dlProgress} onStart={() => { if (packSize > deviceFree) { setToast({ type: "warn", text: `Espace insuffisant. Libérez ${packSize - deviceFree} Mo` }); } else { setDownloading(true); setDlProgress(0); } }} onCancel={() => goToScene(2)} onBack={goBack} />}
+          {scene === 9 && (
+            <DownloadScene
+              key="s9"
+              packSize={packSize}
+              setPackSize={setPackSize}
+              deviceFree={deviceFree}
+              setDeviceFree={setDeviceFree}
+              includeRelief={includeRelief}
+              setIncludeRelief={setIncludeRelief}
+              includeWeather={includeWeather}
+              setIncludeWeather={setIncludeWeather}
+              downloading={downloading}
+              dlProgress={dlProgress}
+              onStart={() => {
+                if (packSize > deviceFree) {
+                  setToast({
+                    type: "warn",
+                    text: t("Espace insuffisant. Libérez {n} Mo", { n: packSize - deviceFree }),
+                  });
+                } else {
+                  setDownloading(true);
+                  setDlProgress(0);
+                }
+              }}
+              onCancel={() => goToScene(2)}
+              onBack={goBack}
+            />
+          )}
         </AnimatePresence>
       </main>
     </div>

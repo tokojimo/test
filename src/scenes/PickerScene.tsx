@@ -4,28 +4,35 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { useT } from "../i18n";
 
 export default function PickerScene({ items, search, setSearch, onPick, onBack }: { items: any[]; search: string; setSearch: (v: string) => void; onPick: (m: any) => void; onBack: () => void }) {
   const [seasonFilter, setSeasonFilter] = useState("toutes");
   const [valueFilter, setValueFilter] = useState("toutes");
+  const { t } = useT();
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
       <div className="grid md:grid-cols-4 gap-2 mb-3 items-center">
-        <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label="Retour">
+        <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
           <ChevronLeft className="w-5 h-5" />
         </Button>
-        <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Rechercher un champignon…" className={`bg-neutral-900 border-neutral-800 ${T_PRIMARY}`} />
+        <Input
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+          placeholder={t("Rechercher un champignon…")}
+          className={`bg-neutral-900 border-neutral-800 ${T_PRIMARY}`}
+        />
         <select value={seasonFilter} onChange={(e) => setSeasonFilter(e.target.value)} className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-100">
-          <option value="toutes">Toutes saisons</option>
-          <option>Printemps</option>
-          <option>Été</option>
-          <option>Automne</option>
+          <option value="toutes">{t("Toutes saisons")}</option>
+          <option>{t("Printemps")}</option>
+          <option>{t("Été")}</option>
+          <option>{t("Automne")}</option>
         </select>
         <select value={valueFilter} onChange={(e) => setValueFilter(e.target.value)} className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-100">
-          <option value="toutes">Toute valeur</option>
-          <option>Excellente</option>
-          <option>Bonne</option>
-          <option>Moyenne</option>
+          <option value="toutes">{t("Toute valeur")}</option>
+          <option>{t("Excellente")}</option>
+          <option>{t("Bonne")}</option>
+          <option>{t("Moyenne")}</option>
         </select>
       </div>
 
@@ -35,12 +42,14 @@ export default function PickerScene({ items, search, setSearch, onPick, onBack }
             <img src={m.photo} className="w-full h-40 object-cover" />
             <div className="p-3">
               <div className={`font-medium ${T_PRIMARY}`}>{m.name}</div>
-              <div className={`text-xs ${T_MUTED}`}>Saison : {m.season}</div>
+              <div className={`text-xs ${T_MUTED}`}>{t("Saison :")} {m.season}</div>
             </div>
           </button>
         ))}
       </div>
-      <p className={`text-xs mt-2 ${T_SUBTLE}`}>Hors‑ligne : Cèpe, Girolle et Morille apparaissent par défaut.</p>
+      <p className={`text-xs mt-2 ${T_SUBTLE}`}>
+        {t("Hors‑ligne : Cèpe, Girolle et Morille apparaissent par défaut.")}
+      </p>
     </motion.section>
   );
 }
