@@ -13,24 +13,32 @@ import PickerScene from "./scenes/PickerScene";
 import MushroomScene from "./scenes/MushroomScene";
 import SettingsScene from "./scenes/SettingsScene";
 import DownloadScene from "./scenes/DownloadScene";
+import { AppProvider, useAppContext } from "./context/AppContext";
 
 export default function MycoExplorerApp() {
+  return (
+    <AppProvider>
+      <AppContent />
+    </AppProvider>
+  );
+}
+
+function AppContent() {
   const [scene, setScene] = useState<number>(1);
   const [history, setHistory] = useState<number[]>([1]);
   const [search, setSearch] = useState("");
   const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
   const [selectedMushroom, setSelectedMushroom] = useState<Mushroom | null>(null);
-  const [mySpots, setMySpots] = useState<Spot[]>([]);
   const [downloading, setDownloading] = useState(false);
   const [dlProgress, setDlProgress] = useState(0);
   const [includeRelief, setIncludeRelief] = useState(true);
   const [includeWeather, setIncludeWeather] = useState(true);
-  const [alerts, setAlerts] = useState({ optimum: true, newZone: false });
-  const [prefs, setPrefs] = useState({ units: "métriques", theme: "auto", gps: true });
   const [packSize, setPackSize] = useState(180);
   const [deviceFree, setDeviceFree] = useState(2048);
   const [toast, setToast] = useState<{ type: "success" | "warn"; text: string } | null>(null);
   const [gpsFollow, setGpsFollow] = useState(false);
+
+  const { dispatch } = useAppContext();
 
   const goToScene = useCallback((next: number) => {
     setScene(next);
@@ -89,12 +97,44 @@ export default function MycoExplorerApp() {
         <AnimatePresence mode="wait">
           {scene === 1 && <LandingScene key="s1" onSeeMap={() => goToScene(2)} onMySpots={() => goToScene(4)} onOpenSettings={() => goToScene(8)} onOpenPicker={() => goToScene(6)} />}
           {scene === 2 && <MapScene key="s2" onBack={goBack} gpsFollow={gpsFollow} setGpsFollow={setGpsFollow} onZone={(z) => { setSelectedZone(z); goToScene(3); }} onOpenShroom={(id) => { setSelectedMushroom(MUSHROOMS.find((m) => m.id === id) || null); goToScene(7); }} />}
-          {scene === 3 && <ZoneScene key="s3" zone={selectedZone} onGo={() => goToScene(5)} onAdd={() => { const today = new Date().toISOString().slice(0,10); setMySpots((s) => [{ id: Date.now(), cover: MUSHROOMS[1].photo, photos: [MUSHROOMS[1].photo], name: selectedZone?.name, species: Object.keys(selectedZone?.species || {}), rating: 5, last: today, history: [{ date: today, rating: 5, note: "Créé", photos: [MUSHROOMS[1].photo] }] }, ...s]); setToast({ type: "success", text: "Coin ajouté" }); }} onOpenShroom={(id) => { setSelectedMushroom(MUSHROOMS.find((m) => m.id === id) || null); goToScene(7); }} onBack={goBack} />}
-          {scene === 4 && <SpotsScene key="s4" spots={mySpots} onRoute={() => goToScene(5)} onCreate={(spot) => setMySpots((s) => [spot, ...s])} onBack={goBack} onUpdateSpot={(updated) => setMySpots((list) => list.map((s) => (s.id === updated.id ? updated : s)))} />}
+            {scene === 3 && (
+              <ZoneScene
+                key="s3"
+                zone={selectedZone}
+                onGo={() => goToScene(5)}
+                onAdd={() => {
+                  const today = new Date().toISOString().slice(0, 10);
+                  dispatch({
+                    type: "addSpot",
+                    spot: {
+                      id: Date.now(),
+                      cover: MUSHROOMS[1].photo,
+                      photos: [MUSHROOMS[1].photo],
+                      name: selectedZone?.name,
+                      species: Object.keys(selectedZone?.species || {}),
+                      rating: 5,
+                      last: today,
+                      history: [
+                        { date: today, rating: 5, note: "Créé", photos: [MUSHROOMS[1].photo] },
+                      ],
+                    } as Spot,
+                  });
+                  setToast({ type: "success", text: "Coin ajouté" });
+                }}
+                onOpenShroom={(id) => {
+                  setSelectedMushroom(
+                    MUSHROOMS.find((m) => m.id === id) || null
+                  );
+                  goToScene(7);
+                }}
+                onBack={goBack}
+              />
+            )}
+            {scene === 4 && <SpotsScene key="s4" onRoute={() => goToScene(5)} onBack={goBack} />}
           {scene === 5 && <RouteScene key="s5" onBackToMap={() => goToScene(2)} onBack={goBack} />}
           {scene === 6 && <PickerScene key="s6" items={filteredMushrooms} search={search} setSearch={setSearch} onPick={(m) => { setSelectedMushroom(m); goToScene(7); }} onBack={goBack} />}
           {scene === 7 && <MushroomScene key="s7" item={selectedMushroom} onSeeZones={() => goToScene(2)} onBack={goBack} />}
-          {scene === 8 && <SettingsScene key="s8" alerts={alerts} setAlerts={setAlerts} prefs={prefs} setPrefs={setPrefs} onOpenPacks={() => goToScene(9)} onBack={goBack} />}
+            {scene === 8 && <SettingsScene key="s8" onOpenPacks={() => goToScene(9)} onBack={goBack} />}
           {scene === 9 && <DownloadScene key="s9" packSize={packSize} setPackSize={setPackSize} deviceFree={deviceFree} setDeviceFree={setDeviceFree} includeRelief={includeRelief} setIncludeRelief={setIncludeRelief} includeWeather={includeWeather} setIncludeWeather={setIncludeWeather} downloading={downloading} dlProgress={dlProgress} onStart={() => { if (packSize > deviceFree) { setToast({ type: "warn", text: `Espace insuffisant. Libérez ${packSize - deviceFree} Mo` }); } else { setDownloading(true); setDlProgress(0); } }} onCancel={() => goToScene(2)} onBack={goBack} />}
         </AnimatePresence>
       </main>
