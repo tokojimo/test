@@ -29,7 +29,7 @@ export default function LandingScene({ onSeeMap, onMySpots, onOpenSettings, onOp
       />
       <div className="absolute inset-0 bg-black/60" />
       <div className="relative z-10 max-w-3xl mx-auto px-6 py-20 text-center">
-        <div className="mx-auto mb-6 w-20 h-20 rounded-2xl bg-neutral-800/60 border border-neutral-700 grid place-items-center shadow-xl">
+        <div className="mx-auto mb-6 w-20 h-20 rounded-2xl bg-neutral-200/60 dark:bg-neutral-800/60 border border-neutral-300 dark:border-neutral-700 grid place-items-center shadow-xl">
           <MushroomIcon className={T_PRIMARY} />
         </div>
         <h1 className={`text-3xl font-semibold ${T_PRIMARY}`}>

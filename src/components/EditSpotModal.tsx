@@ -29,7 +29,7 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: (
 
   return (
     <div ref={overlayRef} onClick={handleOutside} className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-3">
-      <div className="w-full max-w-2xl bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
+      <div className="w-full max-w-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-2">
           <div className={`text-lg font-semibold ${T_PRIMARY}`}>{t("Modifier le coin")}</div>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100"><X className="w-5 h-5" /></button>
@@ -41,13 +41,13 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: (
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t("Nom")}
-              className={`bg-neutral-900 border-neutral-800 ${T_PRIMARY}`}
+              className={`bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
             />
             <Input
               value={location}
               onChange={(e) => setLocation(e.target.value)}
               placeholder={t("Localisation")}
-              className={`bg-neutral-900 border-neutral-800 ${T_PRIMARY}`}
+              className={`bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
             />
             <div className="flex items-center gap-2">
               <span className={`text-sm ${T_MUTED}`}>{t("Note")}</span>
@@ -61,7 +61,7 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: (
               <div className={`text-sm mb-1 ${T_PRIMARY}`}>{t("Champignons trouvés")}</div>
               <div className="flex flex-wrap gap-2 mb-2">
                 {species.map((id) => (
-                  <span key={id} className="inline-flex items-center gap-1 bg-neutral-800 border border-neutral-700 rounded-full px-2 py-1 text-xs">
+                  <span key={id} className="inline-flex items-center gap-1 bg-neutral-200 dark:bg-neutral-800 border border-neutral-300 dark:border-neutral-700 rounded-full px-2 py-1 text-xs">
                     <span className={T_PRIMARY}>{MUSHROOMS.find((m) => m.id === id)?.name.split(" ")[0]}</span>
                     <button
                       onClick={() => setSpecies((list) => list.filter((x) => x !== id))}
@@ -79,7 +79,7 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: (
                   if (v) setSpecies((list) => (list.includes(v) ? list : [...list, v]));
                 }}
                 value=""
-                className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-100"
+                className="bg-neutral-100 border border-neutral-300 text-neutral-900 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-100 rounded-xl px-3 py-2 text-sm"
               >
                 <option value="" disabled>
                   {t("Ajouter un champignon…")}
@@ -92,13 +92,13 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: (
             <div>
               <div className={`text-sm ${T_PRIMARY}`}>{t("Dernière visite")}</div>
               <div className="mt-1">
-                <input type="date" value={last} onChange={(e) => setLast(e.target.value)} className="w-full bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-100" />
+                <input type="date" value={last} onChange={(e) => setLast(e.target.value)} className="w-full bg-neutral-100 border border-neutral-300 text-neutral-900 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-100 rounded-xl px-3 py-2 text-sm" />
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-3 pt-3 border-t border-neutral-800">
+        <div className="mt-3 pt-3 border-t border-neutral-300 dark:border-neutral-800">
           <div className="flex items-center justify-between mb-2">
             <div className={`text-sm ${T_PRIMARY}`}>{t("Photos")}</div>
             <label className="inline-flex items-center">
@@ -112,14 +112,14 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: (
           {photos.length > 0 && (
             <div className="grid grid-cols-4 gap-2">
               {photos.map((p, i) => (
-                <img key={i} src={p} className="w-full h-20 object-cover rounded-lg border border-neutral-800" />
+                <img key={i} src={p} className="w-full h-20 object-cover rounded-lg border border-neutral-300 dark:border-neutral-800" />
               ))}
             </div>
           )}
         </div>
 
         <div className="mt-3 flex items-center gap-2 justify-end">
-          <Button variant="ghost" onClick={onClose} className={`rounded-xl hover:bg-neutral-800 ${T_PRIMARY}`}>
+          <Button variant="ghost" onClick={onClose} className={`rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-800 ${T_PRIMARY}`}>
             {t("Annuler")}
           </Button>
           <Button

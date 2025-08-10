@@ -23,14 +23,14 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
 
   return (
     <div ref={overlayRef} onClick={handleOutside} className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-3">
-      <div className="w-full max-w-3xl bg-neutral-900 border border-neutral-800 rounded-2xl p-4">
+      <div className="w-full max-w-3xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl p-4">
         <div className="flex items-center justify-between mb-3">
           <div className={`text-lg font-semibold ${T_PRIMARY}`}>{t("Historique du coin")}</div>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100"><X className="w-5 h-5" /></button>
         </div>
 
-        <div className="relative h-48 rounded-xl overflow-hidden border border-neutral-800 bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)]">
-          <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs bg-neutral-900/70 border border-neutral-800 ${T_PRIMARY}`}>
+        <div className="relative h-48 rounded-xl overflow-hidden border border-neutral-300 dark:border-neutral-800 bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)] bg-neutral-100 dark:bg-neutral-900">
+          <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs bg-neutral-100/70 dark:bg-neutral-900/70 border border-neutral-300 dark:border-neutral-800 ${T_PRIMARY}`}>
             <MapPin className="w-3 h-3 inline mr-1" />
             {t("Carte du coin")}
           </div>
@@ -48,7 +48,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
           <div className="space-y-2">
             {history.length === 0 && <div className={T_MUTED}>{t("Aucune visite enregistrée.")}</div>}
             {history.map((h, i) => (
-              <div key={i} className="flex items-start justify-between bg-neutral-900 border border-neutral-800 rounded-xl p-2">
+              <div key={i} className="flex items-start justify-between bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-xl p-2">
                 <div>
                   <div className={`text-sm ${T_PRIMARY}`}>{h.date}</div>
                   <div className={`text-xs ${T_MUTED}`}>
@@ -59,7 +59,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
                   {h.photos && h.photos.length > 0 && (
                     <div className="flex -space-x-2">
                       {h.photos.slice(0, 3).map((p: string, idx: number) => (
-                        <img key={idx} src={p} className="w-10 h-10 rounded-lg border border-neutral-800 object-cover" />
+                        <img key={idx} src={p} className="w-10 h-10 rounded-lg border border-neutral-300 dark:border-neutral-800 object-cover" />
                       ))}
                     </div>
                   )}
@@ -80,13 +80,13 @@ export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => 
             <div className="grid grid-cols-3 gap-2">
               {photos.slice(0, 5).map((p: string, i: number) => (
                 <button key={i} onClick={() => setLightbox({ open: true, index: i })} className="relative group">
-                  <img src={p} className="w-full h-28 object-cover rounded-xl border border-neutral-800" />
+                  <img src={p} className="w-full h-28 object-cover rounded-xl border border-neutral-300 dark:border-neutral-800" />
                   <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/20 transition" />
                   <Maximize2 className="absolute right-2 bottom-2 w-4 h-4 text-white opacity-0 group-hover:opacity-100" />
                 </button>
               ))}
               {photos.length > 5 && (
-                <button onClick={() => setLightbox({ open: true, index: 5 })} className="relative grid place-items-center rounded-xl border border-neutral-800 bg-neutral-900/60">
+                <button onClick={() => setLightbox({ open: true, index: 5 })} className="relative grid place-items-center rounded-xl border border-neutral-300 dark:border-neutral-800 bg-neutral-100/60 dark:bg-neutral-900/60">
                   <span className={`text-sm ${T_PRIMARY}`}>+{photos.length - 5} {t("photos")}</span>
                 </button>
               )}

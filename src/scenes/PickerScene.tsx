@@ -20,15 +20,15 @@ export default function PickerScene({ items, search, setSearch, onPick, onBack }
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder={t("Rechercher un champignon…")}
-          className={`bg-neutral-900 border-neutral-800 ${T_PRIMARY}`}
+          className={`bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
         />
-        <select value={seasonFilter} onChange={(e) => setSeasonFilter(e.target.value)} className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-100">
+        <select value={seasonFilter} onChange={(e) => setSeasonFilter(e.target.value)} className="bg-neutral-100 border border-neutral-300 text-neutral-900 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-100 rounded-xl px-3 py-2 text-sm">
           <option value="toutes">{t("Toutes saisons")}</option>
           <option>{t("Printemps")}</option>
           <option>{t("Été")}</option>
           <option>{t("Automne")}</option>
         </select>
-        <select value={valueFilter} onChange={(e) => setValueFilter(e.target.value)} className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-100">
+        <select value={valueFilter} onChange={(e) => setValueFilter(e.target.value)} className="bg-neutral-100 border border-neutral-300 text-neutral-900 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-100 rounded-xl px-3 py-2 text-sm">
           <option value="toutes">{t("Toute valeur")}</option>
           <option>{t("Excellente")}</option>
           <option>{t("Bonne")}</option>
@@ -38,7 +38,7 @@ export default function PickerScene({ items, search, setSearch, onPick, onBack }
 
       <div className="grid md:grid-cols-3 gap-3">
         {items.map(m => (
-          <button key={m.id} onClick={() => onPick(m)} className="text-left bg-neutral-900 border border-neutral-800 rounded-2xl overflow-hidden hover:border-neutral-700">
+          <button key={m.id} onClick={() => onPick(m)} className="text-left bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl overflow-hidden hover:border-neutral-400 dark:hover:border-neutral-700">
             <img src={m.photo} className="w-full h-40 object-cover" />
             <div className="p-3">
               <div className={`font-medium ${T_PRIMARY}`}>{m.name}</div>

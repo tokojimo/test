@@ -26,7 +26,7 @@ export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: {
       >
         <ChevronLeft className="w-5 h-5" />
       </Button>
-      <Card className="bg-neutral-900 border-neutral-800 rounded-2xl">
+      <Card className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl">
         <CardHeader>
           <CardTitle className={`flex items-center justify-between ${T_PRIMARY}`}>
             <div>
@@ -56,7 +56,7 @@ export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: {
               {Object.entries(zone.species).filter(([_, v]) => v > 0).map(([id, sc]) => {
                 const m = MUSHROOMS.find(m => m.id === id);
                 return (
-                  <button key={id} onClick={() => onOpenShroom(id)} className={`bg-neutral-800 border border-neutral-700 rounded-xl p-2 hover:bg-neutral-700 ${T_PRIMARY}`}>
+                  <button key={id} onClick={() => onOpenShroom(id)} className={`bg-neutral-200 border border-neutral-300 hover:bg-neutral-300 dark:bg-neutral-800 dark:border-neutral-700 dark:hover:bg-neutral-700 rounded-xl p-2 ${T_PRIMARY}`}>
                     <div className="flex items-center gap-2">
                       <img src={m.photo} className="w-12 h-12 object-cover rounded-lg" />
                       <div>

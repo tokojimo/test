@@ -47,13 +47,13 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
       <div className="grid md:grid-cols-2 gap-3">
         {spots.length === 0 && <div className={T_PRIMARY}>{t("Aucun coin enregistré.")}</div>}
         {spots.map(s => (
-          <Card key={s.id} className="bg-neutral-900 border-neutral-800 rounded-2xl overflow-hidden relative">
+          <Card key={s.id} className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl overflow-hidden relative">
             <button onClick={() => setDetails(s)} className="block text-left">
               <img src={s.cover || s.photo} className="w-full h-40 object-cover" />
             </button>
             <button
               onClick={() => setEditing(s)}
-              className="absolute top-2 right-2 bg-neutral-900/80 hover:bg-neutral-800/80 border border-neutral-700 rounded-full p-2"
+              className="absolute top-2 right-2 bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/80 dark:hover:bg-neutral-800/80 border border-neutral-300 dark:border-neutral-700 rounded-full p-2"
               aria-label={t("modifier")}
             >
               <Pencil className="w-4 h-4 text-neutral-200" />

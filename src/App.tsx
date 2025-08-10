@@ -40,7 +40,7 @@ function AppContent() {
   const [toast, setToast] = useState<{ type: "success" | "warn"; text: string } | null>(null);
   const [gpsFollow, setGpsFollow] = useState(false);
 
-  const { dispatch } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const { t } = useT();
 
   const goToScene = useCallback((next: number) => {
@@ -77,13 +77,25 @@ function AppContent() {
     }
   }, [downloading, goToScene]);
 
+  useEffect(() => {
+    const theme = state.prefs.theme;
+    const media = window.matchMedia("(prefers-color-scheme: dark)");
+    const applyTheme = () => {
+      const isDark = theme === "sombre" || (theme === "auto" && media.matches);
+      document.documentElement.classList.toggle("dark", isDark);
+    };
+    applyTheme();
+    media.addEventListener("change", applyTheme);
+    return () => media.removeEventListener("change", applyTheme);
+  }, [state.prefs.theme]);
+
   const filteredMushrooms = useMemo(
     () => MUSHROOMS.filter((m) => m.name.toLowerCase().includes(search.toLowerCase())),
     [search]
   );
 
   return (
-    <div className="w-full min-h-screen bg-neutral-950">
+    <div className="w-full min-h-screen bg-neutral-50 dark:bg-neutral-950">
       {toast && (
         <div
           className={classNames(

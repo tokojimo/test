@@ -21,7 +21,7 @@ export default function MushroomScene({ item, onSeeZones, onBack }: { item: any;
       >
         <ChevronLeft className="w-5 h-5" />
       </Button>
-      <div className="rounded-2xl overflow-hidden border border-neutral-800">
+      <div className="rounded-2xl overflow-hidden border border-neutral-300 dark:border-neutral-800">
         <img src={item.photo} className="w-full h-60 object-cover" />
       </div>
 
