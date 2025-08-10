@@ -75,7 +75,6 @@ export default function MycoExplorerApp(){
   const [deviceFree, setDeviceFree] = useState(2048);
   const [toast, setToast] = useState(null);
   const [gpsFollow, setGpsFollow] = useState(false);
-  const [zoom, setZoom] = useState(8);
 
   const goToScene = useCallback((next) => {
     setScene(next);
@@ -119,34 +118,30 @@ export default function MycoExplorerApp(){
 
       <main>
         <AnimatePresence mode="wait">
-          {scene===1 && <Scene1 key="s1" onSeeMap={()=>goToScene(2)} onMySpots={()=>goToScene(4)} onOpenSettings={()=>goToScene(8)} />}
-          {scene===2 && <Scene2 key="s2" onBack={goBack} zoom={zoom} setZoom={setZoom} gpsFollow={gpsFollow} setGpsFollow={setGpsFollow} onOpenDownload={()=>goToScene(9)} onZone={(z)=>{setSelectedZone(z); goToScene(3);}} onOpenPicker={()=>goToScene(6)} onOpenShroom={(id)=>{setSelectedMushroom(MUSHROOMS.find(m=>m.id===id)); goToScene(7);}} onAddSpot={(z)=>{
-              const today = new Date().toISOString().slice(0,10);
-              setMySpots(s=>[{ id:Date.now(), cover: MUSHROOMS[0].photo, photos:[MUSHROOMS[0].photo], name:z.name, species: Object.keys(z.species), rating: 4, last:today, history:[{date:today, rating:4, note:"Ajouté", photos:[MUSHROOMS[0].photo]}] }, ...s]);
-              setToast({ type:"success", text:"Ajouté à Mes coins"});
-            }} />}
-          {scene===3 && <Scene3 key="s3" zone={selectedZone} onGo={()=> goToScene(5)} onAdd={()=>{ const today=new Date().toISOString().slice(0,10); setMySpots(s=>[{ id:Date.now(), cover:MUSHROOMS[1].photo, photos:[MUSHROOMS[1].photo], name:selectedZone?.name, species: Object.keys(selectedZone?.species||{}), rating:5, last:today, history:[{date:today, rating:5, note:"Créé", photos:[MUSHROOMS[1].photo]}] }, ...s]); setToast({ type:"success", text:"Coin ajouté"}); }} onOpenShroom={(id)=>{setSelectedMushroom(MUSHROOMS.find(m=>m.id===id)); goToScene(7);}} />}
+          {scene===1 && <Scene1 key="s1" onSeeMap={()=>goToScene(2)} onMySpots={()=>goToScene(4)} onOpenSettings={()=>goToScene(8)} onOpenPicker={()=>goToScene(6)} />}
+          {scene===2 && <Scene2 key="s2" onBack={goBack} gpsFollow={gpsFollow} setGpsFollow={setGpsFollow} onZone={(z)=>{setSelectedZone(z); goToScene(3);}} onOpenShroom={(id)=>{setSelectedMushroom(MUSHROOMS.find(m=>m.id===id)); goToScene(7);}} />}
+          {scene===3 && <Scene3 key="s3" zone={selectedZone} onGo={()=> goToScene(5)} onAdd={()=>{ const today=new Date().toISOString().slice(0,10); setMySpots(s=>[{ id:Date.now(), cover:MUSHROOMS[1].photo, photos:[MUSHROOMS[1].photo], name:selectedZone?.name, species: Object.keys(selectedZone?.species||{}), rating:5, last:today, history:[{date:today, rating:5, note:"Créé", photos:[MUSHROOMS[1].photo]}] }, ...s]); setToast({ type:"success", text:"Coin ajouté"}); }} onOpenShroom={(id)=>{setSelectedMushroom(MUSHROOMS.find(m=>m.id===id)); goToScene(7);}} onBack={goBack} />}
           {scene===4 && <Scene4 key="s4" spots={mySpots} onRoute={()=> goToScene(5)} onCreate={(spot)=> setMySpots(s=>[spot, ...s])} onBack={goBack} onUpdateSpot={(updated)=> setMySpots(list=> list.map(s=> s.id===updated.id? updated : s))} />}
-          {scene===5 && <Scene5 key="s5" onBackToMap={()=> goToScene(2)} />}
-          {scene===6 && <Scene6 key="s6" items={filteredMushrooms} search={search} setSearch={setSearch} onPick={(m)=>{ setSelectedMushroom(m); goToScene(7); }} />}
-          {scene===7 && <Scene7 key="s7" item={selectedMushroom} onSeeZones={()=> goToScene(2)} />}
-          {scene===8 && <Scene8 key="s8" alerts={alerts} setAlerts={setAlerts} prefs={prefs} setPrefs={setPrefs} onOpenPacks={()=> goToScene(9)} />}
+          {scene===5 && <Scene5 key="s5" onBackToMap={()=> goToScene(2)} onBack={goBack} />}
+          {scene===6 && <Scene6 key="s6" items={filteredMushrooms} search={search} setSearch={setSearch} onPick={(m)=>{ setSelectedMushroom(m); goToScene(7); }} onBack={goBack} />}
+          {scene===7 && <Scene7 key="s7" item={selectedMushroom} onSeeZones={()=> goToScene(2)} onBack={goBack} />}
+          {scene===8 && <Scene8 key="s8" alerts={alerts} setAlerts={setAlerts} prefs={prefs} setPrefs={setPrefs} onOpenPacks={()=> goToScene(9)} onBack={goBack} />}
           {scene===9 && <Scene9 key="s9" packSize={packSize} setPackSize={setPackSize} deviceFree={deviceFree} setDeviceFree={setDeviceFree} includeRelief={includeRelief} setIncludeRelief={setIncludeRelief} includeWeather={includeWeather} setIncludeWeather={setIncludeWeather} downloading={downloading} dlProgress={dlProgress} onStart={()=>{
               if(packSize>deviceFree){ setToast({ type:"warn", text:`Espace insuffisant. Libérez ${packSize-deviceFree} Mo`}); }
               else { setDownloading(true); setDlProgress(0); }
-            }} onCancel={()=> goToScene(2)} />}
+            }} onCancel={()=> goToScene(2)} onBack={goBack} />}
         </AnimatePresence>
       </main>
     </div>
   );
 }
 
-function Scene1({ onSeeMap, onMySpots, onOpenSettings }){
+function Scene1({ onSeeMap, onMySpots, onOpenSettings, onOpenPicker }){
   return (
     <motion.section initial={{ opacity:0 }} animate={{ opacity:1 }} exit={{ opacity:0 }} className="relative min-h-[calc(100vh-0px)]">
       <div className="absolute top-3 right-3 z-20">
         <Button variant="ghost" size="icon" onClick={onOpenSettings} className={BTN_GHOST_ICON} aria-label="Réglages">
-          <Menu className="w-5 h-5" />
+          <Menu className="w-7 h-7" />
         </Button>
       </div>
 
@@ -160,6 +155,7 @@ function Scene1({ onSeeMap, onMySpots, onOpenSettings }){
         <div className="mt-6 flex items-center justify-center gap-3">
           <Button onClick={onSeeMap} className={BTN}>Voir la carte</Button>
           <Button onClick={onMySpots} className={BTN}>Mes coins</Button>
+          <Button onClick={onOpenPicker} className={BTN}>Les champignons</Button>
         </div>
         <p className={"mt-8 text-sm "+T_MUTED}>Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.</p>
       </div>
@@ -167,7 +163,9 @@ function Scene1({ onSeeMap, onMySpots, onOpenSettings }){
   );
 }
 
-function Scene2({ onOpenDownload, onZone, onOpenPicker, onOpenShroom, onAddSpot, gpsFollow, setGpsFollow, zoom, setZoom, onBack }){
+function Scene2({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }){
+  const [selectedSpecies, setSelectedSpecies] = useState([]);
+  const zones = useMemo(() => selectedSpecies.length===0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id]||0) > 50)), [selectedSpecies]);
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3">
       <div className="flex items-center gap-2 mb-3">
@@ -182,29 +180,23 @@ function Scene2({ onOpenDownload, onZone, onOpenPicker, onOpenShroom, onAddSpot,
       </div>
 
       <div className="relative h-[60vh] rounded-2xl border border-neutral-800 overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_40%_40%,#064e3b,transparent_60%),radial-gradient(circle_at_70%_60%,#166534,transparent_55%),radial-gradient(circle_at_20%_70%,#a16207,transparent_50%)]"/>
+        <iframe title="Carte" className="absolute inset-0 w-full h-full" src="https://www.openstreetmap.org/export/embed.html"></iframe>
 
-        <div className="absolute top-3 left-3 bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-800 flex items-center gap-2">
-          <span className={"text-xs "+T_PRIMARY}>Légende</span>
-          {LEGEND.map((l,i)=> (
-            <div key={i} className="flex items-center gap-1">
-              <div className={classNames("w-3 h-3 rounded", l.color)} />
-              <span className={"text-[10px] "+T_MUTED}>{l.label}</span>
-            </div>
-          ))}
-        </div>
-
-        <div className="absolute bottom-3 right-3 flex flex-col gap-2">
-          <Button onClick={onOpenDownload} className={BTN}><Download className="w-4 h-4 mr-2"/>Télécharger zone</Button>
-          <div className="bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-800 flex flex-col items-center">
-            <Button variant="ghost" size="icon" onClick={()=> setZoom(z=>z+1)} className={BTN_GHOST_ICON}><ChevronUpIcon /></Button>
-            <div className={"text-xs "+T_PRIMARY}>{zoom}</div>
-            <Button variant="ghost" size="icon" onClick={()=> setZoom(z=>Math.max(1,z-1))} className={BTN_GHOST_ICON}><ChevronDownIcon /></Button>
+        <div className="absolute top-3 left-3 flex flex-col gap-2">
+          <Button variant="ghost" size="icon" onClick={()=> setGpsFollow(true)} className={BTN_GHOST_ICON} aria-label="Ma position">📍</Button>
+          <div className="bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-800 flex items-center gap-2">
+            <span className={"text-xs "+T_PRIMARY}>Légende</span>
+            {LEGEND.map((l,i)=> (
+              <div key={i} className="flex items-center gap-1">
+                <div className={classNames("w-3 h-3 rounded", l.color)} />
+                <span className={"text-[10px] "+T_MUTED}>{l.label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
         <div className="absolute bottom-3 left-3 grid gap-2">
-          {DEMO_ZONES.map(z=> (
+          {zones.map(z=> (
             <div key={z.id} onClick={()=> onZone(z)} role="button" tabIndex={0} className={"bg-neutral-900/80 hover:bg-neutral-800/80 border border-neutral-800 rounded-xl px-3 py-2 text-left cursor-pointer"}>
               <div className="flex items-center justify-between">
                 <div className={"font-medium "+T_PRIMARY}>{z.name}</div>
@@ -221,9 +213,13 @@ function Scene2({ onOpenDownload, onZone, onOpenPicker, onOpenShroom, onAddSpot,
         </div>
       </div>
 
-      <div className="mt-3 flex items-center justify-between">
-        <Button onClick={onOpenPicker} className={BTN}><ChefHat className="w-4 h-4 mr-2"/>Sélecteur de champignons</Button>
-        <Button onClick={()=> onAddSpot(DEMO_ZONES[0])} className={BTN}><Plus className="w-4 h-4 mr-2"/>Ajouter à mes coins</Button>
+      <div className="mt-3 flex flex-wrap gap-2">
+        {MUSHROOMS.map(m=> {
+          const active = selectedSpecies.includes(m.id);
+          return (
+            <Button key={m.id} onClick={()=> setSelectedSpecies(s=> active?s.filter(x=>x!==m.id):[...s,m.id])} className={classNames(BTN, active?"":"opacity-60")}>{m.name}</Button>
+          );
+        })}
       </div>
 
       <p className={"text-xs mt-2 "+T_SUBTLE}>Hors ligne : affichage des zones optimales Cèpe, Girolle, Morille.</p>
@@ -231,18 +227,21 @@ function Scene2({ onOpenDownload, onZone, onOpenPicker, onOpenShroom, onAddSpot,
   );
 }
 
-function ChevronUpIcon(){return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M6 15L12 9L18 15" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-function ChevronDownIcon(){return <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M18 9L12 15L6 9" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>}
-
-function Scene3({ zone, onGo, onAdd, onOpenShroom }){
+function Scene3({ zone, onGo, onAdd, onOpenShroom, onBack }){
   const data = useMemo(()=> generateForecast(), [zone?.id]);
   if(!zone) return <div className={"p-6 "+T_PRIMARY}>Sélectionnez une zone…</div>;
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3">
+      <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON+" mb-3"} aria-label="Retour">
+        <ChevronLeft className="w-5 h-5" />
+      </Button>
       <Card className="bg-neutral-900 border-neutral-800 rounded-2xl">
         <CardHeader>
           <CardTitle className={"flex items-center justify-between "+T_PRIMARY}>
-            <div>{zone.name}</div>
+            <div>
+              <div>{zone.name}</div>
+              <div className={"text-xs "+T_MUTED}>{zone.coords?.join(", ")}</div>
+            </div>
             <Badge>{zone.score}%</Badge>
           </CardTitle>
         </CardHeader>
@@ -334,7 +333,7 @@ function Scene4({ spots, onRoute, onCreate, onBack, onUpdateSpot }){
               <div className={"text-xs "+T_MUTED}>Dernière visite : {s.last||"–"}</div>
               <div className="mt-3 flex gap-2">
                 <Button onClick={onRoute} className={BTN}><Route className="w-4 h-4 mr-2"/>Itinéraire</Button>
-                <Button variant="ghost" className={"rounded-xl border border-neutral-800 "+T_PRIMARY} onClick={()=> setDetails(s)}>Voir l'historique</Button>
+                {/* bouton historique supprimé, clic sur la carte suffit */}
               </div>
             </CardContent>
           </Card>
@@ -390,6 +389,7 @@ function CreateSpotModal({ onClose, onCreate }){
   const [species, setSpecies] = useState(["cepe"]);
   const [rating, setRating] = useState(4);
   const [last, setLast] = useState(today);
+  const [location, setLocation] = useState("");
   const [photos, setPhotos] = useState([]); // multiples images
 
   const importImages = (e)=>{
@@ -404,7 +404,7 @@ function CreateSpotModal({ onClose, onCreate }){
   const create = ()=>{
     const cover = photos[0] || MUSHROOMS[0].photo;
     const history = [{ date:last, rating, note:"Création", photos: photos.slice(0,3) }];
-    onCreate({ id:Date.now(), name, species, rating, last, cover, photos:photos.length?photos:[cover], history });
+    onCreate({ id:Date.now(), name, species, rating, last, location, cover, photos:photos.length?photos:[cover], history });
   };
 
   return (
@@ -417,6 +417,7 @@ function CreateSpotModal({ onClose, onCreate }){
 
         <div className="space-y-3">
           <Input value={name} onChange={e=> setName(e.target.value)} placeholder="Nom du coin" className={"bg-neutral-900 border-neutral-800 "+T_PRIMARY}/>
+          <Input value={location} onChange={e=> setLocation(e.target.value)} placeholder="Localisation (coordonnées ou lieu)" className={"bg-neutral-900 border-neutral-800 "+T_PRIMARY}/>
 
           <div>
             <div className={"text-sm mb-1 "+T_PRIMARY}>Champignons trouvés</div>
@@ -456,7 +457,7 @@ function CreateSpotModal({ onClose, onCreate }){
               <div className={"text-sm "+T_PRIMARY}>Photos</div>
               <label className="inline-flex items-center">
                 <input type="file" accept="image/*" multiple className="hidden" onChange={importImages} />
-                <Button type="button" className={BTN}><Images className="w-4 h-4 mr-2"/>Importer des images</Button>
+                <Button type="button" className={BTN}><Images className="w-4 h-4 mr-2"/>Importer des photos</Button>
               </label>
             </div>
             {photos.length>0 && (
@@ -485,6 +486,7 @@ function EditSpotModal({ spot, onClose, onSave }){
   const [rating, setRating] = useState(spot.rating||3);
   const [species, setSpecies] = useState(spot.species||[]);
   const [last, setLast] = useState(spot.last||new Date().toISOString().slice(0,10));
+  const [location, setLocation] = useState(spot.location||"");
   const [photos, setPhotos] = useState(spot.photos||[spot.cover].filter(Boolean));
 
   const importImages = (e)=>{
@@ -506,6 +508,7 @@ function EditSpotModal({ spot, onClose, onSave }){
         <div className="grid md:grid-cols-2 gap-3">
           <div className="space-y-2">
             <Input value={name} onChange={e=> setName(e.target.value)} placeholder="Nom" className={"bg-neutral-900 border-neutral-800 "+T_PRIMARY}/>
+            <Input value={location} onChange={e=> setLocation(e.target.value)} placeholder="Localisation" className={"bg-neutral-900 border-neutral-800 "+T_PRIMARY}/>
             <div className="flex items-center gap-2">
               <span className={"text-sm "+T_MUTED}>Note</span>
               <StarRating value={rating} onSelectIndex={(i)=> setRating(5-i)} />
@@ -546,7 +549,7 @@ function EditSpotModal({ spot, onClose, onSave }){
             <div className={"text-sm "+T_PRIMARY}>Photos</div>
             <label className="inline-flex items-center">
               <input type="file" accept="image/*" multiple className="hidden" onChange={importImages} />
-              <Button type="button" className={BTN}><Images className="w-4 h-4 mr-2"/>Importer des images</Button>
+              <Button type="button" className={BTN}><Images className="w-4 h-4 mr-2"/>Importer des photos</Button>
             </label>
           </div>
           {photos.length>0 && (
@@ -560,7 +563,7 @@ function EditSpotModal({ spot, onClose, onSave }){
 
         <div className="mt-3 flex items-center gap-2 justify-end">
           <Button variant="ghost" onClick={onClose} className={"rounded-xl hover:bg-neutral-800 "+T_PRIMARY}>Annuler</Button>
-          <Button className={BTN} onClick={()=> onSave({ ...spot, name, rating, species, last, cover:photos[0]||spot.cover, photos })}>Enregistrer</Button>
+          <Button className={BTN} onClick={()=> onSave({ ...spot, name, rating, species, last, location, cover:photos[0]||spot.cover, photos })}>Enregistrer</Button>
         </div>
       </div>
     </div>
@@ -572,9 +575,13 @@ function SpotDetailsModal({ spot, onClose }){
   const overlayRef = useRef(null);
   const [lightbox, setLightbox] = useState({ open:false, index:0 });
   const photos = (spot.photos||[]);
-  const history = spot.history || (spot.visits||[]).map((d)=> ({ date:d, rating:spot.rating, note:"", photos:[] }));
+  const [history, setHistory] = useState(spot.history || (spot.visits||[]).map((d)=> ({ date:d, rating:spot.rating, note:"", photos:[] })));
 
   const handleOutside = (e)=>{ if(e.target===overlayRef.current) onClose(); };
+  const addVisit = ()=>{
+    const today = new Date().toISOString().slice(0,10);
+    setHistory(h=> [...h, { date:today, rating:0, note:"", photos:[] }]);
+  };
 
   return (
     <div ref={overlayRef} onClick={handleOutside} className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-3">
@@ -592,7 +599,10 @@ function SpotDetailsModal({ spot, onClose }){
 
         {/* Historique par date */}
         <div className="mt-3">
-          <div className={"text-sm mb-2 "+T_PRIMARY}>Visites</div>
+          <div className="flex items-center justify-between mb-2">
+            <div className={"text-sm "+T_PRIMARY}>Visites</div>
+            <Button onClick={addVisit} className={BTN}><Plus className="w-4 h-4 mr-2"/>Ajouter une cueillette</Button>
+          </div>
           <div className="space-y-2">
             {history.length===0 && <div className={T_MUTED}>Aucune visite enregistrée.</div>}
             {history.map((h,i)=> (
@@ -601,13 +611,16 @@ function SpotDetailsModal({ spot, onClose }){
                   <div className={"text-sm "+T_PRIMARY}>{h.date}</div>
                   <div className={"text-xs "+T_MUTED}>Note: {h.rating??"–"}/5 {h.note?`• ${h.note}`:""}</div>
                 </div>
-                {h.photos && h.photos.length>0 && (
-                  <div className="flex -space-x-2">
-                    {h.photos.slice(0,3).map((p,idx)=> (
-                      <img key={idx} src={p} className="w-10 h-10 rounded-lg border border-neutral-800 object-cover"/>
-                    ))}
-                  </div>
-                )}
+                <div className="flex items-center gap-2">
+                  {h.photos && h.photos.length>0 && (
+                    <div className="flex -space-x-2">
+                      {h.photos.slice(0,3).map((p,idx)=> (
+                        <img key={idx} src={p} className="w-10 h-10 rounded-lg border border-neutral-800 object-cover"/>
+                      ))}
+                    </div>
+                  )}
+                  <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} aria-label="modifier"><Pencil className="w-4 h-4"/></Button>
+                </div>
               </div>
             ))}
           </div>
@@ -653,9 +666,12 @@ function SpotDetailsModal({ spot, onClose }){
   );
 }
 
-function Scene5({ onBackToMap }){
+function Scene5({ onBackToMap, onBack }){
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3">
+      <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON+" mb-3"} aria-label="Retour">
+        <ChevronLeft className="w-5 h-5" />
+      </Button>
       <div className="relative h-[60vh] rounded-2xl border border-neutral-800 overflow-hidden bg-neutral-900 grid">
         <div className={"p-3 text-sm "+T_MUTED}>Instructions étape par étape (démo) : <br/>🚗 Rejoindre parking → 🚶 Sentier balisé → 🧭 Boussole sur 250 m</div>
         <div className="absolute top-3 right-3 flex gap-2">
@@ -668,12 +684,15 @@ function Scene5({ onBackToMap }){
   );
 }
 
-function Scene6({ items, search, setSearch, onPick }){
+function Scene6({ items, search, setSearch, onPick, onBack }){
   const [seasonFilter, setSeasonFilter] = useState("toutes");
   const [valueFilter, setValueFilter] = useState("toutes");
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3">
-      <div className="grid md:grid-cols-3 gap-2 mb-3">
+      <div className="grid md:grid-cols-4 gap-2 mb-3 items-center">
+        <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label="Retour">
+          <ChevronLeft className="w-5 h-5" />
+        </Button>
         <Input value={search} onChange={e=> setSearch(e.target.value)} placeholder="Rechercher un champignon…" className={"bg-neutral-900 border-neutral-800 "+T_PRIMARY}/>
         <select value={seasonFilter} onChange={e=> setSeasonFilter(e.target.value)} className="bg-neutral-900 border border-neutral-800 rounded-xl px-3 py-2 text-sm text-neutral-100">
           <option value="toutes">Toutes saisons</option>
@@ -705,10 +724,13 @@ function Scene6({ items, search, setSearch, onPick }){
   );
 }
 
-function Scene7({ item, onSeeZones }){
+function Scene7({ item, onSeeZones, onBack }){
   if(!item) return <div className={"p-6 "+T_PRIMARY}>Sélectionnez un champignon…</div>;
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3">
+      <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON+" mb-3"} aria-label="Retour">
+        <ChevronLeft className="w-5 h-5" />
+      </Button>
       <div className="rounded-2xl overflow-hidden border border-neutral-800">
         <img src={item.photo} className="w-full h-60 object-cover"/>
       </div>
@@ -752,9 +774,12 @@ function InfoBlock({ icon, title, text }){
   );
 }
 
-function Scene8({ alerts, setAlerts, prefs, setPrefs, onOpenPacks }){
+function Scene8({ alerts, setAlerts, prefs, setPrefs, onOpenPacks, onBack }){
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3 space-y-3">
+      <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label="Retour">
+        <ChevronLeft className="w-5 h-5" />
+      </Button>
       <Card className="bg-neutral-900 border-neutral-800 rounded-2xl">
         <CardHeader><CardTitle className={T_PRIMARY}>Cartes hors‑ligne</CardTitle></CardHeader>
         <CardContent>
@@ -810,7 +835,7 @@ function SelectRow({ label, value, options, onChange }){
   );
 }
 
-function Scene9({ packSize, setPackSize, deviceFree, setDeviceFree, includeRelief, setIncludeRelief, includeWeather, setIncludeWeather, downloading, dlProgress, onStart, onCancel }){
+function Scene9({ packSize, setPackSize, deviceFree, setDeviceFree, includeRelief, setIncludeRelief, includeWeather, setIncludeWeather, downloading, dlProgress, onStart, onCancel, onBack }){
   useEffect(()=>{
     const base = 120;
     const size = base + (includeRelief?30:0) + (includeWeather?30:0);
@@ -819,6 +844,15 @@ function Scene9({ packSize, setPackSize, deviceFree, setDeviceFree, includeRelie
 
   return (
     <motion.section initial={{ x:20, opacity:0 }} animate={{ x:0, opacity:1 }} exit={{ x:-20, opacity:0 }} className="p-3">
+      <div className="flex items-center gap-2 mb-3">
+        <div className="relative flex-1">
+          <Input placeholder="Rechercher une zone…" className={"pl-9 bg-neutral-900 border-neutral-800 "+T_PRIMARY}/>
+          <Search className={"w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 "+T_MUTED} />
+        </div>
+        <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label="Retour">
+          <ChevronLeft className="w-5 h-5" />
+        </Button>
+      </div>
       <div className="relative h-[50vh] rounded-2xl border border-neutral-800 overflow-hidden bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)]">
         <div className="absolute inset-6 border-2 border-red-600 rounded-xl"/>
         <div className={"absolute top-3 left-3 bg-neutral-900/80 rounded-xl px-3 py-1 text-sm "+T_PRIMARY}>Vue actuelle</div>
