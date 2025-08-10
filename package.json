@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "tsc",
+    "build": "vite build",
     "start": "tsx -r tsconfig-paths/register src/App.tsx",
     "test": "echo \"No tests specified\" && exit 0",
     "dev": "vite",
