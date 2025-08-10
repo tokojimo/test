@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { X, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -10,13 +10,19 @@ import { useT } from "../i18n";
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: any) => void }) {
   const today = new Date().toISOString().slice(0, 10);
   const overlayRef = useRef<HTMLDivElement | null>(null);
-  const { t } = useT();
-  const [name, setName] = useState(t("Mon nouveau coin"));
+  const { t, lang } = useT();
+  const [name, setName] = useState("");
   const [species, setSpecies] = useState<string[]>(["cepe"]);
   const [rating, setRating] = useState(4);
   const [last, setLast] = useState(today);
   const [location, setLocation] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
+
+  useEffect(() => {
+    if (!name) {
+      setName(t("Mon nouveau coin"));
+    }
+  }, [lang, name, t]);
 
   const importImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
