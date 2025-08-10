@@ -11,6 +11,7 @@ import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import mapboxgl from "mapbox-gl";
 import { useT } from "../i18n";
+import { NotificationStack, Notification } from "../components/NotificationStack";
 
 export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }: { onZone: (z: any) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
@@ -18,28 +19,43 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const { t } = useT();
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+
+  const addNotification = (msg: string) =>
+    setNotifications(prev => [...prev, { id: Date.now(), message: msg }]);
+  const removeNotification = (id: number) =>
+    setNotifications(prev => prev.filter(n => n.id !== id));
 
   useEffect(() => {
-    if (!mapRef.current && mapContainer.current) {
-      mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
-      const map = new mapboxgl.Map({
-        container: mapContainer.current,
-        style: "https://demotiles.maplibre.org/style.json",
-        center: [2.3522, 48.8566],
-        zoom,
+    if (mapRef.current || !mapContainer.current) return;
+    mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
+    const map = new mapboxgl.Map({
+      container: mapContainer.current,
+      style: "https://demotiles.maplibre.org/style.json",
+      center: [2.3522, 48.8566],
+      zoom,
+    });
+    const handleClick = (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
+      addNotification(
+        t("Map clicked at {lng}, {lat}", {
+          lng: e.lngLat.lng.toFixed(2),
+          lat: e.lngLat.lat.toFixed(2),
+        })
+      );
+    };
+    map.on("click", handleClick);
+    mapRef.current = map;
+    map.on("load", () => {
+      map.addSource("mock", {
+        type: "raster",
+        tiles: ["https://example.com/mock/{z}/{x}/{y}.png"],
+        tileSize: 256,
       });
-      mapRef.current = map;
-      map.on("load", () => {
-        map.addSource("mock", {
-          type: "raster",
-          tiles: ["https://example.com/mock/{z}/{x}/{y}.png"],
-          tileSize: 256,
-        });
-        map.addLayer({ id: "mock", type: "raster", source: "mock" });
-      });
-    }
+      map.addLayer({ id: "mock", type: "raster", source: "mock" });
+    });
     return () => {
-      mapRef.current?.remove();
+      map.off("click", handleClick);
+      map.remove();
       mapRef.current = null;
     };
   }, []);
@@ -53,6 +69,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
+      <NotificationStack notifications={notifications} onRemove={removeNotification} />
       <div className="flex items-center gap-2 mb-3">
         <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
           <ChevronLeft className="w-5 h-5" />
@@ -96,7 +113,16 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
 
         <div className="absolute bottom-3 left-3 grid gap-2">
           {zones.map(z => (
-            <div key={z.id} onClick={() => onZone(z)} role="button" tabIndex={0} className="bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/80 dark:hover:bg-neutral-800/80 border border-neutral-300 dark:border-neutral-800 rounded-xl px-3 py-2 text-left cursor-pointer">
+            <div
+              key={z.id}
+              onClick={() => {
+                addNotification(t("Zone clicked: {name}", { name: z.name }));
+                onZone(z);
+              }}
+              role="button"
+              tabIndex={0}
+              className="bg-neutral-100/80 hover:bg-neutral-200/80 dark:bg-neutral-900/80 dark:hover:bg-neutral-800/80 border border-neutral-300 dark:border-neutral-800 rounded-xl px-3 py-2 text-left cursor-pointer"
+            >
               <div className="flex items-center justify-between">
                 <div className={`font-medium ${T_PRIMARY}`}>{z.name}</div>
                 <Badge variant={z.score > 85 ? "default" : "secondary"}>{z.score}%</Badge>
