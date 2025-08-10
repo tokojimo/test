@@ -6,8 +6,9 @@ import { MUSHROOMS } from "../data/mushrooms";
 import { BTN, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
+import type { Spot } from "../types";
 
-export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: any) => void }) {
+export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = new Date().toISOString().slice(0, 10);
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const { t, lang } = useT();

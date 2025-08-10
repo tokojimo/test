@@ -6,8 +6,9 @@ import { MUSHROOMS } from "../data/mushrooms";
 import { BTN, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
+import type { Spot } from "../types";
 
-export function EditSpotModal({ spot, onClose, onSave }: { spot: any; onClose: () => void; onSave: (s: any) => void }) {
+export function EditSpotModal({ spot, onClose, onSave }: { spot: Spot; onClose: () => void; onSave: (s: Spot) => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [name, setName] = useState(spot.name);
   const [rating, setRating] = useState(spot.rating || 3);

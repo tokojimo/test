@@ -3,12 +3,13 @@ import { X, MapPin, Plus, Pencil, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
+import type { Spot, VisitHistory } from "../types";
 
-export function SpotDetailsModal({ spot, onClose }: { spot: any; onClose: () => void }) {
+export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
-  const [lightbox, setLightbox] = useState({ open: false, index: 0 });
+  const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
   const photos = spot.photos || [];
-  const [history, setHistory] = useState(
+  const [history, setHistory] = useState<VisitHistory[]>(
     spot.history || (spot.visits || []).map((d: string) => ({ date: d, rating: spot.rating, note: "", photos: [] }))
   );
   const { t } = useT();

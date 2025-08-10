@@ -10,8 +10,9 @@ import { MUSHROOMS } from "../data/mushrooms";
 import { generateForecast } from "../utils";
 import { useT } from "../i18n";
 import { useAppContext } from "../context/AppContext";
+import type { Zone } from "../types";
 
-export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: { zone: any; onGo: () => void; onAdd: () => void; onOpenShroom: (id: string) => void; onBack: () => void }) {
+export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: { zone: Zone; onGo: () => void; onAdd: () => void; onOpenShroom: (id: string) => void; onBack: () => void }) {
   const { t } = useT();
   const { state } = useAppContext();
   const data = useMemo(() => generateForecast(state.prefs.lang), [zone?.id, state.prefs.lang]);
