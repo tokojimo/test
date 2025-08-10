@@ -2,7 +2,7 @@ import React, { useState, useRef } from "react";
 import { X, Images } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { MUSHROOMS } from "../data";
+import { MUSHROOMS } from "../data/mushrooms";
 import { BTN, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { StarRating } from "./StarRating";
 

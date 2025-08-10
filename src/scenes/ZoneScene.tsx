@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
-import { MUSHROOMS } from "../data";
+import { MUSHROOMS } from "../data/mushrooms";
 import { generateForecast } from "../utils";
 
 export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: { zone: any; onGo: () => void; onAdd: () => void; onOpenShroom: (id: string) => void; onBack: () => void }) {
