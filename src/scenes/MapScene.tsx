@@ -22,24 +22,28 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
   const { t } = useT();
 
   useEffect(() => {
-    if (mapRef.current) return;
-    mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
-    if (mapContainer.current) {
-      mapRef.current = new mapboxgl.Map({
+    if (!mapRef.current && mapContainer.current) {
+      mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
+      const map = new mapboxgl.Map({
         container: mapContainer.current,
         style: "https://demotiles.maplibre.org/style.json",
         center: [2.3522, 48.8566],
         zoom,
       });
-      mapRef.current.on("load", () => {
-        mapRef.current?.addSource("mock", {
+      mapRef.current = map;
+      map.on("load", () => {
+        map.addSource("mock", {
           type: "raster",
           tiles: ["https://example.com/mock/{z}/{x}/{y}.png"],
           tileSize: 256,
         });
-        mapRef.current?.addLayer({ id: "mock", type: "raster", source: "mock" });
+        map.addLayer({ id: "mock", type: "raster", source: "mock" });
       });
     }
+    return () => {
+      mapRef.current?.remove();
+      mapRef.current = null;
+    };
   }, []);
 
   useEffect(() => {
