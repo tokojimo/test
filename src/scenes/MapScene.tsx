@@ -4,7 +4,9 @@ import { ChevronLeft, LocateFixed, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { MUSHROOMS, DEMO_ZONES, LEGEND } from "../data";
+import { MUSHROOMS } from "../data/mushrooms";
+import { DEMO_ZONES } from "../data/zones";
+import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 

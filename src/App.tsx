@@ -3,7 +3,7 @@ import { AnimatePresence } from "framer-motion";
 import { classNames } from "./utils";
 import { T_PRIMARY } from "./styles/tokens";
 import type { Mushroom, Zone, Spot } from "./types";
-import { MUSHROOMS } from "./data";
+import { MUSHROOMS } from "./data/mushrooms";
 import LandingScene from "./scenes/LandingScene";
 import MapScene from "./scenes/MapScene";
 import ZoneScene from "./scenes/ZoneScene";
