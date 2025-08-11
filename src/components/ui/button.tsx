@@ -12,7 +12,9 @@ export function Button({
   ...props
 }: ButtonProps) {
   const base =
-    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-50 disabled:pointer-events-none";
+    "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:pointer-events-none";
+  const disabledStyles =
+    "disabled:bg-neutral-200 disabled:text-neutral-400 dark:disabled:bg-neutral-800 dark:disabled:text-neutral-400";
   const variants = {
     primary:
       "bg-forest text-paper hover:bg-moss",
@@ -27,7 +29,7 @@ export function Button({
     default: "px-4 py-2 text-sm",
     icon: "h-10 w-10 p-0",
   } as const;
-  const classes = `${base} ${variants[variant]} ${sizes[size]} ${className}`;
+  const classes = `${base} ${variants[variant]} ${sizes[size]} ${disabledStyles} ${className}`;
   return <button className={classes} {...props} />;
 }
 
