@@ -156,16 +156,6 @@ export default function SettingsScene({
             ]}
             onChange={(v) => dispatch({ type: "setPrefs", prefs: { units: v } })}
           />
-          <SelectRow
-            label={t("Thème")}
-            value={prefs.theme}
-            options={[
-              { value: "auto", label: t("auto") },
-              { value: "clair", label: t("clair") },
-              { value: "sombre", label: t("sombre") },
-            ]}
-            onChange={(v) => dispatch({ type: "setPrefs", prefs: { theme: v } })}
-          />
           <ToggleRow
             label={t("GPS")}
             checked={prefs.gps}

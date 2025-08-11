@@ -8,15 +8,6 @@
       "earth-brown": "#7B5E42",
       "accent-gold": "#FFD700",
       "accent-gold-hover": "#FFE55A"
-    },
-    "dark": {
-      "forest-green": "#1E2B24",
-      "moss-green": "#32473A",
-      "fern-green": "#4C6653",
-      "paper-beige": "#1E1E1E",
-      "earth-brown": "#5C4531",
-      "accent-gold": "#FFD700",
-      "accent-gold-hover": "#FFE55A"
     }
   },
   "typography": {
