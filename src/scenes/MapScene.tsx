@@ -40,7 +40,27 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
     });
     map.on("click", e => {
       const { lng, lat } = e.lngLat;
-      onMapClick?.(`Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`);
+      // Find nearest demo zone to the clicked coordinates
+      let nearest: Zone | null = null;
+      let minDist = Infinity;
+      for (const z of DEMO_ZONES) {
+        const [zLat, zLng] = z.coords;
+        const dist = Math.hypot(lat - zLat, lng - zLng);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = z;
+        }
+      }
+      if (nearest) {
+        const speciesLines = Object.entries(nearest.species)
+          .map(([id, sc]) => {
+            const name = MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
+            return `${name} ${sc}%`;
+          })
+          .join("\n");
+        const msg = `${nearest.name}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
+        onMapClick?.(msg);
+      }
     });
     return () => {
       map.remove();
