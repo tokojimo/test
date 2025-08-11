@@ -1,8 +1,8 @@
 export default {
   "forêt brumeuse": { fr: "forêt brumeuse", en: "misty forest" },
   "Logo": { fr: "Logo", en: "Logo" },
-  "Trouvez vos coins à champignons comestibles, même sans réseau.": {
-    fr: "Trouvez vos coins à champignons comestibles, même sans réseau.",
+  "Trouvez vos coins à champignons comestibles, même sans réseaux.": {
+    fr: "Trouvez vos coins à champignons comestibles, même sans réseaux.",
     en: "Find your edible mushroom spots, even offline.",
   },
   "Voir la carte": { fr: "Voir la carte", en: "See map" },
