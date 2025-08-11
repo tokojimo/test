@@ -10,7 +10,7 @@ import { useT } from "../i18n";
 import type { Spot } from "../types";
 import { todayISO } from "../utils";
 import { loadMapKit } from "@/services/mapkit";
-import Logo from "/Logo.png";
+import Logo from "@/assets/logo.png";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = todayISO();
