@@ -1,6 +1,9 @@
 {
-  "name": "test",
+  "name": "mushroom-finder",
   "version": "1.0.0",
+  "description": "Find and manage edible mushroom spots offline.",
+  "author": "Victor Mora <victor.mora@orange.fr>",
+  "license": "MIT",
   "private": true,
   "type": "module",
   "scripts": {
