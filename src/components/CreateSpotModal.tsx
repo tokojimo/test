@@ -26,6 +26,12 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
     }
   }, [lang, name, t]);
 
+  useEffect(() => {
+    if (!name) {
+      setName(t("Mon nouveau coin"));
+    }
+  }, [lang, name, t]);
+
   const importImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
     if (files.length === 0) return;
