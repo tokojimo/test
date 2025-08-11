@@ -62,7 +62,7 @@ export default function LandingScene({
             alt={t("Logo")}
             className="mx-auto mb-8 w-28 h-28 rounded-[2rem] shadow-lg"
           />
-          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-forest via-moss to-fern bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-forest">
             {t("Trouvez vos coins à champignons comestibles, même sans réseau.")}
           </h1>
           <p className={`mt-6 text-lg ${T_MUTED}`}>
