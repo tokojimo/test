@@ -147,10 +147,6 @@ function AppContent() {
                     setSelectedZone(z);
                     goTo(Scene.Zone);
                   }}
-                  onOpenShroom={(id) => {
-                    setSelectedMushroom(MUSHROOMS.find((m) => m.id === id) || null);
-                    goTo(Scene.Mushroom);
-                  }}
                 />
               }
             />

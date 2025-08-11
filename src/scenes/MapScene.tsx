@@ -1,9 +1,8 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { MUSHROOMS } from "../data/mushrooms";
 import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
@@ -13,20 +12,15 @@ import { loadMapKit } from "@/services/mapkit";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
-const STATUS_BADGES = [
-  { label: "⬈ amélioration", color: "bg-emerald-700" },
-  { label: "→ stable", color: "bg-yellow-600" },
-  { label: "⬊ en baisse", color: "bg-red-600" },
-];
-
-export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onMapClick, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onMapClick?: (msg: string) => void; onBack: () => void }) {
+export default function MapScene({ onZone, gpsFollow, setGpsFollow, onMapClick, onBack }: { onZone: (z: Zone) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onMapClick?: (msg: string) => void; onBack: () => void }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const { t } = useT();
-  const statusBadges = useMemo(() => {
-    const count = Math.floor(Math.random() * STATUS_BADGES.length) + 1;
-    return [...STATUS_BADGES].sort(() => Math.random() - 0.5).slice(0, count);
-  }, []);
+  const [selected, setSelected] = useState<string[]>([]);
+  const toggleShroom = (id: string) =>
+    setSelected(prev =>
+      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
+    );
 
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
@@ -117,15 +111,13 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
 
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
-        {statusBadges.map((s, i) => (
-          <Badge key={i} className={s.color}>
-            {s.label}
-          </Badge>
-        ))}
-      </div>
-      <div className="mt-4 flex flex-wrap gap-2">
         {MUSHROOMS.map(m => (
-          <Button key={m.id} onClick={() => onOpenShroom(m.id)} className={BTN}>
+          <Button
+            key={m.id}
+            onClick={() => toggleShroom(m.id)}
+            className={BTN}
+            variant={selected.includes(m.id) ? "secondary" : "primary"}
+          >
             {m.name}
           </Button>
         ))}
