@@ -14,7 +14,8 @@ type Action =
   | { type: "setPrefs"; prefs: Partial<Prefs> }
   | { type: "setAlerts"; alerts: Partial<Alerts> }
   | { type: "addSpot"; spot: Spot }
-  | { type: "updateSpot"; spot: Spot };
+  | { type: "updateSpot"; spot: Spot }
+  | { type: "removeSpot"; id: number };
 
 const initialState: AppState = {
   prefs: { units: "métriques", theme: "auto", gps: true, lang: "fr" },
@@ -34,6 +35,11 @@ function reducer(state: AppState, action: Action): AppState {
       return {
         ...state,
         mySpots: state.mySpots.map((s) => (s.id === action.spot.id ? action.spot : s)),
+      };
+    case "removeSpot":
+      return {
+        ...state,
+        mySpots: state.mySpots.filter((s) => s.id !== action.id),
       };
     default:
       return state;
