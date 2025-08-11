@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { CreateSpotModal } from "../components/CreateSpotModal";
 import { SpotDetailsModal } from "../components/SpotDetailsModal";
+import { ConfirmModal } from "../components/ConfirmModal";
 import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 import { getStaticMapUrl } from "../services/openstreetmap";
@@ -18,6 +19,7 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
   const spots = state.mySpots;
   const [createOpen, setCreateOpen] = useState(false);
   const [details, setDetails] = useState<Spot | null>(null);
+  const [toDelete, setToDelete] = useState<Spot | null>(null);
   const [loading, setLoading] = useState(true);
   const { t } = useT();
 
@@ -90,11 +92,7 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
                   )}
                 </button>
                 <button
-                  onClick={() => {
-                    if (window.confirm(t("Supprimer ce coin ?"))) {
-                      dispatch({ type: "removeSpot", id: s.id });
-                    }
-                  }}
+                  onClick={() => setToDelete(s)}
                   className="absolute top-2 right-2 bg-secondary/80 hover:bg-secondary/80 dark:bg-secondary/80 dark:hover:bg-secondary/80 border border-secondary dark:border-secondary rounded-full p-2"
                   aria-label={t("supprimer")}
                 >
@@ -136,6 +134,19 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
 
       {details && (
         <SpotDetailsModal spot={details} onClose={() => setDetails(null)} />
+      )}
+      {toDelete && (
+        <ConfirmModal
+          open={!!toDelete}
+          message={t("Supprimer ce coin ?")}
+          confirmLabel={t("supprimer")}
+          cancelLabel={t("Annuler")}
+          onCancel={() => setToDelete(null)}
+          onConfirm={() => {
+            dispatch({ type: "removeSpot", id: toDelete.id });
+            setToDelete(null);
+          }}
+        />
       )}
     </motion.section>
   );

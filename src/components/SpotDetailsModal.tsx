@@ -9,6 +9,7 @@ import { loadMap } from "@/services/openstreetmap";
 import Logo from "@/assets/logo.png";
 import { useAppContext } from "../context/AppContext";
 import { EditSpotModal } from "./EditSpotModal";
+import { ConfirmModal } from "./ConfirmModal";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -20,6 +21,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
   const { t } = useT();
   const { dispatch } = useAppContext();
   const [editing, setEditing] = useState(false);
+  const [confirmDelete, setConfirmDelete] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
 
@@ -52,10 +54,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
   };
 
   const handleDelete = () => {
-    if (window.confirm(t("Supprimer ce coin ?"))) {
-      dispatch({ type: "removeSpot", id: spot.id });
-      onClose();
-    }
+    setConfirmDelete(true);
   };
 
   return (
@@ -162,6 +161,18 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
           }}
         />
       )}
+      <ConfirmModal
+        open={confirmDelete}
+        message={t("Supprimer ce coin ?")}
+        confirmLabel={t("supprimer")}
+        cancelLabel={t("Annuler")}
+        onCancel={() => setConfirmDelete(false)}
+        onConfirm={() => {
+          dispatch({ type: "removeSpot", id: spot.id });
+          setConfirmDelete(false);
+          onClose();
+        }}
+      />
     </div>
   );
 }
