@@ -61,9 +61,9 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
         </div>
       )}
 
-      <div className="grid md:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
         {loading &&
-          Array.from({ length: 2 }).map((_, i) => (
+          Array.from({ length: 4 }).map((_, i) => (
             <Card key={i} className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden">
               <Skeleton className="w-full h-40" />
               <CardContent className="p-4 space-y-2">
