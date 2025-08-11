@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { MushroomIcon } from "../components/MushroomIcon";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_MUTED } from "../styles/tokens";
 import { useT } from "../i18n";
 
 export default function LandingScene({
@@ -19,7 +19,12 @@ export default function LandingScene({
 }) {
   const { t } = useT();
   return (
-    <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative min-h-[calc(100vh-0px)]">
+    <motion.section
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="relative min-h-screen overflow-hidden"
+    >
       <div className="absolute top-3 right-3 z-20">
         <Button
           variant="ghost"
@@ -32,33 +37,47 @@ export default function LandingScene({
         </Button>
       </div>
 
-      <img
-        src="https://images.unsplash.com/photo-1441974231531-c6227db76b6e?q=80&w=1920&auto=format&fit=crop"
-        alt={t("forêt brumeuse")}
-        className="absolute inset-0 w-full h-full object-cover"
-      />
-      <div className="absolute inset-0 bg-black/60" />
-      <div className="relative z-10 max-w-3xl mx-auto px-6 py-20 text-center">
-        <div className="mx-auto mb-6 w-20 h-20 rounded-2xl bg-secondary/60 dark:bg-secondary/60 border border-secondary dark:border-secondary grid place-items-center shadow-xl">
-          <MushroomIcon className={T_PRIMARY} />
-        </div>
-        <h1 className={`text-3xl font-semibold ${T_PRIMARY}`}>
-          {t("Trouvez vos coins à champignons comestibles, même sans réseau.")}
-        </h1>
-        <div className="mt-6 flex items-center justify-center gap-3">
-          <Button onClick={onSeeMap} className={BTN}>
-            {t("Voir la carte")}
-          </Button>
-          <Button onClick={onMySpots} className={BTN}>
-            {t("Mes coins")}
-          </Button>
-          <Button onClick={onOpenPicker} className={BTN}>
-            {t("Les champignons")}
-          </Button>
-        </div>
-        <p className={`mt-8 text-sm ${T_MUTED}`}>
-          {t("Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.")}
-        </p>
+      <div className="absolute inset-0 -z-10 overflow-hidden">
+        <motion.div
+          className="absolute -top-20 -left-20 w-[40rem] h-[40rem] rounded-full bg-primary/30 blur-3xl"
+          animate={{ y: [0, 40, 0], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div
+          className="absolute -bottom-20 -right-20 w-[40rem] h-[40rem] rounded-full bg-secondary/30 blur-3xl"
+          animate={{ y: [0, -40, 0], opacity: [0.5, 0.8, 0.5] }}
+          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        />
+      </div>
+
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-screen px-6 text-center">
+        <motion.div
+          initial={{ y: 20, opacity: 0 }}
+          animate={{ y: 0, opacity: 1 }}
+          transition={{ delay: 0.2 }}
+          className="p-8 rounded-3xl backdrop-blur-xl bg-background/60 border border-border/50 shadow-2xl"
+        >
+          <div className="mx-auto mb-6 w-24 h-24 rounded-2xl bg-primary/20 grid place-items-center shadow-lg">
+            <MushroomIcon className="w-12 h-12 text-primary" />
+          </div>
+          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-br from-primary via-emerald-300 to-primary bg-clip-text text-transparent">
+            {t("Trouvez vos coins à champignons comestibles, même sans réseau.")}
+          </h1>
+          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+            <Button onClick={onSeeMap} className={BTN}>
+              {t("Voir la carte")}
+            </Button>
+            <Button onClick={onMySpots} className={BTN}>
+              {t("Mes coins")}
+            </Button>
+            <Button onClick={onOpenPicker} className={BTN}>
+              {t("Les champignons")}
+            </Button>
+          </div>
+          <p className={`mt-8 text-sm ${T_MUTED}`}>
+            {t("Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.")}
+          </p>
+        </motion.div>
       </div>
     </motion.section>
   );
