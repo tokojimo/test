@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { upgrade } from '../../api/subscription';
 import { useSubscription, useSettingsStore } from '../../stores/settings';
 import { useToasts } from '../../components/settings/Toasts';
+import { Button } from '@/components/ui/button';
+import ActionsBar from '@/components/settings/ActionsBar';
 
 export default function Subscription() {
   const sub = useSubscription();
@@ -18,17 +20,21 @@ export default function Subscription() {
   };
 
   return (
-    <div className="space-y-2">
-      <p>Statut: {sub.status === 'premium' ? 'Premium' : 'Gratuit'}</p>
-      {sub.renewalDate && <p>Renouvellement: {new Date(sub.renewalDate).toLocaleDateString()}</p>}
+    <div className="space-y-6">
+      <p className="text-sm text-foreground">Statut: {sub.status === 'premium' ? 'Premium' : 'Gratuit'}</p>
+      {sub.renewalDate && (
+        <p className="text-sm text-foreground">Renouvellement: {new Date(sub.renewalDate).toLocaleDateString()}</p>
+      )}
       {sub.status === 'free' && (
-        <button
-          onClick={handleUpgrade}
-          disabled={loading}
-          className="px-3 py-2 border rounded"
-        >
-          Passer en Premium
-        </button>
+        <ActionsBar>
+          <Button
+            onClick={handleUpgrade}
+            disabled={loading}
+            className="w-full md:w-auto h-10 px-4 rounded-lg shadow-sm"
+          >
+            Passer en Premium
+          </Button>
+        </ActionsBar>
       )}
     </div>
   );
