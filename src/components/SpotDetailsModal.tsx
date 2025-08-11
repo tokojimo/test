@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect } from "react";
 import { X, Plus, Pencil, Maximize2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
@@ -8,7 +9,6 @@ import { todayISO } from "../utils";
 import { loadMap } from "@/services/openstreetmap";
 import Logo from "@/assets/logo.png";
 import { useAppContext } from "../context/AppContext";
-import { EditSpotModal } from "./EditSpotModal";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -19,9 +19,10 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
   );
   const { t } = useT();
   const { dispatch } = useAppContext();
-  const [editing, setEditing] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
+  const [editingVisit, setEditingVisit] = useState<number | null>(null);
+  const [visitDraft, setVisitDraft] = useState<VisitHistory | null>(null);
 
   useEffect(() => {
     if (!spot.location || mapRef.current || !mapContainerRef.current) return;
@@ -51,6 +52,23 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     setHistory((h) => [...h, { date: today, rating: 0, note: "", photos: [] }]);
   };
 
+  const startEditVisit = (i: number) => {
+    setEditingVisit(i);
+    setVisitDraft(history[i]);
+  };
+
+  const saveVisit = () => {
+    if (editingVisit === null || !visitDraft) return;
+    setHistory((h) => h.map((v, idx) => (idx === editingVisit ? visitDraft : v)));
+    setEditingVisit(null);
+    setVisitDraft(null);
+  };
+
+  const cancelEditVisit = () => {
+    setEditingVisit(null);
+    setVisitDraft(null);
+  };
+
   const handleDelete = () => {
     if (window.confirm(t("Supprimer ce coin ?"))) {
       dispatch({ type: "removeSpot", id: spot.id });
@@ -64,10 +82,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
         <div className="flex items-center justify-between mb-3">
           <div className={`text-lg font-semibold ${T_PRIMARY}`}>{t("Historique du coin")}</div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={() => setEditing(true)} aria-label={t("modifier")}> 
-              <Pencil className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={handleDelete} aria-label={t("supprimer")}> 
+            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={handleDelete} aria-label={t("supprimer")}>
               <Trash2 className="w-4 h-4" />
             </Button>
             <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100"><X className="w-5 h-5" /></button>
@@ -94,25 +109,67 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
           <div className="space-y-2">
             {history.length === 0 && <div className={T_MUTED}>{t("Aucune visite enregistrée.")}</div>}
             {history.map((h, i) => (
-              <div key={i} className="flex items-start justify-between bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-xl p-2">
-                <div>
-                  <div className={`text-sm ${T_PRIMARY}`}>{h.date}</div>
-                  <div className={`text-xs ${T_MUTED}`}>
-                    {t("Note:")} {h.rating ?? "–"}/5 {h.note ? `• ${h.note}` : ""}
-                  </div>
-                </div>
-                <div className="flex items-center gap-2">
-                  {h.photos && h.photos.length > 0 && (
-                    <div className="flex -space-x-2">
-                      {h.photos.slice(0, 3).map((p: string, idx: number) => (
-                        <img key={idx} src={p} className="w-10 h-10 rounded-lg border border-neutral-300 dark:border-neutral-800 object-cover" />
-                      ))}
+              <div key={i} className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-xl p-2">
+                {editingVisit === i ? (
+                  <div className="flex flex-col gap-2">
+                    <Input
+                      type="date"
+                      value={visitDraft?.date ?? ""}
+                      onChange={(e) => setVisitDraft((v) => (v ? { ...v, date: e.target.value } : v))}
+                    />
+                    <Input
+                      type="number"
+                      min={0}
+                      max={5}
+                      value={visitDraft?.rating ?? 0}
+                      onChange={(e) => setVisitDraft((v) => (v ? { ...v, rating: Number(e.target.value) } : v))}
+                    />
+                    <Input
+                      value={visitDraft?.note ?? ""}
+                      onChange={(e) => setVisitDraft((v) => (v ? { ...v, note: e.target.value } : v))}
+                      placeholder={t("Note:")}
+                    />
+                    <div className="flex gap-2 self-end">
+                      <Button size="sm" onClick={saveVisit}>
+                        {t("Enregistrer")}
+                      </Button>
+                      <Button size="sm" variant="ghost" onClick={cancelEditVisit}>
+                        {t("Annuler")}
+                      </Button>
                     </div>
-                  )}
-                  <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} aria-label={t("modifier")}>
-                    <Pencil className="w-4 h-4" />
-                  </Button>
-                </div>
+                  </div>
+                ) : (
+                  <div className="flex items-start justify-between">
+                    <div>
+                      <div className={`text-sm ${T_PRIMARY}`}>{h.date}</div>
+                      <div className={`text-xs ${T_MUTED}`}>
+                        {t("Note:")} {h.rating ?? "–"}/5 {h.note ? `• ${h.note}` : ""}
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      {h.photos && h.photos.length > 0 && (
+                        <div className="flex -space-x-2">
+                          {h.photos.slice(0, 3).map((p: string, idx: number) => (
+                            <img
+                              key={idx}
+                              src={p}
+                              className="w-10 h-10 rounded-lg border border-neutral-300 dark:border-neutral-800 object-cover"
+                            />
+                          ))}
+                        </div>
+                      )}
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        className={BTN_GHOST_ICON}
+                        aria-label={t("modifier")}
+                        onClick={() => startEditVisit(i)}
+                      >
+                        <Pencil className="w-4 h-4" />
+                      </Button>
+                    </div>
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -151,16 +208,6 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
             </div>
           </div>
         </div>
-      )}
-      {editing && (
-        <EditSpotModal
-          spot={spot}
-          onClose={() => setEditing(false)}
-          onSave={(u) => {
-            dispatch({ type: "updateSpot", spot: u });
-            setEditing(false);
-          }}
-        />
       )}
     </div>
   );
