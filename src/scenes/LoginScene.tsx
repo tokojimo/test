@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY } from "../styles/tokens";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n";
+import AuthProviders from "../components/AuthProviders";
 
 export default function LoginScene({
   onSignup,
@@ -51,40 +52,49 @@ export default function LoginScene({
             {t("Passer en premium")}
           </Button>
         </header>
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className={`text-lg font-medium text-center ${T_PRIMARY}`}>{t("Se connecter")}</div>
-          <Input
-            placeholder={t("Nom d'utilisateur")}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder={t("Mot de passe")}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button onClick={handleLogin} className={BTN}>
-            {t("Se connecter")}
-          </Button>
-          <Button
-            onClick={() => {
-              loginWithProvider("google");
-              onBack();
+          <form
+            className="space-y-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
             }}
-            className={BTN}
           >
-            {t("Se connecter avec Google")}
-          </Button>
-          <Button
-            onClick={() => {
-              loginWithProvider("apple");
-              onBack();
-            }}
-            className={BTN}
-          >
-            {t("Se connecter avec Apple")}
-          </Button>
+            <div className="space-y-1">
+              <label htmlFor="username" className="text-sm font-medium">
+                {t("Nom d'utilisateur")}
+              </label>
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="password" className="text-sm font-medium">
+                {t("Mot de passe")}
+              </label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className={BTN}>
+              {t("Se connecter")}
+            </Button>
+          </form>
+          <div className="pt-2 border-t">
+            <AuthProviders
+              mode="login"
+              onProvider={(provider) => {
+                loginWithProvider(provider);
+                onBack();
+              }}
+            />
+          </div>
           <button type="button" className="text-sm underline" onClick={() => {}}>
             {t("Mot de passe oublié ?")}
           </button>
