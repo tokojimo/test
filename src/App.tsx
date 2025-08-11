@@ -11,7 +11,7 @@ import ZoneScene from "./scenes/ZoneScene";
 import SpotsScene from "./scenes/SpotsScene";
 import PickerScene from "./scenes/PickerScene";
 import MushroomScene from "./scenes/MushroomScene";
-import SettingsScene from "./scenes/SettingsScene";
+import SettingsIndex from "./routes/settings";
 import DownloadScene from "./scenes/DownloadScene";
 import PrivacyPolicyScene from "./scenes/PrivacyPolicyScene";
 import TermsScene from "./scenes/TermsScene";
@@ -20,6 +20,7 @@ import SignupScene from "./scenes/SignupScene";
 import PremiumScene from "./scenes/PremiumScene";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { AuthProvider } from "./context/AuthContext";
+import { ToastProvider } from "./components/settings/Toasts";
 import { useT } from "./i18n";
 import { Scene } from "./routes";
 
@@ -27,7 +28,9 @@ export default function MycoExplorerApp() {
   return (
     <AuthProvider>
       <AppProvider>
-        <AppContent />
+        <ToastProvider>
+          <AppContent />
+        </ToastProvider>
       </AppProvider>
     </AuthProvider>
   );
@@ -190,20 +193,7 @@ function AppContent() {
               path={Scene.Mushroom}
               element={<MushroomScene item={selectedMushroom} onSeeZones={() => goTo(Scene.Map)} onBack={goBack} />}
             />
-            <Route
-              path={Scene.Settings}
-              element={
-                <SettingsScene
-                  onOpenPacks={() => goTo(Scene.Download)}
-                  onOpenPrivacy={() => goTo(Scene.Privacy)}
-                  onOpenTerms={() => goTo(Scene.Terms)}
-                  onLogin={() => goTo(Scene.Login)}
-                  onSignup={() => goTo(Scene.Signup)}
-                  onPremium={() => goTo(Scene.Premium)}
-                  onBack={goBack}
-                />
-              }
-            />
+            <Route path={Scene.Settings} element={<SettingsIndex />} />
             <Route
               path={Scene.Download}
               element={
