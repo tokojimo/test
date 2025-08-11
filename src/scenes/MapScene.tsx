@@ -24,6 +24,9 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
     if (mapRef.current || !mapContainer.current) return;
     loadMapKit().then(() => {
       const map = new mapkit.Map(mapContainer.current);
+      map.tintColor = "#C6A15B";
+      map.showsMapTypeControl = false;
+      map.showsCompass = false;
       map.region = new mapkit.CoordinateRegion(
         new mapkit.Coordinate(48.8566, 2.3522),
         new mapkit.CoordinateSpan(0.5, 0.5)
