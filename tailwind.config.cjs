@@ -13,6 +13,9 @@ module.exports = {
         success: "hsl(var(--success))",
         danger: "hsl(var(--danger))",
       },
+      fontFamily: {
+        sans: ["Inter", "sans-serif"],
+      },
       borderRadius: {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",

@@ -8,8 +8,8 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
 export function Button({ variant = "default", size = "default", className = "", ...props }: ButtonProps) {
   const base = "inline-flex items-center justify-center rounded-xl text-sm font-medium transition-colors focus:outline-none disabled:opacity-50";
   const variants = {
-    default: "bg-secondary text-primary hover:bg-secondary/80 dark:bg-secondary dark:text-primary dark:hover:bg-secondary/60",
-    ghost: "bg-transparent hover:bg-secondary dark:hover:bg-secondary",
+    default: "bg-primary text-white hover:bg-primary/90 dark:bg-primary dark:text-white dark:hover:bg-primary/80",
+    ghost: "bg-transparent text-primary hover:bg-primary/10 dark:text-primary dark:hover:bg-primary/20",
   } as const;
   const sizes = {
     default: "px-3 py-2",
