@@ -15,7 +15,6 @@ import type { Zone } from "../types";
 
 export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onMapClick, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onMapClick?: (msg: string) => void; onBack: () => void }) {
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
-  const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const { t } = useT();
@@ -63,11 +62,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
     };
   }, []);
 
-  useEffect(() => {
-    if (mapRef.current) {
-      (mapRef.current as any).zoom = zoom;
-    }
-  }, [zoom]);
   const zones = useMemo<Zone[]>(() => (selectedSpecies.length === 0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id] || 0) > 50))), [selectedSpecies]);
 
   return (
@@ -136,9 +130,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
           ))}
         </div>
 
-        <div className="absolute bottom-3 right-3 bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary">
-          <input type="range" min={1} max={14} value={zoom} onChange={(e) => setZoom(parseInt(e.target.value, 10))} />
-        </div>
       </div>
 
       <div className="mt-3 flex flex-wrap gap-2">
