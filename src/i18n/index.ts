@@ -1,6 +1,7 @@
 import common from './common';
 import landing from './landing';
 import settings from './settings';
+import privacy from './privacy';
 import { useAppContext } from '../context/AppContext';
 
 export const TRANSLATIONS: Record<string, { fr: string; en: string }> = Object.assign(
@@ -8,6 +9,7 @@ export const TRANSLATIONS: Record<string, { fr: string; en: string }> = Object.a
   common,
   landing,
   settings,
+  privacy,
 );
 
 export function useT() {

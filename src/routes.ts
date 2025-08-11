@@ -7,5 +7,6 @@ export enum Scene {
   Picker = '/picker',
   Mushroom = '/mushroom',
   Settings = '/settings',
-  Download = '/download'
+  Download = '/download',
+  Privacy = '/privacy'
 }

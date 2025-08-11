@@ -9,12 +9,25 @@ import { SelectRow } from "../components/SelectRow";
 import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 
-export default function SettingsScene({ onOpenPacks, onBack }: { onOpenPacks: () => void; onBack: () => void }) {
+export default function SettingsScene({
+  onOpenPacks,
+  onOpenPrivacy,
+  onBack,
+}: {
+  onOpenPacks: () => void;
+  onOpenPrivacy: () => void;
+  onBack: () => void;
+}) {
   const { state, dispatch } = useAppContext();
   const { alerts, prefs } = state;
   const { t } = useT();
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3 space-y-3">
+    <motion.section
+      initial={{ x: 20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: -20, opacity: 0 }}
+      className="p-3 space-y-3"
+    >
       <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
         <ChevronLeft className="w-5 h-5" />
       </Button>
@@ -97,6 +110,11 @@ export default function SettingsScene({ onOpenPacks, onBack }: { onOpenPacks: ()
 
       <div className={`text-sm ${T_MUTED}`}>
         {t("« À propos » • « Conseils de cueillette »")}
+      </div>
+      <div className={`text-sm ${T_MUTED}`}>
+        <button onClick={onOpenPrivacy} className="underline">
+          {t("Politique de confidentialité")}
+        </button>
       </div>
     </motion.section>
   );
