@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, PAGE } from "../styles/tokens";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +34,7 @@ export default function SignupScene({ onLogin, onBack }: { onLogin: () => void; 
       initial={{ x: 20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -20, opacity: 0 }}
-      className="p-3 space-y-4"
+      className={`p-3 space-y-4 ${PAGE}`}
     >
       <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
         <ChevronLeft className="w-5 h-5" />

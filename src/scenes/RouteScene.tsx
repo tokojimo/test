@@ -2,13 +2,13 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BTN, BTN_GHOST_ICON, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_MUTED, T_SUBTLE, PAGE } from "../styles/tokens";
 import { useT } from "../i18n";
 
 export default function RouteScene({ onBackToMap, onBack }: { onBackToMap: () => void; onBack: () => void }) {
   const { t } = useT();
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
+    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className={`p-3 ${PAGE}`}>
       <Button variant="ghost" size="icon" onClick={onBack} className={`${BTN_GHOST_ICON} mb-3`} aria-label={t("Retour")}>
         <ChevronLeft className="w-5 h-5" />
       </Button>

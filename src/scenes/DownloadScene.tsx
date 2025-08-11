@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE, PAGE } from "../styles/tokens";
 import { Row } from "../components/Row";
 import { useT } from "../i18n";
 
@@ -19,7 +19,7 @@ export default function DownloadScene({ packSize, setPackSize, deviceFree, setDe
   }, [includeRelief, includeWeather, setPackSize]);
 
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
+    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className={`p-3 ${PAGE}`}>
       <div className="flex items-center gap-2 mb-3">
         <div className="relative flex-1">
           <Input

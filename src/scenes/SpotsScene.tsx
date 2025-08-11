@@ -4,7 +4,7 @@ import { ChevronLeft, Plus, Pencil, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE, PAGE } from "../styles/tokens";
 import { CreateSpotModal } from "../components/CreateSpotModal";
 import { EditSpotModal } from "../components/EditSpotModal";
 import { SpotDetailsModal } from "../components/SpotDetailsModal";
@@ -27,7 +27,7 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
   }, []);
 
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3 space-y-3">
+    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className={`p-3 space-y-3 ${PAGE}`}>
       <div className="relative h-10">
         <Button
           variant="ghost"

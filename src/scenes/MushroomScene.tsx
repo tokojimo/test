@@ -4,7 +4,7 @@ import { ChevronLeft, Calendar, Trees, CloudSun, Info, ChefHat, Sandwich, AlertT
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { InfoBlock } from "../components/InfoBlock";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_SUBTLE } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_SUBTLE, PAGE } from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Mushroom } from "../types";
 
@@ -12,7 +12,7 @@ export default function MushroomScene({ item, onSeeZones, onBack }: { item: Mush
   const { t } = useT();
   if (!item) return <div className={`p-6 ${T_PRIMARY}`}>{t("Sélectionnez un champignon…")}</div>;
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
+    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className={`p-3 ${PAGE}`}>
       <Button
         variant="ghost"
         size="icon"

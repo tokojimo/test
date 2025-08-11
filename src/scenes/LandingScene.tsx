@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BTN, BTN_GHOST_ICON, T_MUTED } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_MUTED, PAGE } from "../styles/tokens";
 import { useT } from "../i18n";
 import logo from "../../Logo.png";
 
@@ -23,7 +23,7 @@ export default function LandingScene({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="relative min-h-screen overflow-hidden bg-background text-foreground"
+      className={`relative overflow-hidden ${PAGE}`}
     >
       <div className="absolute top-3 right-3 z-20">
         <Button

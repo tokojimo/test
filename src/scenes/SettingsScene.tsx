@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, PAGE } from "../styles/tokens";
 import { ToggleRow } from "../components/ToggleRow";
 import { SelectRow } from "../components/SelectRow";
 import { useAppContext } from "../context/AppContext";
@@ -60,7 +60,7 @@ export default function SettingsScene({
       initial={{ x: 20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -20, opacity: 0 }}
-      className="p-3 space-y-3"
+      className={`p-3 space-y-3 ${PAGE}`}
     >
       <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
         <ChevronLeft className="w-5 h-5" />

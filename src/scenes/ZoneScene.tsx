@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE, PAGE } from "../styles/tokens";
 import { MUSHROOMS } from "../data/mushrooms";
 import { generateForecast } from "../utils";
 import { useT } from "../i18n";
@@ -19,7 +19,7 @@ export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: {
   if (!zone)
     return <div className={`p-6 ${T_PRIMARY}`}>{t("Sélectionnez une zone…")}</div>;
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
+    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className={`p-3 ${PAGE}`}>
       <Button
         variant="ghost"
         size="icon"

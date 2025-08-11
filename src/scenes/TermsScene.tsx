@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
+import { BTN_GHOST_ICON, T_PRIMARY, T_MUTED, PAGE } from "../styles/tokens";
 import { useT } from "../i18n";
 
 export default function TermsScene({ onBack }: { onBack: () => void }) {
@@ -12,7 +12,7 @@ export default function TermsScene({ onBack }: { onBack: () => void }) {
       initial={{ x: 20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
       exit={{ x: -20, opacity: 0 }}
-      className="p-3 space-y-3"
+      className={`p-3 space-y-3 ${PAGE}`}
     >
       <Button
         variant="ghost"

@@ -8,7 +8,7 @@ import { MUSHROOMS } from "../data/mushrooms";
 import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE, PAGE } from "../styles/tokens";
 import { loadMapKit } from "@/services/mapkit";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
@@ -71,7 +71,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
   const zones = useMemo<Zone[]>(() => (selectedSpecies.length === 0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id] || 0) > 50))), [selectedSpecies]);
 
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
+    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className={`p-3 ${PAGE}`}>
       <div className="flex items-center gap-2 mb-3">
         <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
           <ChevronLeft className="w-5 h-5" />
