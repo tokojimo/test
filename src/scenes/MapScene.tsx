@@ -106,14 +106,16 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         if (nearest) {
           const speciesLines = Object.entries(nearest.species)
             .map(([id, sc]) => {
-              const name = MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
+              const name =
+                MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
               return `${name} ${sc}%`;
             })
             .join("\n");
+
           const placeName = await reverseGeocode(lat, lng);
-          const locationLine = placeName ? `${placeName}\n` : "";
-          const msg = `${nearest.name}\n${locationLine}${nearest.score}% ${nearest.trend}\n${speciesLines}`;
-          showToast(msg, nearest);
+          const zone = placeName ? { ...nearest, name: placeName } : nearest;
+          const msg = `${zone.name}\n${zone.score}% ${zone.trend}\n${speciesLines}`;
+          showToast(msg, zone);
         }
       });
     });
