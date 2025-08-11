@@ -14,6 +14,7 @@ export default {
   },
   "Retour": { fr: "Retour", en: "Back" },
   "Se connecter": { fr: "Se connecter", en: "Log in" },
+  "Se déconnecter": { fr: "Se déconnecter", en: "Log out" },
   "Créer un compte": { fr: "Créer un compte", en: "Sign up" },
   "Nom d'utilisateur": { fr: "Nom d'utilisateur", en: "Username" },
   "Mot de passe": { fr: "Mot de passe", en: "Password" },

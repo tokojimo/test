@@ -67,12 +67,11 @@ export default function SettingsScene({
       </Button>
       <Card className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl">
         <CardHeader>
-          <CardTitle className={T_PRIMARY}>{t("Compte")}</CardTitle>
+          <CardTitle className={T_PRIMARY}>{user ? user.username : t("Compte")}</CardTitle>
         </CardHeader>
         <CardContent>
           {user ? (
             <div className="space-y-2">
-              <div className={`font-medium ${T_PRIMARY}`}>{user.username}</div>
               {!user.premium ? (
                 <Button
                   onClick={handlePremium}
@@ -89,12 +88,6 @@ export default function SettingsScene({
             </div>
           ) : (
             <div className="space-y-2">
-              <Button
-                onClick={handlePremium}
-                className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
-              >
-                {t("Passer en premium")}
-              </Button>
               <div className="flex items-center justify-between">
                 <Button onClick={onLogin} className={BTN}>
                   {t("Se connecter")}
@@ -103,6 +96,12 @@ export default function SettingsScene({
                   {t("Créer un compte")}
                 </Button>
               </div>
+              <Button
+                onClick={handlePremium}
+                className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+              >
+                {t("Passer en premium")}
+              </Button>
             </div>
           )}
         </CardContent>
