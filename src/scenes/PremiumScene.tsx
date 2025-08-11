@@ -23,7 +23,13 @@ export default function PremiumScene({ onBack }: { onBack: () => void }) {
         {user?.premium ? t("Vous êtes premium") : t("Passez en premium pour plus de fonctionnalités")}
       </div>
       {!user?.premium && (
-        <Button onClick={() => { upgrade(); onBack(); }} className={BTN}>
+        <Button
+          onClick={() => {
+            upgrade();
+            onBack();
+          }}
+          className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+        >
           {t("Passer en premium")}
         </Button>
       )}

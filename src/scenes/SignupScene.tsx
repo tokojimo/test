@@ -6,16 +6,24 @@ import { Input } from "@/components/ui/input";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY } from "../styles/tokens";
 import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n";
+import { useNavigate } from "react-router-dom";
+import { Scene } from "../routes";
 
 export default function SignupScene({ onLogin, onBack }: { onLogin: () => void; onBack: () => void }) {
   const { signup } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { t } = useT();
+  const navigate = useNavigate();
 
   const handleSignup = () => {
     if (signup(username, password)) {
-      onBack();
+      if (localStorage.getItem("goPremiumAfterSignup") === "true") {
+        localStorage.removeItem("goPremiumAfterSignup");
+        navigate(Scene.Premium);
+      } else {
+        onBack();
+      }
     } else {
       alert(t("Nom d'utilisateur déjà pris"));
     }
