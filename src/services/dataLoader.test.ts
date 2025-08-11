@@ -1,17 +1,19 @@
-import assert from "assert/strict";
-import { fetchJSON, loadMushrooms } from "./dataLoader";
+import { describe, it, expect, vi } from 'vitest';
+import { fetchJSON, loadMushrooms } from './dataLoader';
 
-(async () => {
-  // Mock fetch to simulate a network failure
-  (global as any).fetch = () => Promise.reject(new Error("network down"));
+describe('dataLoader', () => {
+  it('handles network errors and fallbacks', async () => {
+    const fetchMock = vi.fn().mockRejectedValue(new Error('network down'));
+    vi.stubGlobal('fetch', fetchMock);
 
-  await assert.rejects(() => fetchJSON("/test"), /Network error/);
+    await expect(fetchJSON('/test')).rejects.toThrow(/Network error/);
 
-  const fallback = [{ id: "1" }];
-  const res = await fetchJSON("/test", fallback);
-  assert.deepStrictEqual(res, fallback);
+    const fallback = [{ id: '1' }];
+    const res = await fetchJSON('/test', fallback);
+    expect(res).toEqual(fallback);
 
-  await assert.rejects(() => loadMushrooms(), /Network error/);
+    await expect(loadMushrooms()).rejects.toThrow(/Network error/);
 
-  console.log("tests passed");
-})();
+    vi.unstubAllGlobals();
+  });
+});
