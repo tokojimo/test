@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -18,6 +18,14 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>([]);
   const [toast, setToast] = useState<string | null>(null);
+  const [query, setQuery] = useState("");
+  const results = useMemo(
+    () =>
+      DEMO_ZONES.filter(z =>
+        z.name.toLowerCase().includes(query.toLowerCase())
+      ),
+    [query]
+  );
   const showToast = (msg: string) => {
     setToast(msg);
     setTimeout(() => setToast(null), 5000);
@@ -71,15 +79,35 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
       <div className="flex items-center gap-2 mb-3">
-        <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
+      <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div className="relative flex-1">
           <Input
+            value={query}
+            onChange={e => setQuery(e.target.value)}
             placeholder={t("Rechercher un lieu…")}
             className={`pl-9 bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
           />
           <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
+          {query && results.length > 0 && (
+            <ul className="absolute z-10 left-0 right-0 mt-1 max-h-40 overflow-auto rounded-xl border border-secondary dark:border-secondary bg-secondary dark:bg-secondary">
+              {results.map(z => (
+                <li key={z.id}>
+                  <button
+                    onClick={() => {
+                      mapRef.current?.setCenter([z.coords[1], z.coords[0]]);
+                      showToast(z.name);
+                      setQuery("");
+                    }}
+                    className={`w-full text-left px-3 py-1 ${T_PRIMARY} hover:bg-secondary dark:hover:bg-secondary`}
+                  >
+                    {z.name}
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </div>
         <Button
           onClick={() => setGpsFollow(v => !v)}
