@@ -7,6 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { CreateSpotModal } from "../components/CreateSpotModal";
 import { SpotDetailsModal } from "../components/SpotDetailsModal";
+import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
 import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 import { getStaticMapUrl } from "../services/openstreetmap";
@@ -19,6 +20,7 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
   const [createOpen, setCreateOpen] = useState(false);
   const [details, setDetails] = useState<Spot | null>(null);
   const [loading, setLoading] = useState(true);
+  const [deleteId, setDeleteId] = useState<string | null>(null);
   const { t } = useT();
 
   const openRoute = (spot: Spot) => {
@@ -94,9 +96,7 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (window.confirm(t("Supprimer ce coin ?"))) {
-                      dispatch({ type: "removeSpot", id: s.id });
-                    }
+                    setDeleteId(s.id);
                   }}
                   className="absolute top-2 right-2 bg-secondary/80 hover:bg-secondary/80 dark:bg-secondary/80 dark:hover:bg-secondary/80 border border-secondary dark:border-secondary rounded-full p-2"
                   aria-label={t("supprimer")}
@@ -146,6 +146,15 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
       {details && (
         <SpotDetailsModal spot={details} onClose={() => setDetails(null)} />
       )}
+
+      <ConfirmDeleteModal
+        open={deleteId !== null}
+        onCancel={() => setDeleteId(null)}
+        onConfirm={() => {
+          if (deleteId) dispatch({ type: "removeSpot", id: deleteId });
+          setDeleteId(null);
+        }}
+      />
     </motion.section>
   );
 }
