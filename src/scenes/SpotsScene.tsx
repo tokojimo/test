@@ -31,7 +31,7 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
         >
           <ChevronLeft className="w-5 h-5" />
         </Button>
-        <h2 className={`absolute inset-0 grid place-items-center text-lg font-semibold ${T_PRIMARY}`}>
+        <h2 className={`absolute inset-0 grid place-items-center text-lg font-semibold pointer-events-none ${T_PRIMARY}`}>
           {t("Mes coins")}
         </h2>
       </div>
