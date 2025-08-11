@@ -4,6 +4,7 @@ import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { Select } from "@/components/ui/select";
 import { useT } from "../i18n";
 import type { Mushroom } from "../types";
 
@@ -23,18 +24,26 @@ export default function PickerScene({ items, search, setSearch, onPick, onBack }
           placeholder={t("Rechercher un champignon…")}
           className={`bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
         />
-        <select value={seasonFilter} onChange={(e) => setSeasonFilter(e.target.value)} className="bg-secondary border border-secondary text-primary dark:bg-secondary dark:border-secondary dark:text-primary rounded-xl px-3 py-2 text-sm">
+        <Select
+          value={seasonFilter}
+          onChange={(e) => setSeasonFilter(e.target.value)}
+          className="bg-secondary border-secondary text-primary dark:bg-secondary dark:border-secondary dark:text-primary rounded-xl"
+        >
           <option value="toutes">{t("Toutes saisons")}</option>
           <option>{t("Printemps")}</option>
           <option>{t("Été")}</option>
           <option>{t("Automne")}</option>
-        </select>
-        <select value={valueFilter} onChange={(e) => setValueFilter(e.target.value)} className="bg-secondary border border-secondary text-primary dark:bg-secondary dark:border-secondary dark:text-primary rounded-xl px-3 py-2 text-sm">
+        </Select>
+        <Select
+          value={valueFilter}
+          onChange={(e) => setValueFilter(e.target.value)}
+          className="bg-secondary border-secondary text-primary dark:bg-secondary dark:border-secondary dark:text-primary rounded-xl"
+        >
           <option value="toutes">{t("Toute valeur")}</option>
           <option>{t("Excellente")}</option>
           <option>{t("Bonne")}</option>
           <option>{t("Moyenne")}</option>
-        </select>
+        </Select>
       </div>
 
       <div className="grid md:grid-cols-3 gap-3">
