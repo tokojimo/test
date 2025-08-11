@@ -12,8 +12,8 @@
     --fern-green: 131 13% 49.6%;
     --paper-beige: 37 45% 92.2%;
     --earth-brown: 29 30% 37.1%;
-    --accent-gold: 200 80% 60%;
-    --accent-gold-hover: 200 90% 70%;
+    --accent-gold: 51 100% 50%;
+    --accent-gold-hover: 51 100% 60%;
 
     --background: var(--paper-beige);
     --foreground: var(--forest-green);
@@ -48,8 +48,8 @@
     --fern-green: 136 14.6% 34.9%;
     --paper-beige: 0 0% 11%;
     --earth-brown: 28 30.5% 27.6%;
-    --accent-gold: 200 80% 60%;
-    --accent-gold-hover: 200 90% 70%;
+    --accent-gold: 51 100% 50%;
+    --accent-gold-hover: 51 100% 60%;
 
     --background: 0 0% 7%;
     --foreground: 0 0% 90%;
