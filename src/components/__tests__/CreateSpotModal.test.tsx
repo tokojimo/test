@@ -7,32 +7,24 @@ import { AppProvider } from '@/context/AppContext';
 import { CreateSpotModal } from '../CreateSpotModal';
 import Logo from '@/assets/logo.png';
 
-vi.mock('@/services/mapkit', () => ({
-  loadMapKit: vi.fn(() => Promise.resolve()),
+const addEventListener = vi.fn();
+
+vi.mock('@/services/openstreetmap', () => ({
+  loadMap: vi.fn(async () => ({
+    Map: class {
+      on = addEventListener;
+      remove = vi.fn();
+      getCenter() {
+        return { lat: 0, lng: 0 };
+      }
+    },
+  })),
 }));
 
 describe('CreateSpotModal', () => {
-  const addEventListener = vi.fn();
 
   beforeEach(() => {
     addEventListener.mockClear();
-    (global as any).mapkit = {
-      Map: class {
-        center = { latitude: 0, longitude: 0 };
-        addEventListener = addEventListener;
-        destroy = vi.fn();
-      },
-      Coordinate: class {
-        latitude: number;
-        longitude: number;
-        constructor(lat: number, lng: number) {
-          this.latitude = lat;
-          this.longitude = lng;
-        }
-      },
-      CoordinateRegion: class {},
-      CoordinateSpan: class {},
-    };
   });
 
   it('shows logo pin and map move instruction', async () => {
@@ -48,7 +40,7 @@ describe('CreateSpotModal', () => {
     expect(screen.getByRole('img', { name: '' })).toHaveAttribute('src', Logo);
     await waitFor(() =>
       expect(addEventListener).toHaveBeenCalledWith(
-        'regionDidChange',
+        'moveend',
         expect.any(Function)
       )
     );

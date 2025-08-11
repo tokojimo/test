@@ -8,7 +8,7 @@ import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
-import { loadMapKit } from "@/services/mapkit";
+import { loadMap } from "@/services/openstreetmap";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
@@ -24,19 +24,16 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onMapClick, 
 
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
-    loadMapKit().then(() => {
-      const map = new mapkit.Map(mapContainer.current);
-      map.tintColor = "#C6A15B";
-      map.showsMapTypeControl = false;
-      map.showsCompass = false;
-      map.region = new mapkit.CoordinateRegion(
-        new mapkit.Coordinate(48.8566, 2.3522),
-        new mapkit.CoordinateSpan(0.5, 0.5)
-      );
-      (map as any).zoom = 5;
+    loadMap().then(maplibregl => {
+      const map = new maplibregl.Map({
+        container: mapContainer.current as HTMLDivElement,
+        style: "https://demotiles.maplibre.org/style.json",
+        center: [2.3522, 48.8566],
+        zoom: 5,
+      });
       mapRef.current = map;
-      map.addEventListener("singleTap", (e: any) => {
-        const { latitude: lat, longitude: lng } = e.coordinate;
+      map.on("click", (e: any) => {
+        const { lat, lng } = e.lngLat;
         // Find nearest demo zone to the tapped coordinates
         let nearest: Zone | null = null;
         let minDist = Infinity;
@@ -61,7 +58,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onMapClick, 
       });
     });
     return () => {
-      mapRef.current?.destroy();
+      mapRef.current?.remove();
       mapRef.current = null;
     };
   }, []);

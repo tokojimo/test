@@ -9,7 +9,7 @@ import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
 import type { Spot } from "../types";
 import { todayISO } from "../utils";
-import { loadMapKit } from "@/services/mapkit";
+import { loadMap } from "@/services/openstreetmap";
 import Logo from "@/assets/logo.png";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
@@ -59,24 +59,25 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
 
   useEffect(() => {
     if (mapRef.current || !mapContainerRef.current) return;
-    loadMapKit().then(() => {
-      const map = new mapkit.Map(mapContainerRef.current);
-      map.region = new mapkit.CoordinateRegion(
-        new mapkit.Coordinate(48.8566, 2.3522),
-        new mapkit.CoordinateSpan(0.2, 0.2)
-      );
+    loadMap().then(maplibregl => {
+      const map = new maplibregl.Map({
+        container: mapContainerRef.current as HTMLDivElement,
+        style: "https://demotiles.maplibre.org/style.json",
+        center: [2.3522, 48.8566],
+        zoom: 10,
+      });
       mapRef.current = map;
 
       const updateLocation = () => {
-        const c = map.center;
-        setLocation(`${c.longitude.toFixed(5)}, ${c.latitude.toFixed(5)}`);
+        const c = map.getCenter();
+        setLocation(`${c.lng.toFixed(5)}, ${c.lat.toFixed(5)}`);
       };
 
       updateLocation();
-      map.addEventListener("regionDidChange", updateLocation);
+      map.on("moveend", updateLocation);
     });
     return () => {
-      mapRef.current?.destroy();
+      mapRef.current?.remove();
       mapRef.current = null;
     };
   }, []);
