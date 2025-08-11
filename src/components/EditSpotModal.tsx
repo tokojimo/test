@@ -2,6 +2,7 @@ import React, { useState, useRef, useEffect } from "react";
 import { X, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Select } from "@/components/ui/select";
 import { MUSHROOMS } from "../data/mushrooms";
 import { BTN, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { StarRating } from "./StarRating";
@@ -94,21 +95,23 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: Spot; onClose: 
                   </span>
                 ))}
               </div>
-              <select
+              <Select
                 onChange={(e) => {
                   const v = e.target.value;
                   if (v) setSpecies((list) => (list.includes(v) ? list : [...list, v]));
                 }}
                 value=""
-                className="bg-neutral-100 border border-neutral-300 text-neutral-900 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-100 rounded-xl px-3 py-2 text-sm"
+                className="rounded-xl"
               >
                 <option value="" disabled>
                   {t("Ajouter un champignon…")}
                 </option>
                 {MUSHROOMS.filter((m) => !species.includes(m.id)).map((m) => (
-                  <option key={m.id} value={m.id}>{m.name}</option>
+                  <option key={m.id} value={m.id}>
+                    {m.name}
+                  </option>
                 ))}
-              </select>
+              </Select>
             </div>
             <div>
               <div className={`text-sm ${T_PRIMARY}`}>{t("Dernière visite")}</div>
