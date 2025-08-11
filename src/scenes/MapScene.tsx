@@ -37,12 +37,12 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         : [],
     [search]
   );
-  type Toast = { id: number; text: string };
+  type Toast = { id: number; text: string; zone: Zone };
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const showToast = (text: string) => {
+  const showToast = (text: string, zone: Zone) => {
     const id = Date.now() + Math.random();
     setToasts(curr => {
-      const next = [{ id, text }, ...curr];
+      const next = [{ id, text, zone }, ...curr];
       return next.slice(0, 3);
     });
     setTimeout(() => {
@@ -113,7 +113,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           const placeName = await reverseGeocode(lat, lng);
           const title = placeName || nearest.name;
           const msg = `${title}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
-          showToast(msg);
+          showToast(msg, nearest);
         }
       });
     });
@@ -199,12 +199,17 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         {toasts.length > 0 && (
           <div className="absolute left-3 top-16 flex flex-col gap-2">
             {toasts.map(toast => (
-              <div
+              <button
                 key={toast.id}
-                className="bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary"
+                type="button"
+                onClick={() => {
+                  onZone(toast.zone);
+                  setToasts(curr => curr.filter(t => t.id !== toast.id));
+                }}
+                className="bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary text-left"
               >
                 <div className={`text-xs whitespace-pre-line ${T_PRIMARY}`}>{toast.text}</div>
-              </div>
+              </button>
             ))}
           </div>
         )}
