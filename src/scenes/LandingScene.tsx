@@ -23,7 +23,7 @@ export default function LandingScene({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="relative min-h-screen overflow-hidden"
+      className="relative min-h-screen overflow-hidden bg-background text-foreground"
     >
       <div className="absolute top-3 right-3 z-20">
         <Button
@@ -39,14 +39,14 @@ export default function LandingScene({
 
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div
-          className="absolute -top-20 -left-20 w-[40rem] h-[40rem] rounded-full bg-primary/30 blur-3xl"
-          animate={{ y: [0, 40, 0], opacity: [0.5, 0.8, 0.5] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute -top-40 left-1/2 w-[60rem] h-[60rem] -translate-x-1/2 rounded-full bg-primary/30 blur-3xl"
+          animate={{ rotate: [0, 360] }}
+          transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute -bottom-20 -right-20 w-[40rem] h-[40rem] rounded-full bg-secondary/30 blur-3xl"
-          animate={{ y: [0, -40, 0], opacity: [0.5, 0.8, 0.5] }}
-          transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+          className="absolute bottom-0 left-1/2 w-[80rem] h-[80rem] -translate-x-1/2 rounded-full bg-secondary/20 blur-3xl mix-blend-multiply"
+          animate={{ rotate: [0, -360] }}
+          transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
         />
       </div>
 
@@ -55,15 +55,18 @@ export default function LandingScene({
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
-          className="p-8 rounded-3xl backdrop-blur-xl bg-background/60 border border-border/50 shadow-2xl"
+          className="max-w-xl p-10 rounded-3xl bg-background/60 backdrop-blur-xl border border-border/50 shadow-2xl"
         >
-          <div className="mx-auto mb-6 w-24 h-24 rounded-2xl bg-primary/20 grid place-items-center shadow-lg">
-            <MushroomIcon className="w-12 h-12 text-primary" />
+          <div className="mx-auto mb-8 w-28 h-28 rounded-3xl bg-primary/20 grid place-items-center shadow-lg">
+            <MushroomIcon className="w-14 h-14 text-primary" />
           </div>
-          <h1 className="text-4xl sm:text-5xl font-bold bg-gradient-to-br from-primary via-emerald-300 to-primary bg-clip-text text-transparent">
+          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
             {t("Trouvez vos coins à champignons comestibles, même sans réseau.")}
           </h1>
-          <div className="mt-8 flex flex-wrap items-center justify-center gap-4">
+          <p className={`mt-6 text-lg ${T_MUTED}`}>
+            {t("Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.")}
+          </p>
+          <div className="mt-10 flex flex-wrap items-center justify-center gap-4">
             <Button onClick={onSeeMap} className={BTN}>
               {t("Voir la carte")}
             </Button>
@@ -74,9 +77,6 @@ export default function LandingScene({
               {t("Les champignons")}
             </Button>
           </div>
-          <p className={`mt-8 text-sm ${T_MUTED}`}>
-            {t("Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.")}
-          </p>
         </motion.div>
       </div>
     </motion.section>
