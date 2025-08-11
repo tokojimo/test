@@ -9,7 +9,8 @@ import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
-import mapboxgl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { useT } from "../i18n";
 import { NotificationStack, Notification } from "../components/NotificationStack";
 import type { Zone } from "../types";
@@ -18,7 +19,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
   const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
   const { t } = useT();
   const [notifications, setNotifications] = useState<Notification[]>([]);
 
@@ -29,14 +30,13 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
 
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
-    mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
-    const map = new mapboxgl.Map({
+    const map = new maplibregl.Map({
       container: mapContainer.current,
       style: "https://demotiles.maplibre.org/style.json",
       center: [2.3522, 48.8566],
       zoom,
     });
-    const handleClick = (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
+    const handleClick = (e: maplibregl.MapMouseEvent & maplibregl.EventData) => {
       addNotification(
         t("Map clicked at {lng}, {lat}", {
           lng: e.lngLat.lng.toFixed(2),

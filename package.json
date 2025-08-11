@@ -13,7 +13,7 @@
   "dependencies": {
     "framer-motion": "^10.18.0",
     "lucide-react": "^0.311.0",
-    "mapbox-gl": "^2.15.0",
+    "maplibre-gl": "^5.6.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^7.8.0",
@@ -21,7 +21,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4.1.11",
-    "@types/mapbox-gl": "^2.3.0",
     "@types/node": "^20.5.7",
     "@types/react": "^18.2.0",
     "@types/react-dom": "^18.2.0",
