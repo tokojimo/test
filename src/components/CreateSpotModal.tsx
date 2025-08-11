@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Image } from "lucide-react";
+import { X, Image, MapPin } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { MUSHROOMS } from "../data/mushrooms";
@@ -8,6 +8,7 @@ import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
 import type { Spot } from "../types";
 import { todayISO } from "../utils";
+import mapboxgl from "mapbox-gl";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = todayISO();
@@ -20,6 +21,8 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const [location, setLocation] = useState("");
   const [photos, setPhotos] = useState<string[]>([]);
   const photoUrlsRef = useRef<string[]>([]);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<mapboxgl.Map | null>(null);
 
   useEffect(() => {
     if (!name) {
@@ -58,6 +61,29 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
     };
   }, []);
 
+  useEffect(() => {
+    if (mapRef.current || !mapContainerRef.current) return;
+    mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
+    const map = new mapboxgl.Map({
+      container: mapContainerRef.current,
+      style: "https://demotiles.maplibre.org/style.json",
+      center: [2.3522, 48.8566],
+      zoom: 12,
+    });
+    mapRef.current = map;
+    const update = () => {
+      const c = map.getCenter();
+      setLocation(`${c.lng.toFixed(5)}, ${c.lat.toFixed(5)}`);
+    };
+    map.on("move", update);
+    update();
+    return () => {
+      map.off("move", update);
+      map.remove();
+      mapRef.current = null;
+    };
+  }, []);
+
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) onClose();
   };
@@ -83,12 +109,15 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
             placeholder={t("Nom du coin")}
             className={`bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
           />
-          <Input
-            value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            placeholder={t("Localisation (coordonnées ou lieu)")}
-            className={`bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
-          />
+          <div>
+            <div className={`text-sm mb-1 ${T_PRIMARY}`}>{t("Localisation")}</div>
+            <div className="relative h-48 rounded-xl border border-neutral-300 dark:border-neutral-800 overflow-hidden">
+              <div ref={mapContainerRef} className="absolute inset-0" />
+              <MapPin className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full text-red-500 pointer-events-none" />
+            </div>
+            <div className={`text-xs mt-1 ${T_MUTED}`}>{t("Déplacez la carte pour choisir la localisation")}</div>
+            <div className={`text-xs mt-1 ${T_PRIMARY}`}>{location}</div>
+          </div>
 
           <div>
             <div className={`text-sm mb-1 ${T_PRIMARY}`}>{t("Champignons trouvés")}</div>
