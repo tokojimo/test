@@ -4,7 +4,7 @@
 @layer base {
   *,*::before,*::after{@apply box-border;}
   body,h1,h2,h3,h4,h5,h6,p{@apply m-0;}
-  body{@apply antialiased;line-height:1.5;}
+  body{@apply antialiased font-medium;line-height:1.6;letter-spacing:0.01em;font-size:17px;}
 
   :root {
     --forest-green: 148 25% 24.7%;
@@ -12,12 +12,14 @@
     --fern-green: 131 13% 49.6%;
     --paper-beige: 37 45% 92.2%;
     --earth-brown: 29 30% 37.1%;
-    --accent-gold: 39 48% 56.7%;
+    --accent-gold: 200 80% 60%;
+    --accent-gold-hover: 200 90% 70%;
 
     --background: var(--paper-beige);
     --foreground: var(--forest-green);
     --border: 148 10% 70%;
     --accent: var(--accent-gold);
+    --accent-hover: var(--accent-gold-hover);
     --danger: 0 84% 60%;
 
     --radius-sm: 0.5rem;
@@ -44,14 +46,16 @@
     --forest-green: 148 17.8% 14.3%;
     --moss-green: 143 17.4% 23.7%;
     --fern-green: 136 14.6% 34.9%;
-    --paper-beige: 60 3.8% 10.2%;
+    --paper-beige: 0 0% 11%;
     --earth-brown: 28 30.5% 27.6%;
-    --accent-gold: 41 39.1% 47.6%;
+    --accent-gold: 200 80% 60%;
+    --accent-gold-hover: 200 90% 70%;
 
-    --background: var(--paper-beige);
-    --foreground: 210 20% 98%;
-    --border: 148 10% 25%;
+    --background: 0 0% 7%;
+    --foreground: 0 0% 90%;
+    --border: 0 0% 25%;
     --accent: var(--accent-gold);
+    --accent-hover: var(--accent-gold-hover);
     --danger: 0 84% 60%;
   }
 
@@ -60,6 +64,24 @@
     background:
       radial-gradient(circle at 20% 20%, hsl(var(--moss-green)/0.15), transparent),
       radial-gradient(circle at 80% 80%, hsl(var(--fern-green)/0.15), transparent);
+  }
+
+  a {
+    color: hsl(var(--accent));
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    transition: color var(--duration-normal) var(--ease-in-out);
+  }
+
+  a:hover,
+  a:focus-visible {
+    color: hsl(var(--accent-hover));
+    text-decoration-thickness: 2px;
+  }
+
+  a:focus-visible {
+    outline: 2px solid hsl(var(--accent-hover));
+    outline-offset: 2px;
   }
 
   body::before {

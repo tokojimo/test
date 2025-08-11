@@ -6,15 +6,17 @@
       "fern-green": "#6E8F74",
       "paper-beige": "#F4EDE2",
       "earth-brown": "#7B5E42",
-      "accent-gold": "#C6A15B"
+      "accent-gold": "#4EA8DE",
+      "accent-gold-hover": "#79C0F2"
     },
     "dark": {
       "forest-green": "#1E2B24",
       "moss-green": "#32473A",
       "fern-green": "#4C6653",
-      "paper-beige": "#1B1B19",
+      "paper-beige": "#1E1E1E",
       "earth-brown": "#5C4531",
-      "accent-gold": "#A98B4A"
+      "accent-gold": "#4EA8DE",
+      "accent-gold-hover": "#79C0F2"
     }
   },
   "typography": {
