@@ -1,20 +1,18 @@
-import React, { useState, useMemo, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { MUSHROOMS } from "../data/mushrooms";
 import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import { loadMapKit } from "@/services/mapkit";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
 export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onMapClick, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onMapClick?: (msg: string) => void; onBack: () => void }) {
-  const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
   const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -68,7 +66,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       (mapRef.current as any).zoom = zoom;
     }
   }, [zoom]);
-  const zones = useMemo<Zone[]>(() => (selectedSpecies.length === 0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id] || 0) > 50))), [selectedSpecies]);
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
@@ -113,46 +110,10 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
           ))}
         </div>
 
-        <div className="absolute bottom-3 left-3 grid gap-2">
-          {zones.map(z => (
-            <div
-              key={z.id}
-              onClick={() => onZone(z)}
-              role="button"
-              tabIndex={0}
-              className="bg-secondary/80 hover:bg-secondary/80 dark:bg-secondary/80 dark:hover:bg-secondary/80 border border-secondary dark:border-secondary rounded-xl px-3 py-2 text-left cursor-pointer"
-            >
-              <div className="flex items-center justify-between">
-                <div className={`font-medium ${T_PRIMARY}`}>{z.name}</div>
-                <Badge variant={z.score > 85 ? "default" : "secondary"}>{z.score}%</Badge>
-              </div>
-              <div className={`text-xs ${T_MUTED}`}>{t(z.trend)}</div>
-              <div className="mt-1 flex gap-1">
-                {Object.entries(z.species).map(([id, sc]) => (
-                  <span key={id} onClick={(e) => { e.stopPropagation(); onOpenShroom(id); }} className={`text-[10px] bg-secondary border border-secondary hover:bg-secondary dark:bg-secondary dark:border-secondary dark:hover:bg-secondary px-2 py-1 rounded-full ${T_PRIMARY} cursor-pointer`}>{MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0]} {sc}%</span>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-
         <div className="absolute bottom-3 right-3 bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary">
           <input type="range" min={1} max={14} value={zoom} onChange={(e) => setZoom(parseInt(e.target.value, 10))} />
         </div>
       </div>
-
-      <div className="mt-3 flex flex-wrap gap-2">
-        {MUSHROOMS.map(m => {
-          const active = selectedSpecies.includes(m.id);
-          return (
-            <Button key={m.id} onClick={() => setSelectedSpecies(s => active ? s.filter(x => x !== m.id) : [...s, m.id])} className={classNames(BTN, active ? "" : "opacity-60")}>{m.name}</Button>
-          );
-        })}
-      </div>
-
-      <p className={`text-xs mt-2 ${T_SUBTLE}`}>
-        {t("Hors ligne : affichage des zones optimales Cèpe, Girolle, Morille.")}
-      </p>
     </motion.section>
   );
 }
