@@ -63,7 +63,10 @@ export default function LandingScene({
             className="mx-auto mb-8 w-28 h-28 rounded-[2rem] shadow-lg"
           />
           <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight text-forest">
-            {t("Trouvez vos coins à champignons comestibles, même sans réseau.")}
+            <span className="block">
+              {t("Trouvez vos coins à champignons comestibles,")}
+            </span>
+            <span className="block">{t("même sans réseau.")}</span>
           </h1>
           <p className={`mt-6 text-lg ${T_MUTED}`}>
             {t("Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.")}
