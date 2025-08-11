@@ -9,6 +9,7 @@ import { useT } from "../i18n";
 import type { Spot } from "../types";
 import { todayISO } from "../utils";
 import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = todayISO();
@@ -23,12 +24,6 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const photoUrlsRef = useRef<string[]>([]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<maplibregl.Map | null>(null);
-
-  useEffect(() => {
-    if (!name) {
-      setName(t("Mon nouveau coin"));
-    }
-  }, [lang, name, t]);
 
   useEffect(() => {
     if (!name) {
