@@ -4,6 +4,7 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_MUTED } from "../styles/tokens";
 import { useT } from "../i18n";
+import logo from "../../Logo.png";
 
 export default function LandingScene({
   onSeeMap,
@@ -56,7 +57,11 @@ export default function LandingScene({
           transition={{ delay: 0.2 }}
           className="max-w-xl p-10 rounded-3xl bg-background/60 backdrop-blur-xl border border-border/50 shadow-2xl"
         >
-          <div className="mx-auto mb-8 w-28 h-28 rounded-[2rem] bg-forest/20 shadow-lg" />
+          <img
+            src={logo}
+            alt={t("Logo")}
+            className="mx-auto mb-8 w-28 h-28 rounded-[2rem] shadow-lg"
+          />
           <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-forest via-moss to-fern bg-clip-text text-transparent">
             {t("Trouvez vos coins à champignons comestibles, même sans réseau.")}
           </h1>
