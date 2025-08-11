@@ -57,6 +57,7 @@ export default {
   "Note": { fr: "Note", en: "Rating" },
   "Champignons trouvés": { fr: "Champignons trouvés", en: "Found mushrooms" },
   "supprimer": { fr: "supprimer", en: "remove" },
+  "Supprimer": { fr: "Supprimer", en: "Delete" },
   "Supprimer ce coin ?": { fr: "Supprimer ce coin ?", en: "Delete this spot?" },
   "Ajouter un champignon…": { fr: "Ajouter un champignon…", en: "Add a mushroom…" },
   "Dernière visite": { fr: "Dernière visite", en: "Last visit" },
