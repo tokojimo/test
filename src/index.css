@@ -2,45 +2,83 @@
 @config "../tailwind.config.cjs";
 
 @layer base {
+  *,*::before,*::after{@apply box-border;}
+  body,h1,h2,h3,h4,h5,h6,p{@apply m-0;}
+  body{@apply antialiased;line-height:1.5;}
+
   :root {
-    --background: 0 0% 100%;
-    --foreground: 230 10% 14%;
-    --border: 230 10% 90%;
-    --primary: 262 83% 58%;
-    --secondary: 198 94% 75%;
-    --success: 142.1 76.2% 36.3%;
-    --danger: 0 84.2% 60.2%;
-    --radius: 0.75rem;
+    --forest-green: 148 25% 24.7%;
+    --moss-green: 137 15% 36.5%;
+    --fern-green: 131 13% 49.6%;
+    --paper-beige: 37 45% 92.2%;
+    --earth-brown: 29 30% 37.1%;
+    --accent-gold: 39 48% 56.7%;
+
+    --background: var(--paper-beige);
+    --foreground: var(--forest-green);
+    --border: 148 10% 70%;
+    --accent: var(--accent-gold);
+    --danger: 0 84% 60%;
+
+    --radius-sm: 0.5rem;
+    --radius-md: 1rem;
+    --radius-lg: 1.5rem;
+
+    --space-xs: 0.25rem;
+    --space-sm: 0.5rem;
+    --space-md: 1rem;
+    --space-lg: 1.5rem;
+    --space-xl: 2rem;
+
+    --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+    --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+    --shadow-lg: 0 10px 15px rgba(0,0,0,0.15);
+
+    --duration-fast: 120ms;
+    --duration-normal: 180ms;
+    --duration-slow: 220ms;
+    --ease-in-out: cubic-bezier(0.4,0,0.2,1);
   }
 
   .dark {
-    --background: 234 15% 8%;
-    --foreground: 210 20% 98%;
-    --border: 234 14% 18%;
-    --primary: 262 83% 58%;
-    --secondary: 198 94% 60%;
-    --success: 142.1 76.2% 36.3%;
-    --danger: 0 84.2% 60.2%;
-  }
+    --forest-green: 148 17.8% 14.3%;
+    --moss-green: 143 17.4% 23.7%;
+    --fern-green: 136 14.6% 34.9%;
+    --paper-beige: 60 3.8% 10.2%;
+    --earth-brown: 28 30.5% 27.6%;
+    --accent-gold: 41 39.1% 47.6%;
 
-  * {
-    @apply border-border;
+    --background: var(--paper-beige);
+    --foreground: 210 20% 98%;
+    --border: 148 10% 25%;
+    --accent: var(--accent-gold);
+    --danger: 0 84% 60%;
   }
 
   body {
     @apply bg-background text-foreground font-sans;
-    background-image:
-      radial-gradient(ellipse at 20% 20%, hsl(var(--primary) / 0.15), transparent),
-      radial-gradient(ellipse at 80% 80%, hsl(var(--secondary) / 0.15), transparent);
+    background:
+      radial-gradient(circle at 20% 20%, hsl(var(--moss-green)/0.15), transparent),
+      radial-gradient(circle at 80% 80%, hsl(var(--fern-green)/0.15), transparent);
   }
 
   body::before {
-    content: "";
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    background-image: url("/noise.svg");
-    opacity: 0.12;
-    mix-blend-mode: overlay;
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:url("data:image/svg+xml;base64,PHN2ZyB3aWR0aD0nNCcgaGVpZ2h0PSc0JyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnPjxyZWN0IHdpZHRoPSc0JyBoZWlnaHQ9JzQnIGZpbGw9JyNmZmYnLz48ZmlsdGVyIGlkPSdub2lzZSc+PGZlVHVyYnVsZW5jZSB0eXBlPSdmaXJzdCcgYmFzZUZyZXF1ZW5jeT0nMC4yMic+PC9mZVR1cmJ1bGVuY2U+PGZlQ29tcG9zaXRlIHJlc3VsdD0nY29tcCcgaW4yPSdub2lzZSc+PGZlQ29sb3JNYXRyaXggdHlwZT0iYnVybiIgdmFsdWVzPSIwIDAgMCAwIDAgIDAgMCAwIDAgMCAgMCAwIDAgMCAwIDAgMCAxIi8+PC9mZUNvbXBvc2l0ZT48ZmVSdW5BY2V0b3IgcmVzdWx0PSJkb2dlIiBpbnB1dD0iY29tcCIvPjxmZUZsb29kIHJl
+c3VsdD0ibm9pc2VHdW51IiBpbj0iZG9nZSIgZHVyYXRpb249IjAuM3MiIHN0ZC1kZXZpYXRpb249IjAuMyIvPjxmZUdYdXJidWxlbmNlIGluPSdub2lzZUd1bnUnIHN0ZERldmlhdGlvbj0iMC4zIiAvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPSc0JyBoZWlnaHQ9JzQnIGZpbGw9JyNmZmYnIGZpbHRlcj0idXJsKCNub2lzZSkiIC8+PC9zdmcnPg==");
+    opacity:0.15;
+    mix-blend-mode:overlay;
   }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { transition-duration:0ms!important; animation-duration:0ms!important; }
+  }
+}
+
+@layer utilities {
+  .container { @apply max-w-screen-xl mx-auto px-4 md:px-6; }
+  .grid-responsive { @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3; }
 }

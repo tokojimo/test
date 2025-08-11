@@ -42,8 +42,8 @@ describe('LandingScene', () => {
   it('renders rotating background orbs', () => {
     renderScene();
     const calls = motionDiv.mock.calls;
-    const primary = calls.find(([props]) => props.className?.includes('bg-primary/30'));
-    const secondary = calls.find(([props]) => props.className?.includes('bg-secondary/20'));
+    const primary = calls.find(([props]) => props.className?.includes('bg-forest/30'));
+    const secondary = calls.find(([props]) => props.className?.includes('bg-moss/20'));
     expect(primary).toBeTruthy();
     expect(primary![0].animate).toMatchObject({ rotate: expect.any(Array) });
     expect(secondary).toBeTruthy();

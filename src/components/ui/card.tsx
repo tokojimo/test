@@ -2,12 +2,12 @@ import React from "react";
 
 export function Card({ className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const base =
-    "rounded-2xl border border-border bg-secondary text-foreground dark:border-border dark:bg-secondary dark:text-foreground";
+    "rounded-lg border border-border bg-paper text-foreground shadow-sm hover:shadow-md transition-shadow";
   return <div className={`${base} ${className}`} {...props} />;
 }
 
 export function CardHeader({ className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
-  return <div className={`p-4 border-b border-border dark:border-border ${className}`} {...props} />;
+  return <div className={`p-4 border-b border-border ${className}`} {...props} />;
 }
 
 export function CardTitle({ className = "", ...props }: React.HTMLAttributes<HTMLHeadingElement>) {

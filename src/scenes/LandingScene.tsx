@@ -2,7 +2,6 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { MushroomIcon } from "../components/MushroomIcon";
 import { BTN, BTN_GHOST_ICON, T_MUTED } from "../styles/tokens";
 import { useT } from "../i18n";
 
@@ -39,12 +38,12 @@ export default function LandingScene({
 
       <div className="absolute inset-0 -z-10 overflow-hidden">
         <motion.div
-          className="absolute -top-40 left-1/2 w-[60rem] h-[60rem] -translate-x-1/2 rounded-full bg-primary/30 blur-3xl"
+          className="absolute -top-40 left-1/2 w-[60rem] h-[60rem] -translate-x-1/2 rounded-full bg-forest/30 blur-3xl"
           animate={{ rotate: [0, 360] }}
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
         />
         <motion.div
-          className="absolute bottom-0 left-1/2 w-[80rem] h-[80rem] -translate-x-1/2 rounded-full bg-secondary/20 blur-3xl mix-blend-multiply"
+          className="absolute bottom-0 left-1/2 w-[80rem] h-[80rem] -translate-x-1/2 rounded-full bg-moss/20 blur-3xl mix-blend-multiply"
           animate={{ rotate: [0, -360] }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
         />
@@ -57,10 +56,8 @@ export default function LandingScene({
           transition={{ delay: 0.2 }}
           className="max-w-xl p-10 rounded-3xl bg-background/60 backdrop-blur-xl border border-border/50 shadow-2xl"
         >
-          <div className="mx-auto mb-8 w-28 h-28 rounded-3xl bg-primary/20 grid place-items-center shadow-lg">
-            <MushroomIcon className="w-14 h-14 text-primary" />
-          </div>
-          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
+          <div className="mx-auto mb-8 w-28 h-28 rounded-[2rem] bg-forest/20 shadow-lg" />
+          <h1 className="text-5xl sm:text-6xl font-extrabold tracking-tight bg-gradient-to-r from-forest via-moss to-fern bg-clip-text text-transparent">
             {t("Trouvez vos coins à champignons comestibles, même sans réseau.")}
           </h1>
           <p className={`mt-6 text-lg ${T_MUTED}`}>
