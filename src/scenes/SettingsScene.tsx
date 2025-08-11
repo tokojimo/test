@@ -31,6 +31,14 @@ export default function SettingsScene({
   const { alerts, prefs } = state;
   const { user, logout } = useAuth();
   const { t } = useT();
+  const handlePremium = () => {
+    if (user) {
+      onPremium();
+    } else {
+      localStorage.setItem("goPremiumAfterSignup", "true");
+      onSignup();
+    }
+  };
   const handleGpsChange = (v: boolean) => {
     if (v) {
       const ok = window.confirm(
@@ -66,7 +74,10 @@ export default function SettingsScene({
             <div className="space-y-2">
               <div className={`font-medium ${T_PRIMARY}`}>{user.username}</div>
               {!user.premium ? (
-                <Button onClick={onPremium} className={BTN}>
+                <Button
+                  onClick={handlePremium}
+                  className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+                >
                   {t("Passer en premium")}
                 </Button>
               ) : (
@@ -77,13 +88,21 @@ export default function SettingsScene({
               </Button>
             </div>
           ) : (
-            <div className="flex items-center justify-between">
-              <Button onClick={onLogin} className={BTN}>
-                {t("Se connecter")}
+            <div className="space-y-2">
+              <Button
+                onClick={handlePremium}
+                className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+              >
+                {t("Passer en premium")}
               </Button>
-              <Button onClick={onSignup} className={BTN}>
-                {t("Créer un compte")}
-              </Button>
+              <div className="flex items-center justify-between">
+                <Button onClick={onLogin} className={BTN}>
+                  {t("Se connecter")}
+                </Button>
+                <Button onClick={onSignup} className={BTN}>
+                  {t("Créer un compte")}
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
