@@ -9,7 +9,7 @@ import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import logo from "@/assets/logo.png";
-import { loadMap, geocode } from "@/services/openstreetmap";
+import { loadMap, geocode, reverseGeocode } from "@/services/openstreetmap";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
@@ -68,7 +68,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       const canvas = map.getCanvas();
       canvas.style.cursor = `url(${logo}) 16 16, auto`;
 
-      map.on("click", (e: any) => {
+      map.on("click", async (e: any) => {
         const { lat, lng } = e.lngLat;
 
         // Drop a temporary logo marker at the clicked location
@@ -110,7 +110,9 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
               return `${name} ${sc}%`;
             })
             .join("\n");
-          const msg = `${nearest.name}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
+          const placeName = await reverseGeocode(lat, lng);
+          const title = placeName || nearest.name;
+          const msg = `${title}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
           showToast(msg);
         }
       });
