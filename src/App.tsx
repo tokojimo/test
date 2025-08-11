@@ -37,7 +37,8 @@ function AppContent() {
   const [includeWeather, setIncludeWeather] = useState(true);
   const [packSize, setPackSize] = useState(180);
   const [deviceFree, setDeviceFree] = useState(2048);
-  const [toast, setToast] = useState<{ type: "success" | "warn"; text: string } | null>(null);
+  type Toast = { id: number; type: "success" | "warn"; text: string };
+  const [toasts, setToasts] = useState<Toast[]>([]);
   const [gpsFollow, setGpsFollow] = useState(false);
 
   const { state, dispatch } = useAppContext();
@@ -48,6 +49,17 @@ function AppContent() {
   const goTo = useCallback((s: Scene) => navigate(s), [navigate]);
   const goBack = useCallback(() => navigate(-1), [navigate]);
 
+  const pushToast = useCallback((toast: Omit<Toast, "id">) => {
+    const id = Date.now() + Math.random();
+    setToasts((curr) => {
+      const next = [{ id, ...toast }, ...curr];
+      return next.slice(0, 3);
+    });
+    setTimeout(() => {
+      setToasts((curr) => curr.filter((t) => t.id !== id));
+    }, 5000);
+  }, []);
+
   useEffect(() => {
     if (downloading) {
       const id = setInterval(() => {
@@ -57,7 +69,7 @@ function AppContent() {
             clearInterval(id);
             setTimeout(() => {
               setDownloading(false);
-              setToast({ type: "success", text: t("Carte téléchargée et prête hors‑ligne") });
+              pushToast({ type: "success", text: t("Carte téléchargée et prête hors‑ligne") });
               goTo(Scene.Map);
             }, 500);
           }
@@ -80,12 +92,6 @@ function AppContent() {
     return () => media.removeEventListener("change", applyTheme);
   }, [state.prefs.theme]);
 
-  useEffect(() => {
-    if (toast) {
-      const id = setTimeout(() => setToast(null), 2500);
-      return () => clearTimeout(id);
-    }
-  }, [toast]);
 
   const filteredMushrooms = useMemo(
     () => MUSHROOMS.filter((m) => m.name.toLowerCase().includes(search.toLowerCase())),
@@ -94,16 +100,19 @@ function AppContent() {
 
   return (
     <div className="w-full min-h-screen bg-neutral-50 dark:bg-neutral-950">
-      {toast && (
-        <div
-          className={classNames(
-            "fixed top-4 left-1/2 -translate-x-1/2 z-50 rounded-xl px-4 py-2 shadow-xl",
-            toast.type === "success" ? "bg-emerald-600 " + T_PRIMARY : "bg-amber-600 " + T_PRIMARY
-          )}
-        >
-          {toast.text}
-        </div>
-      )}
+      <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
+        {toasts.map((toast) => (
+          <div
+            key={toast.id}
+            className={classNames(
+              "rounded-xl px-4 py-2 shadow-xl",
+              toast.type === "success" ? "bg-emerald-600 " + T_PRIMARY : "bg-amber-600 " + T_PRIMARY
+            )}
+          >
+            {toast.text}
+          </div>
+        ))}
+      </div>
 
       <main>
         <AnimatePresence mode="wait">
@@ -126,6 +135,7 @@ function AppContent() {
                   onBack={goBack}
                   gpsFollow={gpsFollow}
                   setGpsFollow={setGpsFollow}
+                  onMapClick={(msg) => pushToast({ type: "success", text: msg })}
                   onZone={(z) => {
                     setSelectedZone(z);
                     goTo(Scene.Zone);
@@ -160,7 +170,7 @@ function AppContent() {
                         ],
                       } as Spot,
                     });
-                    setToast({ type: "success", text: t("Coin ajouté") });
+                    pushToast({ type: "success", text: t("Coin ajouté") });
                   }}
                   onOpenShroom={(id) => {
                     setSelectedMushroom(
@@ -225,7 +235,7 @@ function AppContent() {
                   dlProgress={dlProgress}
                   onStart={() => {
                     if (packSize > deviceFree) {
-                      setToast({
+                      pushToast({
                         type: "warn",
                         text: t("Espace insuffisant. Libérez {n} Mo", { n: packSize - deviceFree }),
                       });

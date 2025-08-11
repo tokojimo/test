@@ -14,7 +14,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
-export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
+export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onMapClick, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onMapClick?: (msg: string) => void; onBack: () => void }) {
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
   const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
@@ -37,6 +37,10 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
         tileSize: 256,
       });
       map.addLayer({ id: "mock", type: "raster", source: "mock" });
+    });
+    map.on("click", e => {
+      const { lng, lat } = e.lngLat;
+      onMapClick?.(`Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}`);
     });
     return () => {
       map.remove();
