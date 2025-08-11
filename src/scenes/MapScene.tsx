@@ -17,10 +17,17 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const mapRef = useRef<any>(null);
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>([]);
-  const [toast, setToast] = useState<string | null>(null);
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 5000);
+  type Toast = { id: number; text: string };
+  const [toasts, setToasts] = useState<Toast[]>([]);
+  const showToast = (text: string) => {
+    const id = Date.now() + Math.random();
+    setToasts(curr => {
+      const next = [{ id, text }, ...curr];
+      return next.slice(0, 3);
+    });
+    setTimeout(() => {
+      setToasts(curr => curr.filter(t => t.id !== id));
+    }, 45000);
   };
   const toggleShroom = (id: string) =>
     setSelected(prev =>
@@ -114,9 +121,16 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             </div>
           ))}
         </div>
-        {toast && (
-          <div className="absolute left-3 top-16 bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary">
-            <div className={`text-xs whitespace-pre-line ${T_PRIMARY}`}>{toast}</div>
+        {toasts.length > 0 && (
+          <div className="absolute left-3 top-16 flex flex-col gap-2">
+            {toasts.map(toast => (
+              <div
+                key={toast.id}
+                className="bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary"
+              >
+                <div className={`text-xs whitespace-pre-line ${T_PRIMARY}`}>{toast.text}</div>
+              </div>
+            ))}
           </div>
         )}
 
