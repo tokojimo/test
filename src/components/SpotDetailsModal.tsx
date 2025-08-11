@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
+import { todayISO } from "../utils";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -18,7 +19,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     if (e.target === overlayRef.current) onClose();
   };
   const addVisit = () => {
-    const today = new Date().toISOString().slice(0, 10);
+    const today = todayISO();
     setHistory((h) => [...h, { date: today, rating: 0, note: "", photos: [] }]);
   };
 

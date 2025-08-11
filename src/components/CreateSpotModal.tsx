@@ -7,9 +7,10 @@ import { BTN, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
 import type { Spot } from "../types";
+import { todayISO } from "../utils";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
-  const today = new Date().toISOString().slice(0, 10);
+  const today = todayISO();
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const { t, lang } = useT();
   const [name, setName] = useState("");

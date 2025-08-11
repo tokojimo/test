@@ -1,7 +1,7 @@
 import React, { useMemo, useState, useEffect, useCallback } from "react";
 import { AnimatePresence } from "framer-motion";
 import { Routes, Route, useNavigate, useLocation, Navigate } from "react-router-dom";
-import { classNames } from "./utils";
+import { classNames, todayISO } from "./utils";
 import { T_PRIMARY } from "./styles/tokens";
 import type { Mushroom, Zone, Spot } from "./types";
 import { MUSHROOMS } from "./data/mushrooms";
@@ -143,7 +143,7 @@ function AppContent() {
                   zone={selectedZone}
                   onGo={() => goTo(Scene.Route)}
                   onAdd={() => {
-                    const today = new Date().toISOString().slice(0, 10);
+                    const today = todayISO();
                     dispatch({
                       type: "addSpot",
                       spot: {

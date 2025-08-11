@@ -7,13 +7,14 @@ import { BTN, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
 import type { Spot } from "../types";
+import { todayISO } from "../utils";
 
 export function EditSpotModal({ spot, onClose, onSave }: { spot: Spot; onClose: () => void; onSave: (s: Spot) => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
   const [name, setName] = useState(spot.name);
   const [rating, setRating] = useState(spot.rating || 3);
   const [species, setSpecies] = useState<string[]>(spot.species || []);
-  const [last, setLast] = useState(spot.last || new Date().toISOString().slice(0, 10));
+  const [last, setLast] = useState(spot.last || todayISO());
   const [location, setLocation] = useState(spot.location || "");
   const [photos, setPhotos] = useState<string[]>(spot.photos || [spot.cover].filter(Boolean));
   const photoUrlsRef = useRef<string[]>([]);

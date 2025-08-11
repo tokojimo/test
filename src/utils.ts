@@ -18,3 +18,7 @@ export function generateForecast(lang: string) {
   }
   return days;
 }
+
+export function todayISO() {
+  return new Date().toISOString().slice(0, 10);
+}
