@@ -6,7 +6,7 @@ import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
 import { todayISO } from "../utils";
 import { loadMapKit } from "@/services/mapkit";
-import Logo from "/Logo.png";
+import Logo from "@/assets/logo.png";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);

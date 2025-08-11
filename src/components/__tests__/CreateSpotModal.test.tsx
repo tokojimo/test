@@ -5,7 +5,7 @@ import { vi, describe, it, expect, beforeEach } from 'vitest';
 
 import { AppProvider } from '@/context/AppContext';
 import { CreateSpotModal } from '../CreateSpotModal';
-import Logo from '/Logo.png';
+import Logo from '@/assets/logo.png';
 
 vi.mock('@/services/mapkit', () => ({
   loadMapKit: vi.fn(() => Promise.resolve()),

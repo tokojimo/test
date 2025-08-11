@@ -4,7 +4,7 @@ import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_MUTED } from "../styles/tokens";
 import { useT } from "../i18n";
-import logo from "../../Logo.png";
+import logo from "@/assets/logo.png";
 
 export default function LandingScene({
   onSeeMap,
