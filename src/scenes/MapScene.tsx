@@ -8,6 +8,7 @@ import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
+import logo from "@/assets/logo.png";
 import { loadMap } from "@/services/openstreetmap";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
@@ -15,6 +16,7 @@ import type { Zone } from "../types";
 export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { onZone: (z: Zone) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
+  const markersRef = useRef<{ marker: any; timeout: ReturnType<typeof setTimeout> }[]>([]);
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>([]);
   type Toast = { id: number; text: string };
@@ -44,8 +46,34 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         zoom: 5,
       });
       mapRef.current = map;
+      // Use logo as cursor on desktop
+      const canvas = map.getCanvas();
+      canvas.style.cursor = `url(${logo}) 16 16, auto`;
+
       map.on("click", (e: any) => {
         const { lat, lng } = e.lngLat;
+
+        // Drop a temporary logo marker at the clicked location
+        const el = document.createElement("img");
+        el.src = logo;
+        el.className = "w-6 h-6 pointer-events-none animate-bounce";
+        const marker = new maplibregl.Marker({ element: el })
+          .setLngLat([lng, lat])
+          .addTo(map);
+        setTimeout(() => el.classList.remove("animate-bounce"), 1000);
+        const timeout = setTimeout(() => {
+          marker.remove();
+          markersRef.current = markersRef.current.filter(m => m.marker !== marker);
+        }, 45000);
+        markersRef.current.push({ marker, timeout });
+        if (markersRef.current.length > 3) {
+          const oldest = markersRef.current.shift();
+          if (oldest) {
+            clearTimeout(oldest.timeout);
+            oldest.marker.remove();
+          }
+        }
+
         // Find nearest demo zone to the tapped coordinates
         let nearest: Zone | null = null;
         let minDist = Infinity;
@@ -64,8 +92,8 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
               return `${name} ${sc}%`;
             })
             .join("\n");
-            const msg = `${nearest.name}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
-            showToast(msg);
+          const msg = `${nearest.name}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
+          showToast(msg);
         }
       });
     });
@@ -99,7 +127,11 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       </div>
 
       <div className="relative h-[60vh] rounded-2xl border border-secondary dark:border-secondary bg-secondary dark:bg-secondary overflow-hidden">
-        <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
+        <div
+          ref={mapContainer}
+          className="absolute inset-0 w-full h-full"
+          style={{ cursor: `url(${logo}) 16 16, auto` }}
+        />
 
         {gpsFollow && (
           <Button
