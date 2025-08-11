@@ -62,11 +62,12 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
     loadMap().then(maplibregl => {
       const map = new maplibregl.Map({
         container: mapContainerRef.current as HTMLDivElement,
-        style: "https://demotiles.maplibre.org/style.json",
+        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         center: [2.3522, 48.8566],
         zoom: 10,
       });
       mapRef.current = map;
+      map.on("load", () => map.resize());
 
       const updateLocation = () => {
         const c = map.getCenter();
@@ -110,7 +111,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
           <div>
             <div className={`text-sm mb-1 ${T_PRIMARY}`}>{t("Localisation")}</div>
             <div className="relative h-48 rounded-xl border border-neutral-400 dark:border-neutral-700 bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
-              <div ref={mapContainerRef} className="absolute inset-0" />
+              <div ref={mapContainerRef} className="absolute inset-0 w-full h-full" />
               <img
                 src={Logo}
                 className="absolute left-1/2 top-1/2 w-8 h-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
