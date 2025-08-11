@@ -78,7 +78,8 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
           spots.map(s => {
             const [lat, lng] = s.location ? s.location.split(",").map(v => parseFloat(v.trim())) : [NaN, NaN];
             const hasLoc = !Number.isNaN(lat) && !Number.isNaN(lng);
-            const mapUrl = hasLoc ? getStaticMapUrl(lat, lng) : s.cover || s.photos?.[0];
+            const useCover = Boolean(s.cover);
+            const mapUrl = s.cover || (hasLoc ? getStaticMapUrl(lat, lng) : s.photos?.[0]);
             return (
               <Card
                 key={s.id}
@@ -88,7 +89,9 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
                 {hasLoc ? (
                   <div className="relative w-full h-40">
                     <img src={mapUrl as string} className="w-full h-full object-cover" />
-                    <img src={Logo} className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    {!useCover && (
+                      <img src={Logo} className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    )}
                   </div>
                 ) : (
                   <img src={mapUrl as string} className="w-full h-40 object-cover" />
