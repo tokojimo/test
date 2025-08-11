@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, LocateFixed, Search } from "lucide-react";
+import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -73,16 +73,18 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       <div className="relative h-[60vh] rounded-2xl border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
         <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
 
-        <div className="absolute top-3 left-3 flex flex-col gap-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setGpsFollow(true)}
-            className={BTN_GHOST_ICON}
-            aria-label={t("Ma position")}
-          >
-            📍
-          </Button>
+        <div className="absolute top-3 left-3 flex items-start gap-2">
+          {gpsFollow && (
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={() => setGpsFollow(true)}
+              className={BTN_GHOST_ICON}
+              aria-label={t("Centrer sur ma position")}
+            >
+              <Navigation className="w-4 h-4" />
+            </Button>
+          )}
           <div className="bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-300 dark:border-neutral-800 flex items-center gap-2">
             <span className={`text-xs ${T_PRIMARY}`}>{t("Légende")}</span>
             {LEGEND.map((l, i) => (
