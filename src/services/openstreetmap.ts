@@ -8,3 +8,19 @@ export async function loadMap() {
 export function getStaticMapUrl(lat: number, lng: number, width = 400, height = 160, zoom = 13) {
   return `https://staticmap.openstreetmap.de/staticmap.php?center=${lat},${lng}&zoom=${zoom}&size=${width}x${height}`;
 }
+
+export async function geocode(query: string) {
+  const url = `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query)}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return [];
+    const data = await res.json();
+    return data.map((d: any) => ({
+      lat: parseFloat(d.lat),
+      lon: parseFloat(d.lon),
+      name: d.display_name,
+    }));
+  } catch {
+    return [];
+  }
+}
