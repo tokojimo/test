@@ -8,8 +8,7 @@ import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
 import type { Spot } from "../types";
 import { todayISO } from "../utils";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import { loadMapKit } from "@/services/mapkit";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = todayISO();
@@ -23,7 +22,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const [photos, setPhotos] = useState<string[]>([]);
   const photoUrlsRef = useRef<string[]>([]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
+    const mapRef = useRef<any>(null);
 
   useEffect(() => {
     if (!name) {
@@ -58,22 +57,22 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
 
   useEffect(() => {
     if (mapRef.current || !mapContainerRef.current) return;
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: "https://demotiles.maplibre.org/style.json",
-      center: [2.3522, 48.8566],
-      zoom: 12,
+    loadMapKit().then(() => {
+      const map = new mapkit.Map(mapContainerRef.current);
+      map.region = new mapkit.CoordinateRegion(
+        new mapkit.Coordinate(48.8566, 2.3522),
+        new mapkit.CoordinateSpan(0.2, 0.2)
+      );
+      mapRef.current = map;
+      const update = () => {
+        const c = map.center;
+        setLocation(`${c.longitude.toFixed(5)}, ${c.latitude.toFixed(5)}`);
+      };
+      map.addEventListener("region-change-end", update);
+      update();
     });
-    mapRef.current = map;
-    const update = () => {
-      const c = map.getCenter();
-      setLocation(`${c.lng.toFixed(5)}, ${c.lat.toFixed(5)}`);
-    };
-    map.on("move", update);
-    update();
     return () => {
-      map.off("move", update);
-      map.remove();
+      mapRef.current?.destroy();
       mapRef.current = null;
     };
   }, []);
