@@ -1,48 +1,65 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Account from './Account';
 import Subscription from './Subscription';
 import OfflineMaps from './OfflineMaps';
 import Alerts from './Alerts';
 import Preferences from './Preferences';
 import Legal from './Legal';
+import { Tabs } from '@/components/ui/tabs';
+import { Accordion } from '@/components/ui/accordion';
+import Section from '@/components/settings/Section';
+import '../../styles/settings.css';
 
 const sections = [
-  { id: 'account', label: 'Compte', component: <Account /> },
-  { id: 'subscription', label: 'Abonnement', component: <Subscription /> },
-  { id: 'maps', label: 'Cartes hors-ligne', component: <OfflineMaps /> },
-  { id: 'alerts', label: 'Alertes', component: <Alerts /> },
-  { id: 'prefs', label: 'Préférences', component: <Preferences /> },
-  { id: 'legal', label: 'Légal', component: <Legal /> },
+  { id: 'account', label: 'Compte', element: <Account /> },
+  { id: 'abonnement', label: 'Abonnement', element: <Subscription /> },
+  { id: 'cartes', label: 'Cartes hors-ligne', element: <OfflineMaps /> },
+  { id: 'alertes', label: 'Alertes', element: <Alerts /> },
+  { id: 'preferences', label: 'Préférences', element: <Preferences /> },
+  { id: 'legal', label: 'Légal', element: <Legal /> },
 ];
 
 export default function SettingsIndex() {
-  const [tab, setTab] = useState('account');
+  const [active, setActive] = useState(() =>
+    window.location.hash.replace('#', '') || 'account'
+  );
+
+  useEffect(() => {
+    if (active) window.location.hash = active;
+  }, [active]);
+
   return (
-    <div className="p-4">
-      <h1 className="text-xl font-bold mb-4">Réglages</h1>
-      <div className="hidden md:flex gap-2 mb-4" role="tablist">
-        {sections.map((s) => (
-          <button
-            key={s.id}
-            role="tab"
-            aria-selected={tab === s.id}
-            onClick={() => setTab(s.id)}
-            className={`px-2 py-1 border-b-2 ${tab === s.id ? 'border-black' : 'border-transparent'}`}
-          >
-            {s.label}
-          </button>
-        ))}
+    <div className="container max-w-3xl mx-auto px-4 py-6 space-y-6">
+      <header className="space-y-1">
+        <h1 className="text-2xl font-semibold text-foreground">Réglages</h1>
+        <p className="text-sm text-foreground/70">Configurer l'application</p>
+      </header>
+
+      <div className="md:hidden">
+        <Accordion
+          items={sections.map((s) => ({
+            id: s.id,
+            label: s.label,
+            content: <Section id={s.id}>{s.element}</Section>,
+          }))}
+          value={active}
+          onChange={setActive}
+        />
       </div>
-      <div className="md:hidden" role="presentation">
-        {sections.map((s) => (
-          <details key={s.id} className="mb-2" open={tab === s.id} onClick={() => setTab(s.id)}>
-            <summary className="font-medium">{s.label}</summary>
-            <div className="p-2">{s.component}</div>
-          </details>
-        ))}
-      </div>
-      <div className="hidden md:block" role="tabpanel">
-        {sections.find((s) => s.id === tab)?.component}
+
+      <div className="hidden md:block">
+        <Tabs
+          tabs={sections.map((s) => ({ id: s.id, label: s.label }))}
+          active={active}
+          onChange={setActive}
+        />
+        <div className="mt-6">
+          {sections.map((s) => (
+            <div key={s.id} className={s.id === active ? 'block' : 'hidden'}>
+              <Section id={s.id}>{s.element}</Section>
+            </div>
+          ))}
+        </div>
       </div>
     </div>
   );
