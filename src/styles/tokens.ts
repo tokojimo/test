@@ -1,5 +1,5 @@
 export const BTN =
-  "rounded-xl bg-primary text-white hover:bg-primary/90";
+  "rounded-xl bg-gradient-to-r from-primary to-secondary text-white hover:opacity-90 transition-opacity";
 export const BTN_GHOST_ICON =
   "text-primary hover:bg-primary/10";
 export const T_PRIMARY = "text-primary";

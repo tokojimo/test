@@ -14,7 +14,7 @@ module.exports = {
         danger: "hsl(var(--danger))",
       },
       fontFamily: {
-        sans: ["'Space Grotesk'", "sans-serif"],
+        sans: ["'Inter'", "sans-serif"],
       },
       borderRadius: {
         lg: "var(--radius)",

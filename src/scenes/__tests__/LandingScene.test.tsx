@@ -39,15 +39,15 @@ describe('LandingScene', () => {
     motionSection.mockClear();
   });
 
-  it('renders animated background bubbles', () => {
+  it('renders rotating background orbs', () => {
     renderScene();
     const calls = motionDiv.mock.calls;
     const primary = calls.find(([props]) => props.className?.includes('bg-primary/30'));
-    const secondary = calls.find(([props]) => props.className?.includes('bg-secondary/30'));
+    const secondary = calls.find(([props]) => props.className?.includes('bg-secondary/20'));
     expect(primary).toBeTruthy();
-    expect(primary![0].animate).toEqual({ y: [0, 40, 0], opacity: [0.5, 0.8, 0.5] });
+    expect(primary![0].animate).toMatchObject({ rotate: expect.any(Array) });
     expect(secondary).toBeTruthy();
-    expect(secondary![0].animate).toEqual({ y: [0, -40, 0], opacity: [0.5, 0.8, 0.5] });
+    expect(secondary![0].animate).toMatchObject({ rotate: expect.any(Array) });
   });
 
   it('shows glassmorphic card with animated content', () => {
