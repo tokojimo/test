@@ -5,8 +5,7 @@ import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tok
 import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
 import { todayISO } from "../utils";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import { loadMapKit } from "@/services/mapkit";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -17,22 +16,24 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
   );
   const { t } = useT();
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
+  const mapRef = useRef<any>(null);
 
   useEffect(() => {
     if (!spot.location || mapRef.current || !mapContainerRef.current) return;
     const [lng, lat] = spot.location.split(",").map((v) => parseFloat(v.trim()));
     if (Number.isNaN(lng) || Number.isNaN(lat)) return;
-    const map = new maplibregl.Map({
-      container: mapContainerRef.current,
-      style: "https://demotiles.maplibre.org/style.json",
-      center: [lng, lat],
-      zoom: 12,
+    loadMapKit().then(() => {
+      const map = new mapkit.Map(mapContainerRef.current);
+      map.region = new mapkit.CoordinateRegion(
+        new mapkit.Coordinate(lat, lng),
+        new mapkit.CoordinateSpan(0.1, 0.1)
+      );
+      mapRef.current = map;
+      const marker = new mapkit.MarkerAnnotation(new mapkit.Coordinate(lat, lng));
+      map.addAnnotation(marker);
     });
-    new maplibregl.Marker().setLngLat([lng, lat]).addTo(map);
-    mapRef.current = map;
     return () => {
-      map.remove();
+      mapRef.current?.destroy();
       mapRef.current = null;
     };
   }, [spot.location]);

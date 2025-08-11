@@ -9,8 +9,7 @@ import { DEMO_ZONES } from "../data/zones";
 import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
-import maplibregl from "maplibre-gl";
-import "maplibre-gl/dist/maplibre-gl.css";
+import { loadMapKit } from "@/services/mapkit";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
@@ -18,59 +17,52 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
   const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
-  const mapRef = useRef<maplibregl.Map | null>(null);
+  const mapRef = useRef<any>(null);
   const { t } = useT();
 
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
-    const map = new maplibregl.Map({
-      container: mapContainer.current,
-      style: "https://demotiles.maplibre.org/style.json",
-      center: [2.3522, 48.8566],
-      zoom,
-    });
-    mapRef.current = map;
-    map.on("load", () => {
-      map.addSource("mock", {
-        type: "raster",
-        tiles: ["https://example.com/mock/{z}/{x}/{y}.png"],
-        tileSize: 256,
-      });
-      map.addLayer({ id: "mock", type: "raster", source: "mock" });
-    });
-    map.on("click", e => {
-      const { lng, lat } = e.lngLat;
-      // Find nearest demo zone to the clicked coordinates
-      let nearest: Zone | null = null;
-      let minDist = Infinity;
-      for (const z of DEMO_ZONES) {
-        const [zLat, zLng] = z.coords;
-        const dist = Math.hypot(lat - zLat, lng - zLng);
-        if (dist < minDist) {
-          minDist = dist;
-          nearest = z;
+    loadMapKit().then(() => {
+      const map = new mapkit.Map(mapContainer.current);
+      map.region = new mapkit.CoordinateRegion(
+        new mapkit.Coordinate(48.8566, 2.3522),
+        new mapkit.CoordinateSpan(0.5, 0.5)
+      );
+      mapRef.current = map;
+      map.addEventListener("singleTap", (e: any) => {
+        const { latitude: lat, longitude: lng } = e.coordinate;
+        // Find nearest demo zone to the tapped coordinates
+        let nearest: Zone | null = null;
+        let minDist = Infinity;
+        for (const z of DEMO_ZONES) {
+          const [zLat, zLng] = z.coords;
+          const dist = Math.hypot(lat - zLat, lng - zLng);
+          if (dist < minDist) {
+            minDist = dist;
+            nearest = z;
+          }
         }
-      }
-      if (nearest) {
-        const speciesLines = Object.entries(nearest.species)
-          .map(([id, sc]) => {
-            const name = MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
-            return `${name} ${sc}%`;
-          })
-          .join("\n");
-        const msg = `${nearest.name}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
-        onMapClick?.(msg);
-      }
+        if (nearest) {
+          const speciesLines = Object.entries(nearest.species)
+            .map(([id, sc]) => {
+              const name = MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
+              return `${name} ${sc}%`;
+            })
+            .join("\n");
+          const msg = `${nearest.name}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
+          onMapClick?.(msg);
+        }
+      });
     });
     return () => {
-      map.remove();
+      mapRef.current?.destroy();
       mapRef.current = null;
     };
   }, []);
 
   useEffect(() => {
     if (mapRef.current) {
-      mapRef.current.setZoom(zoom);
+      (mapRef.current as any).zoom = zoom;
     }
   }, [zoom]);
   const zones = useMemo<Zone[]>(() => (selectedSpecies.length === 0 ? DEMO_ZONES : DEMO_ZONES.filter(z => selectedSpecies.every(id => (z.species[id] || 0) > 50))), [selectedSpecies]);
