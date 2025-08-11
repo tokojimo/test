@@ -63,7 +63,7 @@ function AppContent() {
     });
     setTimeout(() => {
       setToasts((curr) => curr.filter((t) => t.id !== id));
-    }, 5000);
+    }, 45000);
   }, []);
 
   useEffect(() => {
@@ -145,6 +145,7 @@ function AppContent() {
                     setSelectedZone(z);
                     goTo(Scene.Zone);
                   }}
+                  pushToast={pushToast}
                 />
               }
             />
