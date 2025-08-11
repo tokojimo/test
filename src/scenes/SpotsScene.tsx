@@ -12,7 +12,7 @@ import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 import type { Spot } from "../types";
 
-export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; onBack: () => void }) {
+export default function SpotsScene({ onBack }: { onBack: () => void }) {
   const { state, dispatch } = useAppContext();
   const spots = state.mySpots;
   const [createOpen, setCreateOpen] = useState(false);
@@ -20,6 +20,13 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
   const [details, setDetails] = useState<Spot | null>(null);
   const [loading, setLoading] = useState(true);
   const { t } = useT();
+
+  const openRoute = (spot: Spot) => {
+    if (!spot.location) return;
+    const [lng, lat] = spot.location.split(",").map(v => parseFloat(v.trim()));
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return;
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+  };
 
   useEffect(() => {
     const timer = setTimeout(() => setLoading(false), 400);
@@ -90,7 +97,7 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
                   {t("Dernière visite :")} {s.last || "–"}
                 </div>
                 <div className="mt-3 flex gap-2">
-                  <Button onClick={onRoute} className={BTN}>
+                  <Button onClick={() => openRoute(s)} className={BTN}>
                     <Route className="w-4 h-4 mr-2" />
                     {t("Itinéraire")}
                   </Button>
