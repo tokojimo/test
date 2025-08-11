@@ -11,6 +11,7 @@ import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 import { getStaticMapUrl } from "../services/openstreetmap";
 import Logo from "@/assets/logo.png";
+import MapPlaceholder from "@/assets/map-placeholder.svg";
 import type { Spot } from "../types";
 
 export default function SpotsScene({ onBack }: { onBack: () => void }) {
@@ -82,11 +83,23 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
                 <button onClick={() => setDetails(s)} className="block text-left">
                   {hasLoc ? (
                     <div className="relative w-full h-40">
-                      <img src={mapUrl as string} className="w-full h-full object-cover" />
+                      <img
+                        src={mapUrl as string}
+                        className="w-full h-full object-cover"
+                        onError={(e) => {
+                          e.currentTarget.src = MapPlaceholder;
+                        }}
+                      />
                       <img src={Logo} className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                     </div>
                   ) : (
-                    <img src={mapUrl as string} className="w-full h-40 object-cover" />
+                    <img
+                      src={mapUrl as string}
+                      className="w-full h-40 object-cover"
+                      onError={(e) => {
+                        e.currentTarget.src = MapPlaceholder;
+                      }}
+                    />
                   )}
                 </button>
                 <button
