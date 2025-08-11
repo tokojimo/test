@@ -21,8 +21,8 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
 
   useEffect(() => {
     if (!spot.location || mapRef.current || !mapContainerRef.current) return;
-    const [lng, lat] = spot.location.split(",").map((v) => parseFloat(v.trim()));
-    if (Number.isNaN(lng) || Number.isNaN(lat)) return;
+    const [lat, lng] = spot.location.split(",").map((v) => parseFloat(v.trim()));
+    if (Number.isNaN(lat) || Number.isNaN(lng)) return;
     loadMap().then(maplibregl => {
       const map = new maplibregl.Map({
         container: mapContainerRef.current as HTMLDivElement,

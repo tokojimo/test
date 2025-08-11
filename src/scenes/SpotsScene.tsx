@@ -23,7 +23,7 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
 
   const openRoute = (spot: Spot) => {
     if (!spot.location) return;
-    const [lng, lat] = spot.location.split(",").map(v => parseFloat(v.trim()));
+    const [lat, lng] = spot.location.split(",").map(v => parseFloat(v.trim()));
     if (Number.isNaN(lat) || Number.isNaN(lng)) return;
     window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
   };

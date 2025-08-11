@@ -6,7 +6,7 @@ export default {
   },
   "Créé": { fr: "Créé", en: "Created" },
   "Coin ajouté": { fr: "Coin ajouté", en: "Spot added" },
-  "Map clicked at {lng}, {lat}": { fr: "Carte cliquée à {lng}, {lat}", en: "Map clicked at {lng}, {lat}" },
+  "Map clicked at {lat}, {lng}": { fr: "Carte cliquée à {lat}, {lng}", en: "Map clicked at {lat}, {lng}" },
   "Zone clicked: {name}": { fr: "Zone cliquée : {name}", en: "Zone clicked: {name}" },
   "Espace insuffisant. Libérez {n} Mo": {
     fr: "Espace insuffisant. Libérez {n} Mo",

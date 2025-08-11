@@ -71,7 +71,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
 
       const updateLocation = () => {
         const c = map.getCenter();
-        setLocation(`${c.lng.toFixed(5)}, ${c.lat.toFixed(5)}`);
+        setLocation(`${c.lat.toFixed(5)}, ${c.lng.toFixed(5)}`);
       };
 
       updateLocation();
