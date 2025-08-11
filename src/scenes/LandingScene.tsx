@@ -23,6 +23,7 @@ export default function LandingScene({
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
+      style={{ willChange: "opacity" }}
       className="relative min-h-screen overflow-hidden bg-background text-foreground"
     >
       <div className="absolute top-3 right-3 z-20">
@@ -42,11 +43,13 @@ export default function LandingScene({
           className="absolute -top-40 left-1/2 w-[60rem] h-[60rem] -translate-x-1/2 rounded-full bg-forest/30 blur-3xl"
           animate={{ rotate: [0, 360] }}
           transition={{ duration: 30, repeat: Infinity, ease: "linear" }}
+          style={{ willChange: "transform" }}
         />
         <motion.div
           className="absolute bottom-0 left-1/2 w-[80rem] h-[80rem] -translate-x-1/2 rounded-full bg-moss/20 blur-3xl mix-blend-multiply"
           animate={{ rotate: [0, -360] }}
           transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+          style={{ willChange: "transform" }}
         />
       </div>
 
@@ -55,6 +58,7 @@ export default function LandingScene({
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
+          style={{ willChange: "transform, opacity" }}
           className="max-w-xl p-10 rounded-3xl bg-background/60 backdrop-blur-xl border border-border/50 shadow-2xl"
         >
           <img

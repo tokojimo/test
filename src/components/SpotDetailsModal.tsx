@@ -108,7 +108,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
               {photos.slice(0, 5).map((p: string, i: number) => (
                 <button key={i} onClick={() => setLightbox({ open: true, index: i })} className="relative group">
                   <img src={p} className="w-full h-28 object-cover rounded-xl border border-neutral-300 dark:border-neutral-800" />
-                  <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/20 transition" />
+                  <div className="absolute inset-0 rounded-xl bg-black/0 group-hover:bg-black/20 transition" style={{ willChange: "opacity" }} />
                   <Maximize2 className="absolute right-2 bottom-2 w-4 h-4 text-white opacity-0 group-hover:opacity-100" />
                 </button>
               ))}
