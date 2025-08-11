@@ -1,11 +1,12 @@
 import React, { useRef, useState, useEffect } from "react";
-import { X, MapPin, Plus, Pencil, Maximize2 } from "lucide-react";
+import { X, Plus, Pencil, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
 import { todayISO } from "../utils";
 import { loadMapKit } from "@/services/mapkit";
+import Logo from "/Logo.png";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -54,10 +55,10 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
           <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100"><X className="w-5 h-5" /></button>
         </div>
 
-        <div className="relative h-48 rounded-xl overflow-hidden border border-neutral-300 dark:border-neutral-800 bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)] bg-neutral-100 dark:bg-neutral-900">
+        <div className="relative h-48 rounded-xl overflow-hidden border border-neutral-400 dark:border-neutral-700 bg-neutral-200 dark:bg-neutral-800">
           <div ref={mapContainerRef} className="absolute inset-0" />
-          <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs bg-neutral-100/70 dark:bg-neutral-900/70 border border-neutral-300 dark:border-neutral-800 ${T_PRIMARY}`}>
-            <MapPin className="w-3 h-3 inline mr-1" />
+          <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs bg-neutral-100/70 dark:bg-neutral-900/70 border border-neutral-400 dark:border-neutral-700 ${T_PRIMARY}`}>
+            <img src={Logo} className="w-3 h-3 inline mr-1" alt="" />
             {t("Carte du coin")}
           </div>
         </div>
