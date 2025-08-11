@@ -270,7 +270,13 @@ function AppContent() {
             />
             <Route
               path={Scene.Login}
-              element={<LoginScene onSignup={() => goTo(Scene.Signup)} onBack={goBack} />}
+              element={
+                <LoginScene
+                  onSignup={() => goTo(Scene.Signup)}
+                  onPremium={() => goTo(Scene.Premium)}
+                  onBack={goBack}
+                />
+              }
             />
             <Route
               path={Scene.Signup}
