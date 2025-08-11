@@ -36,7 +36,7 @@ export default function LoginScene({
       exit={{ x: -20, opacity: 0 }}
       className="p-3 space-y-4"
     >
-      <header className="flex items-center justify-between">
+      <header className="flex items-center gap-2">
         <Button
           variant="ghost"
           size="icon"

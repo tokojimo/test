@@ -88,7 +88,7 @@ export default function SettingsScene({
             </div>
           ) : (
             <div className="space-y-2">
-              <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
                 <Button onClick={onLogin} className={BTN}>
                   {t("Se connecter")}
                 </Button>
