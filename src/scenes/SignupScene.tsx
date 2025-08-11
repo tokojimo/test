@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { Scene } from "../routes";
 
 export default function SignupScene({ onLogin, onBack }: { onLogin: () => void; onBack: () => void }) {
-  const { signup } = useAuth();
+  const { signup, loginWithProvider } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { t } = useT();
@@ -26,6 +26,16 @@ export default function SignupScene({ onLogin, onBack }: { onLogin: () => void; 
       }
     } else {
       alert(t("Nom d'utilisateur déjà pris"));
+    }
+  };
+
+  const handleProviderSignup = (provider: "google" | "apple") => {
+    loginWithProvider(provider);
+    if (localStorage.getItem("goPremiumAfterSignup") === "true") {
+      localStorage.removeItem("goPremiumAfterSignup");
+      navigate(Scene.Premium);
+    } else {
+      onBack();
     }
   };
 
@@ -54,6 +64,12 @@ export default function SignupScene({ onLogin, onBack }: { onLogin: () => void; 
         />
         <Button onClick={handleSignup} className={BTN}>
           {t("Créer un compte")}
+        </Button>
+        <Button onClick={() => handleProviderSignup("google")} className={BTN}>
+          {t("Créer un compte avec Google")}
+        </Button>
+        <Button onClick={() => handleProviderSignup("apple")} className={BTN}>
+          {t("Créer un compte avec Apple")}
         </Button>
         <Button onClick={onLogin} className={BTN} variant="ghost">
           {t("Se connecter")}

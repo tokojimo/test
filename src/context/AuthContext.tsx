@@ -9,6 +9,7 @@ interface AuthContextValue {
   user: User | null;
   login: (u: string, p: string) => boolean;
   signup: (u: string, p: string) => boolean;
+  loginWithProvider: (p: "google" | "apple") => void;
   logout: () => void;
   upgrade: () => void;
 }
@@ -44,6 +45,20 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return true;
   };
 
+  const loginWithProvider = (provider: "google" | "apple") => {
+    const users = JSON.parse(localStorage.getItem("users") || "{}") as Record<
+      string,
+      { password: string; premium: boolean }
+    >;
+    if (!users[provider]) {
+      users[provider] = { password: "", premium: false };
+      localStorage.setItem("users", JSON.stringify(users));
+    }
+    const u: User = { username: provider, premium: !!users[provider].premium };
+    setUser(u);
+    localStorage.setItem("user", JSON.stringify(u));
+  };
+
   const logout = () => {
     setUser(null);
     localStorage.removeItem("user");
@@ -62,7 +77,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, signup, logout, upgrade }}>
+    <AuthContext.Provider value={{ user, login, signup, loginWithProvider, logout, upgrade }}>
       {children}
     </AuthContext.Provider>
   );
