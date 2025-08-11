@@ -16,15 +16,21 @@ import SettingsScene from "./scenes/SettingsScene";
 import DownloadScene from "./scenes/DownloadScene";
 import PrivacyPolicyScene from "./scenes/PrivacyPolicyScene";
 import TermsScene from "./scenes/TermsScene";
+import LoginScene from "./scenes/LoginScene";
+import SignupScene from "./scenes/SignupScene";
+import PremiumScene from "./scenes/PremiumScene";
 import { AppProvider, useAppContext } from "./context/AppContext";
+import { AuthProvider } from "./context/AuthContext";
 import { useT } from "./i18n";
 import { Scene } from "./routes";
 
 export default function MycoExplorerApp() {
   return (
-    <AppProvider>
-      <AppContent />
-    </AppProvider>
+    <AuthProvider>
+      <AppProvider>
+        <AppContent />
+      </AppProvider>
+    </AuthProvider>
   );
 }
 
@@ -126,6 +132,9 @@ function AppContent() {
                   onMySpots={() => goTo(Scene.Spots)}
                   onOpenSettings={() => goTo(Scene.Settings)}
                   onOpenPicker={() => goTo(Scene.Picker)}
+                  onLogin={() => goTo(Scene.Login)}
+                  onSignup={() => goTo(Scene.Signup)}
+                  onPremium={() => goTo(Scene.Premium)}
                 />
               }
             />
@@ -258,6 +267,18 @@ function AppContent() {
             <Route
               path={Scene.Terms}
               element={<TermsScene onBack={goBack} />}
+            />
+            <Route
+              path={Scene.Login}
+              element={<LoginScene onSignup={() => goTo(Scene.Signup)} onBack={goBack} />}
+            />
+            <Route
+              path={Scene.Signup}
+              element={<SignupScene onLogin={() => goTo(Scene.Login)} onBack={goBack} />}
+            />
+            <Route
+              path={Scene.Premium}
+              element={<PremiumScene onBack={goBack} />}
             />
             <Route path="*" element={<Navigate to={Scene.Landing} replace />} />
           </Routes>
