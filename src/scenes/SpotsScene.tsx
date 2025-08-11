@@ -78,19 +78,22 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
             const hasLoc = !Number.isNaN(lat) && !Number.isNaN(lng);
             const mapUrl = hasLoc ? getStaticMapUrl(lat, lng) : s.cover || s.photos?.[0];
             return (
-              <Card key={s.id} className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden relative">
-                <button onClick={() => setDetails(s)} className="block text-left">
-                  {hasLoc ? (
-                    <div className="relative w-full h-40">
-                      <img src={mapUrl as string} className="w-full h-full object-cover" />
-                      <img src={Logo} className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
-                    </div>
-                  ) : (
-                    <img src={mapUrl as string} className="w-full h-40 object-cover" />
-                  )}
-                </button>
+              <Card
+                key={s.id}
+                onClick={() => setDetails(s)}
+                className="cursor-pointer bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden relative"
+              >
+                {hasLoc ? (
+                  <div className="relative w-full h-40">
+                    <img src={mapUrl as string} className="w-full h-full object-cover" />
+                    <img src={Logo} className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                  </div>
+                ) : (
+                  <img src={mapUrl as string} className="w-full h-40 object-cover" />
+                )}
                 <button
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.stopPropagation();
                     if (window.confirm(t("Supprimer ce coin ?"))) {
                       dispatch({ type: "removeSpot", id: s.id });
                     }
@@ -112,7 +115,13 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
                     {t("Dernière visite :")} {s.last || "–"}
                   </div>
                   <div className="mt-3 flex gap-2">
-                    <Button onClick={() => openRoute(s)} className={BTN}>
+                    <Button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        openRoute(s);
+                      }}
+                      className={BTN}
+                    >
                       <Route className="w-4 h-4 mr-2" />
                       {t("Itinéraire")}
                     </Button>
