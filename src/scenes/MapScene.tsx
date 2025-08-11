@@ -11,7 +11,6 @@ import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import mapboxgl from "mapbox-gl";
 import { useT } from "../i18n";
-import { NotificationStack, Notification } from "../components/NotificationStack";
 import type { Zone } from "../types";
 
 export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
@@ -20,12 +19,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<mapboxgl.Map | null>(null);
   const { t } = useT();
-  const [notifications, setNotifications] = useState<Notification[]>([]);
-
-  const addNotification = (msg: string) =>
-    setNotifications(prev => [...prev, { id: Date.now(), message: msg }]);
-  const removeNotification = (id: number) =>
-    setNotifications(prev => prev.filter(n => n.id !== id));
 
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
@@ -36,15 +29,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       center: [2.3522, 48.8566],
       zoom,
     });
-    const handleClick = (e: mapboxgl.MapMouseEvent & mapboxgl.EventData) => {
-      addNotification(
-        t("Map clicked at {lng}, {lat}", {
-          lng: e.lngLat.lng.toFixed(2),
-          lat: e.lngLat.lat.toFixed(2),
-        })
-      );
-    };
-    map.on("click", handleClick);
     mapRef.current = map;
     map.on("load", () => {
       map.addSource("mock", {
@@ -55,7 +39,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       map.addLayer({ id: "mock", type: "raster", source: "mock" });
     });
     return () => {
-      map.off("click", handleClick);
       map.remove();
       mapRef.current = null;
     };
@@ -70,7 +53,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
-      <NotificationStack notifications={notifications} onRemove={removeNotification} />
       <div className="flex items-center gap-2 mb-3">
         <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
           <ChevronLeft className="w-5 h-5" />
@@ -117,7 +99,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
             <div
               key={z.id}
               onClick={() => {
-                addNotification(t("Zone clicked: {name}", { name: z.name }));
                 onZone(z);
               }}
               role="button"
