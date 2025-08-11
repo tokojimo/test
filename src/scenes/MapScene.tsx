@@ -73,27 +73,25 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       <div className="relative h-[60vh] rounded-2xl border border-neutral-300 dark:border-neutral-800 bg-neutral-100 dark:bg-neutral-900 overflow-hidden">
         <div ref={mapContainer} className="absolute inset-0 w-full h-full" />
 
-        <div className="absolute top-3 left-3 flex items-start gap-2">
-          {gpsFollow && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => setGpsFollow(true)}
-              className={BTN_GHOST_ICON}
-              aria-label={t("Centrer sur ma position")}
-            >
-              <Navigation className="w-4 h-4" />
-            </Button>
-          )}
-          <div className="bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-300 dark:border-neutral-800 flex items-center gap-2">
-            <span className={`text-xs ${T_PRIMARY}`}>{t("Légende")}</span>
-            {LEGEND.map((l, i) => (
-              <div key={i} className="flex items-center gap-1">
-                <div className={classNames("w-3 h-3 rounded", l.color)} />
-                <span className={`text-[10px] ${T_MUTED}`}>{l.label}</span>
-              </div>
-            ))}
-          </div>
+        {gpsFollow && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setGpsFollow(true)}
+            className={`absolute top-3 right-3 ${BTN_GHOST_ICON}`}
+            aria-label={t("Centrer sur ma position")}
+          >
+            <Navigation className="w-4 h-4" />
+          </Button>
+        )}
+        <div className="absolute top-3 left-3 bg-neutral-100/80 dark:bg-neutral-900/80 backdrop-blur rounded-xl p-2 border border-neutral-300 dark:border-neutral-800 flex items-center gap-2">
+          <span className={`text-xs ${T_PRIMARY}`}>{t("Légende")}</span>
+          {LEGEND.map((l, i) => (
+            <div key={i} className="flex items-center gap-1">
+              <div className={classNames("w-3 h-3 rounded", l.color)} />
+              <span className={`text-[10px] ${T_MUTED}`}>{l.label}</span>
+            </div>
+          ))}
         </div>
 
         <div className="absolute bottom-3 left-3 grid gap-2">
