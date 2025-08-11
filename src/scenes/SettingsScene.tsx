@@ -7,6 +7,7 @@ import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import { ToggleRow } from "../components/ToggleRow";
 import { SelectRow } from "../components/SelectRow";
 import { useAppContext } from "../context/AppContext";
+import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n";
 
 export default function SettingsScene({
@@ -14,14 +15,21 @@ export default function SettingsScene({
   onOpenPrivacy,
   onOpenTerms,
   onBack,
+  onLogin,
+  onSignup,
+  onPremium,
 }: {
   onOpenPacks: () => void;
   onOpenPrivacy: () => void;
   onOpenTerms: () => void;
   onBack: () => void;
+  onLogin: () => void;
+  onSignup: () => void;
+  onPremium: () => void;
 }) {
   const { state, dispatch } = useAppContext();
   const { alerts, prefs } = state;
+  const { user, logout } = useAuth();
   const { t } = useT();
   const handleGpsChange = (v: boolean) => {
     if (v) {
@@ -50,6 +58,37 @@ export default function SettingsScene({
         <ChevronLeft className="w-5 h-5" />
       </Button>
       <Card className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl">
+        <CardHeader>
+          <CardTitle className={T_PRIMARY}>{t("Compte")}</CardTitle>
+        </CardHeader>
+        <CardContent>
+          {user ? (
+            <div className="space-y-2">
+              <div className={`font-medium ${T_PRIMARY}`}>{user.username}</div>
+              {!user.premium ? (
+                <Button onClick={onPremium} className={BTN}>
+                  {t("Passer en premium")}
+                </Button>
+              ) : (
+                <div className={`text-sm ${T_MUTED}`}>{t("Compte premium")}</div>
+              )}
+              <Button onClick={logout} className={BTN}>
+                {t("Se déconnecter")}
+              </Button>
+            </div>
+          ) : (
+            <div className="flex items-center justify-between">
+              <Button onClick={onLogin} className={BTN}>
+                {t("Se connecter")}
+              </Button>
+              <Button onClick={onSignup} className={BTN}>
+                {t("Créer un compte")}
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
+      <Card className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl">
         <CardHeader>
           <CardTitle className={T_PRIMARY}>{t("Cartes hors‑ligne")}</CardTitle>
         </CardHeader>

@@ -5,27 +5,19 @@ import { Button } from "@/components/ui/button";
 import { MushroomIcon } from "../components/MushroomIcon";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import { useT } from "../i18n";
-import { useAuth } from "../context/AuthContext";
 
 export default function LandingScene({
   onSeeMap,
   onMySpots,
   onOpenSettings,
   onOpenPicker,
-  onLogin,
-  onSignup,
-  onPremium,
 }: {
   onSeeMap: () => void;
   onMySpots: () => void;
   onOpenSettings: () => void;
   onOpenPicker: () => void;
-  onLogin: () => void;
-  onSignup: () => void;
-  onPremium: () => void;
 }) {
   const { t } = useT();
-  const { user } = useAuth();
   return (
     <motion.section initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} className="relative min-h-[calc(100vh-0px)]">
       <div className="absolute top-3 right-3 z-20">
@@ -64,22 +56,6 @@ export default function LandingScene({
             {t("Les champignons")}
           </Button>
         </div>
-        {!user ? (
-          <div className="mt-3 flex items-center justify-center gap-3">
-            <Button onClick={onLogin} className={BTN}>
-              {t("Se connecter")}
-            </Button>
-            <Button onClick={onSignup} className={BTN}>
-              {t("Créer un compte")}
-            </Button>
-          </div>
-        ) : (
-          <div className="mt-3 flex justify-center">
-            <Button onClick={onPremium} className={BTN}>
-              {user.premium ? t("Compte premium") : t("Passer en premium")}
-            </Button>
-          </div>
-        )}
         <p className={`mt-8 text-sm ${T_MUTED}`}>
           {t("Mini‑pack offline inclus : carte topo (50 km) + fiches Cèpe, Girolle, Morille.")}
         </p>

@@ -132,9 +132,6 @@ function AppContent() {
                   onMySpots={() => goTo(Scene.Spots)}
                   onOpenSettings={() => goTo(Scene.Settings)}
                   onOpenPicker={() => goTo(Scene.Picker)}
-                  onLogin={() => goTo(Scene.Login)}
-                  onSignup={() => goTo(Scene.Signup)}
-                  onPremium={() => goTo(Scene.Premium)}
                 />
               }
             />
@@ -226,6 +223,9 @@ function AppContent() {
                   onOpenPacks={() => goTo(Scene.Download)}
                   onOpenPrivacy={() => goTo(Scene.Privacy)}
                   onOpenTerms={() => goTo(Scene.Terms)}
+                  onLogin={() => goTo(Scene.Login)}
+                  onSignup={() => goTo(Scene.Signup)}
+                  onPremium={() => goTo(Scene.Premium)}
                   onBack={goBack}
                 />
               }
