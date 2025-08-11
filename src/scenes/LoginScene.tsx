@@ -16,7 +16,7 @@ export default function LoginScene({
   onBack: () => void;
   onPremium: () => void;
 }) {
-  const { login } = useAuth();
+  const { login, loginWithProvider } = useAuth();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const { t } = useT();
@@ -65,6 +65,24 @@ export default function LoginScene({
         />
         <Button onClick={handleLogin} className={BTN}>
           {t("Se connecter")}
+        </Button>
+        <Button
+          onClick={() => {
+            loginWithProvider("google");
+            onBack();
+          }}
+          className={BTN}
+        >
+          {t("Se connecter avec Google")}
+        </Button>
+        <Button
+          onClick={() => {
+            loginWithProvider("apple");
+            onBack();
+          }}
+          className={BTN}
+        >
+          {t("Se connecter avec Apple")}
         </Button>
         <button type="button" className="text-sm underline" onClick={() => {}}>
           {t("Mot de passe oublié ?")}
