@@ -6,6 +6,7 @@ import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
 import { todayISO } from "../utils";
 import { loadMap } from "@/services/openstreetmap";
+import type { StyleSpecification } from "maplibre-gl";
 import Logo from "@/assets/logo.png";
 import { useAppContext } from "../context/AppContext";
 import { EditSpotModal } from "./EditSpotModal";
@@ -30,9 +31,31 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     const [lat, lng] = spot.location.split(",").map((v) => parseFloat(v.trim()));
     if (Number.isNaN(lat) || Number.isNaN(lng)) return;
     loadMap().then(maplibregl => {
+      const osmStyle: StyleSpecification = {
+        version: 8,
+        sources: {
+          osm: {
+            type: "raster",
+            // Official OpenStreetMap raster tiles to match openstreetmap.org
+            // See https://tile.openstreetmap.org
+            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            tileSize: 256,
+            attribution: "© OpenStreetMap contributors",
+          },
+        },
+        layers: [
+          {
+            id: "osm",
+            type: "raster",
+            source: "osm",
+            minzoom: 0,
+            maxzoom: 19,
+          },
+        ],
+      };
       const map = new maplibregl.Map({
         container: mapContainerRef.current as HTMLDivElement,
-        style: "https://demotiles.maplibre.org/style.json",
+        style: osmStyle,
         center: [lng, lat],
         zoom: 11,
       });
