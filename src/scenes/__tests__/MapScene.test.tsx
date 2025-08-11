@@ -62,7 +62,7 @@ describe('MapScene', () => {
     await new Promise(r => setTimeout(r, 0));
     mapInstance.handlers.click({ lngLat: { lat: 45.7, lng: 5.9 } });
 
-    const toast = await screen.findByRole('button', { name: /Testville/ });
+    const toast = await screen.findByRole('button', { name: new RegExp(DEMO_ZONES[1].name) });
     fireEvent.click(toast);
 
     expect(onZone).toHaveBeenCalledWith(expect.objectContaining({ id: DEMO_ZONES[1].id }));
