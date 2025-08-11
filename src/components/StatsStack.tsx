@@ -2,23 +2,50 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
+import ZoneDashboard from "./ZoneDashboard";
+import type { Zone } from "../types";
 
-type StatItem = {
-  label: string;
-  percent: string;
-  down?: boolean;
-};
+type StatItem = Zone;
 
 const data: StatItem[] = [
-  { label: "Ripisylve du Vieux Pont", percent: "72% ⬊", down: true },
-  { label: "Cèpe", percent: "40%" },
-  { label: "Girolle", percent: "55%" },
-  { label: "Morille", percent: "85%" }
+  {
+    id: "la_vrignaie",
+    name: "La Vrignaie",
+    score: 72,
+    species: { cepe: 40, girolle: 55, morille: 85 },
+    trend: "down",
+    coords: [0, 0]
+  },
+  {
+    id: "bois_joli",
+    name: "Bois Joli",
+    score: 60,
+    species: { cepe: 30, girolle: 50, morille: 40 },
+    trend: "up",
+    coords: [0, 0]
+  },
+  {
+    id: "ripisylve",
+    name: "Ripisylve du Vieux Pont",
+    score: 68,
+    species: { cepe: 35, girolle: 60, morille: 80 },
+    trend: "down",
+    coords: [0, 0]
+  },
+  {
+    id: "foret_pins",
+    name: "Forêt des Pins",
+    score: 80,
+    species: { cepe: 70, girolle: 40, morille: 20 },
+    trend: "up",
+    coords: [0, 0]
+  }
 ];
 
 export function StatsStack() {
   const [items, setItems] = useState<StatItem[]>([]);
   const [index, setIndex] = useState(0);
+  const [selected, setSelected] = useState<StatItem | null>(null);
 
   const addItem = () => {
     setItems(prev => {
@@ -42,16 +69,27 @@ export function StatsStack() {
               exit={{ opacity: 0, y: 20 }}
               transition={{ duration: 0.25 }}
             >
-              <Card data-testid="stat-card">
+              <Card data-testid="stat-card" onClick={() => setSelected(item)} className="cursor-pointer">
                 <CardContent className="flex justify-between">
-                  <span className="font-semibold">{item.label}</span>
-                  <span className={item.down ? "text-danger" : ""}>{item.percent}</span>
+                  <span className="font-semibold">{item.name}</span>
+                  <span className={item.trend === "down" ? "text-danger" : ""}>
+                    {item.score}% {item.trend === "down" ? "⬊" : ""}
+                  </span>
                 </CardContent>
               </Card>
             </motion.div>
           ))}
         </AnimatePresence>
       </div>
+      {selected && (
+        <ZoneDashboard
+          zone={selected}
+          onGo={() => {}}
+          onAdd={() => {}}
+          onOpenShroom={() => {}}
+          onClose={() => setSelected(null)}
+        />
+      )}
     </div>
   );
 }
