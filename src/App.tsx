@@ -106,7 +106,7 @@ function AppContent() {
   );
 
   return (
-    <div className="w-full min-h-screen bg-neutral-50 dark:bg-neutral-950">
+    <div className="w-full min-h-screen bg-background text-foreground">
       <div className="fixed top-4 right-4 z-50 flex flex-col gap-2">
         {toasts.map((toast) => (
           <div
