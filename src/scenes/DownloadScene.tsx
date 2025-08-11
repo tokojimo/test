@@ -24,7 +24,7 @@ export default function DownloadScene({ packSize, setPackSize, deviceFree, setDe
         <div className="relative flex-1">
           <Input
             placeholder={t("Rechercher une zone…")}
-            className={`pl-9 bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
+            className={`pl-9 bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
           />
           <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
         </div>
@@ -32,15 +32,15 @@ export default function DownloadScene({ packSize, setPackSize, deviceFree, setDe
           <ChevronLeft className="w-5 h-5" />
         </Button>
       </div>
-      <div className="relative h-[50vh] rounded-2xl border border-neutral-300 dark:border-neutral-800 overflow-hidden bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)] bg-neutral-100 dark:bg-neutral-900">
+      <div className="relative h-[50vh] rounded-2xl border border-secondary dark:border-secondary overflow-hidden bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)] bg-secondary dark:bg-secondary">
         <div className="absolute inset-6 border-2 border-red-600 rounded-xl" />
-        <div className={`absolute top-3 left-3 bg-neutral-100/80 dark:bg-neutral-900/80 rounded-xl px-3 py-1 text-sm ${T_PRIMARY}`}>
+        <div className={`absolute top-3 left-3 bg-secondary/80 dark:bg-secondary/80 rounded-xl px-3 py-1 text-sm ${T_PRIMARY}`}>
           {t("Vue actuelle")}
         </div>
       </div>
 
       <div className="mt-3 grid md:grid-cols-2 gap-3">
-        <Card className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl">
+        <Card className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl">
           <CardContent className="pt-4 space-y-2">
             <Row label={t("Taille estimée")} value={`${packSize} Mo`} />
             <Row label={t("Espace disponible")} value={`${deviceFree} Mo`} />
@@ -59,7 +59,7 @@ export default function DownloadScene({ packSize, setPackSize, deviceFree, setDe
                   <Download className="w-4 h-4 mr-2" />
                   {t("Télécharger")}
                 </Button>
-                <Button variant="ghost" onClick={onCancel} className={`flex-1 rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-800 ${T_PRIMARY}`}>
+                <Button variant="ghost" onClick={onCancel} className={`flex-1 rounded-xl hover:bg-secondary dark:hover:bg-secondary ${T_PRIMARY}`}>
                   {t("Annuler")}
                 </Button>
               </div>
@@ -72,7 +72,7 @@ export default function DownloadScene({ packSize, setPackSize, deviceFree, setDe
           </CardContent>
         </Card>
 
-        <Card className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl">
+        <Card className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl">
           <CardHeader>
             <CardTitle className={T_PRIMARY}>{t("États possibles")}</CardTitle>
           </CardHeader>

@@ -49,7 +49,7 @@ export default function SettingsScene({
       <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
         <ChevronLeft className="w-5 h-5" />
       </Button>
-      <Card className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl">
+      <Card className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl">
         <CardHeader>
           <CardTitle className={T_PRIMARY}>{t("Cartes hors‑ligne")}</CardTitle>
         </CardHeader>
@@ -67,7 +67,7 @@ export default function SettingsScene({
         </CardContent>
       </Card>
 
-      <Card className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl">
+      <Card className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl">
         <CardHeader>
           <CardTitle className={T_PRIMARY}>{t("Alertes")}</CardTitle>
         </CardHeader>
@@ -85,7 +85,7 @@ export default function SettingsScene({
         </CardContent>
       </Card>
 
-      <Card className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl">
+      <Card className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl">
         <CardHeader>
           <CardTitle className={T_PRIMARY}>{t("Préférences")}</CardTitle>
         </CardHeader>
