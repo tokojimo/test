@@ -8,6 +8,7 @@ import { useAuth } from "../context/AuthContext";
 import { useT } from "../i18n";
 import { useNavigate } from "react-router-dom";
 import { Scene } from "../routes";
+import AuthProviders from "../components/AuthProviders";
 
 export default function SignupScene({ onLogin, onBack }: { onLogin: () => void; onBack: () => void }) {
   const { signup, loginWithProvider } = useAuth();
@@ -58,28 +59,43 @@ export default function SignupScene({ onLogin, onBack }: { onLogin: () => void; 
             <ChevronLeft className="w-5 h-5" />
           </Button>
         </header>
-        <div className="space-y-3">
+        <div className="space-y-4">
           <div className={`text-lg font-medium text-center ${T_PRIMARY}`}>{t("Créer un compte")}</div>
-          <Input
-            placeholder={t("Nom d'utilisateur")}
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-          />
-          <Input
-            type="password"
-            placeholder={t("Mot de passe")}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-          <Button onClick={handleSignup} className={BTN}>
-            {t("Créer un compte")}
-          </Button>
-          <Button onClick={() => handleProviderSignup("google")} className={BTN}>
-            {t("Créer un compte avec Google")}
-          </Button>
-          <Button onClick={() => handleProviderSignup("apple")} className={BTN}>
-            {t("Créer un compte avec Apple")}
-          </Button>
+          <form
+            className="space-y-3"
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleSignup();
+            }}
+          >
+            <div className="space-y-1">
+              <label htmlFor="username" className="text-sm font-medium">
+                {t("Nom d'utilisateur")}
+              </label>
+              <Input
+                id="username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
+              />
+            </div>
+            <div className="space-y-1">
+              <label htmlFor="password" className="text-sm font-medium">
+                {t("Mot de passe")}
+              </label>
+              <Input
+                id="password"
+                type="password"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </div>
+            <Button type="submit" className={BTN}>
+              {t("Créer un compte")}
+            </Button>
+          </form>
+          <div className="pt-2 border-t">
+            <AuthProviders mode="signup" onProvider={handleProviderSignup} />
+          </div>
           <Button onClick={onLogin} className={BTN} variant="ghost">
             {t("Se connecter")}
           </Button>
