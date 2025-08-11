@@ -27,7 +27,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onMapClick, 
     loadMap().then(maplibregl => {
       const map = new maplibregl.Map({
         container: mapContainer.current as HTMLDivElement,
-        style: "https://demotiles.maplibre.org/style.json",
+        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
         center: [2.3522, 48.8566],
         zoom: 5,
       });
