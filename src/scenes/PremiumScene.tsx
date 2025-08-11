@@ -28,7 +28,7 @@ export default function PremiumScene({ onBack }: { onBack: () => void }) {
             upgrade();
             onBack();
           }}
-          className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+          className={`${BTN} focus-visible:ring-forest`}
         >
           {t("Passer en premium")}
         </Button>

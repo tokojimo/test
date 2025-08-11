@@ -75,7 +75,7 @@ export default function SettingsScene({
               {!user.premium ? (
                 <Button
                   onClick={handlePremium}
-                  className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+                  className={`${BTN} focus-visible:ring-forest`}
                 >
                   {t("Passer en premium")}
                 </Button>
@@ -98,7 +98,7 @@ export default function SettingsScene({
               </div>
               <Button
                 onClick={handlePremium}
-                className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+                className={`${BTN} focus-visible:ring-forest`}
               >
                 {t("Passer en premium")}
               </Button>
