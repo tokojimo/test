@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState } from "react";
+import React, { useRef, useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -19,6 +19,16 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const markersRef = useRef<{ marker: any; timeout: ReturnType<typeof setTimeout> }[]>([]);
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>([]);
+  const [search, setSearch] = useState("");
+  const results = useMemo(
+    () =>
+      search
+        ? DEMO_ZONES.filter(z =>
+            z.name.toLowerCase().includes(search.toLowerCase())
+          )
+        : [],
+    [search]
+  );
   type Toast = { id: number; text: string };
   const [toasts, setToasts] = useState<Toast[]>([]);
   const showToast = (text: string) => {
@@ -111,10 +121,28 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         </Button>
         <div className="relative flex-1">
           <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder={t("Rechercher un lieu…")}
             className={`pl-9 bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
           />
           <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
+          {results.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-xl z-10">
+              {results.map(z => (
+                <button
+                  key={z.id}
+                  onClick={() => {
+                    onZone(z);
+                    setSearch("");
+                  }}
+                  className={`block w-full text-left px-3 py-2 hover:bg-accent/20 ${T_PRIMARY}`}
+                >
+                  {z.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <Button
           onClick={() => setGpsFollow(v => !v)}
