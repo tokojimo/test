@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, Download, Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -7,11 +7,20 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Switch } from "@/components/ui/switch";
 import { Progress } from "@/components/ui/progress";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
+import { DEMO_ZONES } from "../data/zones";
 import { Row } from "../components/Row";
 import { useT } from "../i18n";
 
 export default function DownloadScene({ packSize, setPackSize, deviceFree, setDeviceFree, includeRelief, setIncludeRelief, includeWeather, setIncludeWeather, downloading, dlProgress, onStart, onCancel, onBack }: { packSize: number; setPackSize: (n: number) => void; deviceFree: number; setDeviceFree: (n: number) => void; includeRelief: boolean; setIncludeRelief: (v: boolean) => void; includeWeather: boolean; setIncludeWeather: (v: boolean) => void; downloading: boolean; dlProgress: number; onStart: () => void; onCancel: () => void; onBack: () => void }) {
   const { t } = useT();
+  const [search, setSearch] = useState("");
+  const results = useMemo(
+    () =>
+      DEMO_ZONES.filter(z =>
+        z.name.toLowerCase().includes(search.toLowerCase())
+      ),
+    [search]
+  );
   useEffect(() => {
     const base = 120;
     const size = base + (includeRelief ? 30 : 0) + (includeWeather ? 30 : 0);
@@ -23,10 +32,25 @@ export default function DownloadScene({ packSize, setPackSize, deviceFree, setDe
       <div className="flex items-center gap-2 mb-3">
         <div className="relative flex-1">
           <Input
+            value={search}
+            onChange={e => setSearch(e.target.value)}
             placeholder={t("Rechercher une zone…")}
             className={`pl-9 bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
           />
           <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
+          {search && results.length > 0 && (
+            <div className="absolute top-full left-0 right-0 mt-1 bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-xl z-10">
+              {results.map(z => (
+                <button
+                  key={z.id}
+                  onClick={() => setSearch(z.name)}
+                  className={`block w-full text-left px-3 py-2 hover:bg-accent/20 ${T_PRIMARY}`}
+                >
+                  {z.name}
+                </button>
+              ))}
+            </div>
+          )}
         </div>
         <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
           <ChevronLeft className="w-5 h-5" />
