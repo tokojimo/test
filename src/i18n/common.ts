@@ -74,6 +74,10 @@ export default {
     fr: "Localisation (coordonnées ou lieu)",
     en: "Location (coordinates or place)",
   },
+  "Déplacez la carte pour choisir la localisation": {
+    fr: "Déplacez la carte pour choisir la localisation",
+    en: "Move the map to choose the location",
+  },
   "Sélectionnez un champignon…": { fr: "Sélectionnez un champignon…", en: "Select a mushroom…" },
   "comestible": { fr: "comestible", en: "edible" },
   "toxique": { fr: "toxique", en: "toxic" },
