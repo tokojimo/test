@@ -12,16 +12,11 @@ import { loadMap } from "@/services/openstreetmap";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
-export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { onZone: (z: Zone) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
+export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack, pushToast }: { onZone: (z: Zone) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void; pushToast: (t: { type: "success" | "warn"; text: string }) => void }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>([]);
-  const [toast, setToast] = useState<string | null>(null);
-  const showToast = (msg: string) => {
-    setToast(msg);
-    setTimeout(() => setToast(null), 5000);
-  };
   const toggleShroom = (id: string) =>
     setSelected(prev =>
       prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
@@ -58,7 +53,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             })
             .join("\n");
             const msg = `${nearest.name}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
-            showToast(msg);
+            pushToast({ type: "warn", text: msg });
         }
       });
     });
@@ -114,12 +109,6 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             </div>
           ))}
         </div>
-        {toast && (
-          <div className="absolute left-3 top-16 bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary">
-            <div className={`text-xs whitespace-pre-line ${T_PRIMARY}`}>{toast}</div>
-          </div>
-        )}
-
       </div>
       <div className="mt-4 flex flex-wrap gap-2">
         {MUSHROOMS.map(m => (
