@@ -25,7 +25,6 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const photoUrlsRef = useRef<string[]>([]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
-  const markerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!name) {
@@ -68,29 +67,17 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
       );
       mapRef.current = map;
 
-      const placeMarker = (lat: number, lng: number) => {
-        setLocation(`${lng.toFixed(5)}, ${lat.toFixed(5)}`);
-        if (markerRef.current) {
-          map.removeAnnotation(markerRef.current);
-        }
-        const marker = new mapkit.MarkerAnnotation(new mapkit.Coordinate(lat, lng), {
-          glyphImage: new mapkit.Image(Logo),
-        });
-        map.addAnnotation(marker);
-        markerRef.current = marker;
+      const updateLocation = () => {
+        const c = map.center;
+        setLocation(`${c.longitude.toFixed(5)}, ${c.latitude.toFixed(5)}`);
       };
 
-      const c = map.center;
-      placeMarker(c.latitude, c.longitude);
-      map.addEventListener("singleTap", (e: any) => {
-        const { latitude, longitude } = e.coordinate;
-        placeMarker(latitude, longitude);
-      });
+      updateLocation();
+      map.addEventListener("regionDidChange", updateLocation);
     });
     return () => {
       mapRef.current?.destroy();
       mapRef.current = null;
-      markerRef.current = null;
     };
   }, []);
 
@@ -123,8 +110,12 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
             <div className={`text-sm mb-1 ${T_PRIMARY}`}>{t("Localisation")}</div>
             <div className="relative h-48 rounded-xl border border-neutral-400 dark:border-neutral-700 bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
               <div ref={mapContainerRef} className="absolute inset-0" />
+              <img
+                src={Logo}
+                className="absolute left-1/2 top-1/2 w-8 h-8 -translate-x-1/2 -translate-y-1/2 pointer-events-none"
+              />
             </div>
-            <div className={`text-xs mt-1 ${T_MUTED}`}>{t("Cliquez sur la carte pour choisir la localisation")}</div>
+            <div className={`text-xs mt-1 ${T_MUTED}`}>{t("Déplacez la carte pour choisir la localisation")}</div>
             <div className={`text-xs mt-1 ${T_PRIMARY}`}>{location}</div>
           </div>
 
