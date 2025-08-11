@@ -15,6 +15,7 @@ import MushroomScene from "./scenes/MushroomScene";
 import SettingsScene from "./scenes/SettingsScene";
 import DownloadScene from "./scenes/DownloadScene";
 import PrivacyPolicyScene from "./scenes/PrivacyPolicyScene";
+import TermsScene from "./scenes/TermsScene";
 import { AppProvider, useAppContext } from "./context/AppContext";
 import { useT } from "./i18n";
 import { Scene } from "./routes";
@@ -205,6 +206,7 @@ function AppContent() {
                 <SettingsScene
                   onOpenPacks={() => goTo(Scene.Download)}
                   onOpenPrivacy={() => goTo(Scene.Privacy)}
+                  onOpenTerms={() => goTo(Scene.Terms)}
                   onBack={goBack}
                 />
               }
@@ -242,6 +244,10 @@ function AppContent() {
             <Route
               path={Scene.Privacy}
               element={<PrivacyPolicyScene onBack={goBack} />}
+            />
+            <Route
+              path={Scene.Terms}
+              element={<TermsScene onBack={goBack} />}
             />
             <Route path="*" element={<Navigate to={Scene.Landing} replace />} />
           </Routes>
