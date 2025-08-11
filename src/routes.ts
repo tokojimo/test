@@ -9,5 +9,8 @@ export enum Scene {
   Settings = '/settings',
   Download = '/download',
   Privacy = '/privacy',
-  Terms = '/terms'
+  Terms = '/terms',
+  Login = '/login',
+  Signup = '/signup',
+  Premium = '/premium',
 }
