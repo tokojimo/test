@@ -13,10 +13,6 @@ export default {
   "Unités": { fr: "Unités", en: "Units" },
   "métriques": { fr: "métriques", en: "metric" },
   "impériales": { fr: "impériales", en: "imperial" },
-  "Thème": { fr: "Thème", en: "Theme" },
-  "auto": { fr: "auto", en: "auto" },
-  "clair": { fr: "clair", en: "light" },
-  "sombre": { fr: "sombre", en: "dark" },
   "GPS": { fr: "GPS", en: "GPS" },
   "La géolocalisation est utilisée pour centrer la carte sur votre position.": {
     fr: "La géolocalisation est utilisée pour centrer la carte sur votre position.",

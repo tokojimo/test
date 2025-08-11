@@ -47,7 +47,7 @@ function AppContent() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [gpsFollow, setGpsFollow] = useState(false);
 
-  const { state, dispatch } = useAppContext();
+  const { dispatch } = useAppContext();
   const { t } = useT();
   const navigate = useNavigate();
   const location = useLocation();
@@ -85,18 +85,6 @@ function AppContent() {
       return () => clearInterval(id);
     }
   }, [downloading, goTo]);
-
-  useEffect(() => {
-    const theme = state.prefs.theme;
-    const media = window.matchMedia("(prefers-color-scheme: dark)");
-    const applyTheme = () => {
-      const isDark = theme === "sombre" || (theme === "auto" && media.matches);
-      document.documentElement.classList.toggle("dark", isDark);
-    };
-    applyTheme();
-    media.addEventListener("change", applyTheme);
-    return () => media.removeEventListener("change", applyTheme);
-  }, [state.prefs.theme]);
 
 
   const filteredMushrooms = useMemo(
