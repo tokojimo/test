@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+  <key>NSLocationWhenInUseUsageDescription</key>
+  <string>La géolocalisation est utilisée pour centrer la carte sur votre position.</string>
+  <key>NSLocationAlwaysUsageDescription</key>
+  <string>La géolocalisation est utilisée pour proposer des zones proches même en arrière-plan.</string>
+</dict>
+</plist>

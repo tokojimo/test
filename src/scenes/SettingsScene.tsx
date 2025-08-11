@@ -23,6 +23,22 @@ export default function SettingsScene({
   const { state, dispatch } = useAppContext();
   const { alerts, prefs } = state;
   const { t } = useT();
+  const handleGpsChange = (v: boolean) => {
+    if (v) {
+      const ok = window.confirm(
+        t(
+          "La géolocalisation est utilisée pour centrer la carte sur votre position."
+        )
+      );
+      if (!ok) return;
+      navigator.geolocation?.getCurrentPosition(() => {}, () => {});
+    }
+    dispatch({ type: "setPrefs", prefs: { gps: v } });
+  };
+  const revokeGps = () => {
+    navigator.permissions?.revoke({ name: "geolocation" as PermissionName });
+    dispatch({ type: "setPrefs", prefs: { gps: false } });
+  };
   return (
     <motion.section
       initial={{ x: 20, opacity: 0 }}
@@ -96,8 +112,11 @@ export default function SettingsScene({
           <ToggleRow
             label={t("GPS")}
             checked={prefs.gps}
-            onChange={(v) => dispatch({ type: "setPrefs", prefs: { gps: v } })}
+            onChange={handleGpsChange}
           />
+          <Button onClick={revokeGps} className={BTN}>
+            {t("Retirer le consentement")}
+          </Button>
           <SelectRow
             label={t("Langue")}
             value={prefs.lang}

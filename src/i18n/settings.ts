@@ -18,6 +18,14 @@ export default {
   "clair": { fr: "clair", en: "light" },
   "sombre": { fr: "sombre", en: "dark" },
   "GPS": { fr: "GPS", en: "GPS" },
+  "La géolocalisation est utilisée pour centrer la carte sur votre position.": {
+    fr: "La géolocalisation est utilisée pour centrer la carte sur votre position.",
+    en: "Geolocation is used to center the map on your position.",
+  },
+  "Retirer le consentement": {
+    fr: "Retirer le consentement",
+    en: "Withdraw consent",
+  },
   "Langue": { fr: "Langue", en: "Language" },
   "français": { fr: "français", en: "French" },
   "anglais": { fr: "anglais", en: "English" },
