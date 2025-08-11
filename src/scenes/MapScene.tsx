@@ -79,7 +79,11 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onMapClick, 
           />
           <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
         </div>
-        <Button onClick={() => setGpsFollow(v => !v)} className={BTN}>
+        <Button
+          onClick={() => setGpsFollow(v => !v)}
+          className={BTN}
+          variant={gpsFollow ? "secondary" : "primary"}
+        >
           <LocateFixed className="w-4 h-4 mr-2" />
           {t("GPS")}
         </Button>
