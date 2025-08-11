@@ -8,6 +8,10 @@ module.exports = {
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        primary: "hsl(var(--primary))",
+        secondary: "hsl(var(--secondary))",
+        success: "hsl(var(--success))",
+        danger: "hsl(var(--danger))",
       },
       borderRadius: {
         lg: "var(--radius)",
