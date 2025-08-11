@@ -9,6 +9,7 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import FieldRow from '@/components/settings/FieldRow';
 import ActionsBar from '@/components/settings/ActionsBar';
+import { useT } from '@/i18n';
 
 const schema = z.object({ email: z.string().email(), password: z.string().min(4) });
 type FormValues = z.infer<typeof schema>;
@@ -17,6 +18,7 @@ export default function Account() {
   const account = useAccount();
   const update = useSettingsStore((s) => s.update);
   const { add } = useToasts();
+  const { t } = useT();
   const {
     register,
     handleSubmit,
@@ -28,18 +30,18 @@ export default function Account() {
   const onSubmit = handleSubmit(async (values) => {
     const user = await login(values);
     update({ account: { session: 'connected', email: user.email } });
-    add('Connecté');
+    add(t('Connecté'));
   });
 
   const handleLogout = async () => {
     await logout();
     update({ account: { session: 'disconnected' } });
-    add('Déconnecté');
+    add(t('Déconnecté'));
   };
 
   return (
     <div className="space-y-6">
-      <p className="text-sm text-foreground">État de session: {account.session === 'connected' ? 'Connecté' : 'Déconnecté'}</p>
+      <p className="text-sm text-foreground">{t('État de session')}: {account.session === 'connected' ? t('Connecté') : t('Déconnecté')}</p>
       {account.session === 'connected' ? (
         <div className="space-y-4">
           <p>{account.email}</p>
@@ -50,23 +52,23 @@ export default function Account() {
               onClick={handleLogout}
               className="w-full md:w-auto h-10 px-4 rounded-lg shadow-sm"
             >
-              Se déconnecter
+              {t('Se déconnecter')}
             </Button>
           </ActionsBar>
         </div>
       ) : (
         <form onSubmit={onSubmit} className="space-y-6">
           <FieldRow
-            label="Email"
-            error={formState.errors.email && 'Email invalide'}
+            label={t('Email')}
+            error={formState.errors.email && t('Email invalide')}
           >
-            <Input {...register('email')} placeholder="Email" />
+            <Input {...register('email')} placeholder={t('Email')} />
           </FieldRow>
-          <FieldRow label="Mot de passe">
+          <FieldRow label={t('Mot de passe')}>
             <Input
               {...register('password')}
               type="password"
-              placeholder="Mot de passe"
+              placeholder={t('Mot de passe')}
             />
           </FieldRow>
           <ActionsBar>
@@ -75,7 +77,7 @@ export default function Account() {
               disabled={formState.isSubmitting}
               className="w-full md:w-auto h-10 px-4 rounded-lg shadow-sm"
             >
-              Se connecter
+              {t('Se connecter')}
             </Button>
           </ActionsBar>
         </form>

@@ -3,12 +3,15 @@ import { describe, it, expect } from 'vitest';
 import Account from './Account';
 import { ToastProvider } from '../../components/settings/Toasts';
 import { useSettingsStore } from '../../stores/settings';
+import { AppProvider } from '../../context/AppContext';
 
 function renderWithProviders() {
   return render(
-    <ToastProvider>
-      <Account />
-    </ToastProvider>
+    <AppProvider>
+      <ToastProvider>
+        <Account />
+      </ToastProvider>
+    </AppProvider>
   );
 }
 
