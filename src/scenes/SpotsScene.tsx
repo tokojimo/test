@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, Plus, Pencil, Route } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { CreateSpotModal } from "../components/CreateSpotModal";
 import { EditSpotModal } from "../components/EditSpotModal";
@@ -17,7 +18,13 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
   const [createOpen, setCreateOpen] = useState(false);
   const [editing, setEditing] = useState<Spot | null>(null);
   const [details, setDetails] = useState<Spot | null>(null);
+  const [loading, setLoading] = useState(true);
   const { t } = useT();
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 400);
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3 space-y-3">
@@ -46,39 +53,51 @@ export default function SpotsScene({ onRoute, onBack }: { onRoute: () => void; o
       )}
 
       <div className="grid md:grid-cols-2 gap-3">
-        {spots.length === 0 && <div className={T_PRIMARY}>{t("Aucun coin enregistré.")}</div>}
-        {spots.map(s => (
-          <Card key={s.id} className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden relative">
-            <button onClick={() => setDetails(s)} className="block text-left">
-              <img src={s.cover || s.photos?.[0]} className="w-full h-40 object-cover" />
-            </button>
-            <button
-              onClick={() => setEditing(s)}
-              className="absolute top-2 right-2 bg-secondary/80 hover:bg-secondary/80 dark:bg-secondary/80 dark:hover:bg-secondary/80 border border-secondary dark:border-secondary rounded-full p-2"
-              aria-label={t("modifier")}
-            >
-              <Pencil className="w-4 h-4 text-secondary" />
-            </button>
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div className={`font-medium ${T_PRIMARY}`}>{s.name}</div>
-                <div className="flex items-center gap-1 text-amber-400">{"★".repeat(s.rating || 0)}</div>
-              </div>
-              <div className={`text-xs ${T_MUTED}`}>
-                {t("Espèces :")} {(s.species || []).join(", ")}
-              </div>
-              <div className={`text-xs ${T_MUTED}`}>
-                {t("Dernière visite :")} {s.last || "–"}
-              </div>
-              <div className="mt-3 flex gap-2">
-                <Button onClick={onRoute} className={BTN}>
-                  <Route className="w-4 h-4 mr-2" />
-                  {t("Itinéraire")}
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+        {loading &&
+          Array.from({ length: 2 }).map((_, i) => (
+            <Card key={i} className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden">
+              <Skeleton className="w-full h-40" />
+              <CardContent className="p-4 space-y-2">
+                <Skeleton className="h-4 w-2/3" />
+                <Skeleton className="h-3 w-1/2" />
+                <Skeleton className="h-3 w-1/3" />
+              </CardContent>
+            </Card>
+          ))}
+        {!loading && spots.length === 0 && <div className={T_PRIMARY}>{t("Aucun coin enregistré.")}</div>}
+        {!loading &&
+          spots.map(s => (
+            <Card key={s.id} className="bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden relative">
+              <button onClick={() => setDetails(s)} className="block text-left">
+                <img src={s.cover || s.photos?.[0]} className="w-full h-40 object-cover" />
+              </button>
+              <button
+                onClick={() => setEditing(s)}
+                className="absolute top-2 right-2 bg-secondary/80 hover:bg-secondary/80 dark:bg-secondary/80 dark:hover:bg-secondary/80 border border-secondary dark:border-secondary rounded-full p-2"
+                aria-label={t("modifier")}
+              >
+                <Pencil className="w-4 h-4 text-secondary" />
+              </button>
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div className={`font-medium ${T_PRIMARY}`}>{s.name}</div>
+                  <div className="flex items-center gap-1 text-amber-400">{"★".repeat(s.rating || 0)}</div>
+                </div>
+                <div className={`text-xs ${T_MUTED}`}>
+                  {t("Espèces :")} {(s.species || []).join(", ")}
+                </div>
+                <div className={`text-xs ${T_MUTED}`}>
+                  {t("Dernière visite :")} {s.last || "–"}
+                </div>
+                <div className="mt-3 flex gap-2">
+                  <Button onClick={onRoute} className={BTN}>
+                    <Route className="w-4 h-4 mr-2" />
+                    {t("Itinéraire")}
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))}
       </div>
       <p className={`text-xs ${T_SUBTLE}`}>{t("Données stockées localement. Accès hors‑ligne.")}</p>
 

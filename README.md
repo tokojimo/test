@@ -12,7 +12,7 @@ Tokens live in [`src/styles/design-tokens.json`](src/styles/design-tokens.json) 
 CSS variables are defined in [`src/index.css`](src/index.css) so Tailwind utilities can reference them.  Overrides can be applied by adjusting these variables at the `:root` or `.dark` level.
 
 ## Components
-New primitive components live in [`src/components/ui`](src/components/ui): buttons, inputs, selects, tabs, chips, cards, modals and toasts.  Buttons support `primary`, `secondary`, `ghost` and `destructive` variants with accessible focus styles.  Cards and chips include subtle hover lift and rounded organic forms.
+New primitive components live in [`src/components/ui`](src/components/ui): buttons, inputs, selects, tabs, chips, cards, modals and toasts.  Buttons support `primary`, `secondary`, `ghost` and `destructive` variants with accessible focus styles.  Cards and chips include subtle hover lift and rounded organic forms.  A lightweight `Skeleton` component provides loading placeholders.
 
 ## Global Styles & Layout
 `src/index.css` applies a reset, theming variables, a lightweight grain texture and container/grid utilities.  Motion respects `prefers-reduced-motion` and all colors meet WCAG AA contrast in both themes.

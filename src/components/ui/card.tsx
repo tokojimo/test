@@ -2,7 +2,7 @@ import React from "react";
 
 export function Card({ className = "", ...props }: React.HTMLAttributes<HTMLDivElement>) {
   const base =
-    "rounded-lg border border-border bg-paper text-foreground shadow-sm hover:shadow-md transition-shadow";
+    "rounded-lg border border-border bg-paper text-foreground shadow-sm transition-shadow transition-transform hover:shadow-md hover:-translate-y-1";
   return <div className={`${base} ${className}`} {...props} />;
 }
 
