@@ -33,3 +33,19 @@ Run the dev server with:
 ```bash
 npm run dev
 ```
+
+## Settings Module
+
+The `/settings` route exposes account, subscription, offline maps, alerts,
+preferences and legal sections. Each section lives in
+`src/routes/settings/*.tsx` and shares state through `src/stores/settings.ts`
+persisted to `localStorage` with Zustand.
+
+Forms rely on `react-hook-form` and Zod schemas under `src/validation`. Mocked
+API helpers are in `src/api`. To extend, add new slice in the store and a
+corresponding component under `src/routes/settings`.
+
+Environment variables can be defined in `.env` (see `.env.sample`).
+
+Limitations: offline map downloads and background sync are simplified mocks and
+should be replaced by real implementations when integrating a backend.
