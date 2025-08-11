@@ -1,10 +1,12 @@
-import React, { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import { X, MapPin, Plus, Pencil, Maximize2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
 import { todayISO } from "../utils";
+import maplibregl from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -14,6 +16,26 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     spot.history || (spot.visits || []).map((d: string) => ({ date: d, rating: spot.rating, note: "", photos: [] }))
   );
   const { t } = useT();
+  const mapContainerRef = useRef<HTMLDivElement | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
+
+  useEffect(() => {
+    if (!spot.location || mapRef.current || !mapContainerRef.current) return;
+    const [lng, lat] = spot.location.split(",").map((v) => parseFloat(v.trim()));
+    if (Number.isNaN(lng) || Number.isNaN(lat)) return;
+    const map = new maplibregl.Map({
+      container: mapContainerRef.current,
+      style: "https://demotiles.maplibre.org/style.json",
+      center: [lng, lat],
+      zoom: 12,
+    });
+    new maplibregl.Marker().setLngLat([lng, lat]).addTo(map);
+    mapRef.current = map;
+    return () => {
+      map.remove();
+      mapRef.current = null;
+    };
+  }, [spot.location]);
 
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) onClose();
@@ -32,6 +54,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
         </div>
 
         <div className="relative h-48 rounded-xl overflow-hidden border border-neutral-300 dark:border-neutral-800 bg-[conic-gradient(at_30%_30%,#14532d,#052e16,#14532d)] bg-neutral-100 dark:bg-neutral-900">
+          <div ref={mapContainerRef} className="absolute inset-0" />
           <div className={`absolute top-2 left-2 px-2 py-1 rounded-lg text-xs bg-neutral-100/70 dark:bg-neutral-900/70 border border-neutral-300 dark:border-neutral-800 ${T_PRIMARY}`}>
             <MapPin className="w-3 h-3 inline mr-1" />
             {t("Carte du coin")}
