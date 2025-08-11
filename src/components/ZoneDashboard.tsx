@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useEffect, useRef } from "react";
+import { motion, animate } from "framer-motion";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
 import type { Zone } from "../types";
 import { generateForecast } from "../utils";
@@ -14,6 +14,19 @@ interface Props {
 
 export default function ZoneDashboard({ zone, onGo, onAdd, onOpenShroom, onClose }: Props) {
   const data = useMemo(() => generateForecast("fr"), [zone?.id]);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const path = chartRef.current?.querySelector(
+      ".recharts-line-curve"
+    ) as SVGPathElement | null;
+    if (!path) return;
+    const length = path.getTotalLength();
+    path.style.strokeDasharray = `${length}`;
+    path.style.strokeDashoffset = `${length}`;
+    animate(path, { strokeDashoffset: 0 }, { duration: 1.2, ease: "easeInOut" });
+  }, [data]);
+
   if (!zone) return null;
 
   return (
@@ -31,7 +44,7 @@ export default function ZoneDashboard({ zone, onGo, onAdd, onOpenShroom, onClose
           </span>
         </div>
         <div className="p-4">
-          <div className="h-56">
+          <div className="h-56" ref={chartRef}>
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
                 <XAxis
@@ -52,8 +65,7 @@ export default function ZoneDashboard({ zone, onGo, onAdd, onOpenShroom, onClose
                   stroke="hsl(var(--fern-green))"
                   strokeWidth={2}
                   dot={false}
-                  isAnimationActive
-                  animationDuration={800}
+                  isAnimationActive={false}
                 />
               </LineChart>
             </ResponsiveContainer>
