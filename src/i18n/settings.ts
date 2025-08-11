@@ -29,8 +29,4 @@ export default {
   "Langue": { fr: "Langue", en: "Language" },
   "français": { fr: "français", en: "French" },
   "anglais": { fr: "anglais", en: "English" },
-  "« À propos » • « Conseils de cueillette »": {
-    fr: "« À propos » • « Conseils de cueillette »",
-    en: '"About" • "Picking tips"',
-  },
 };

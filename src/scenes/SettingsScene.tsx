@@ -188,9 +188,6 @@ export default function SettingsScene({
       </Card>
 
       <div className={`text-sm ${T_MUTED}`}>
-        {t("« À propos » • « Conseils de cueillette »")}
-      </div>
-      <div className={`text-sm ${T_MUTED}`}>
         <button onClick={onOpenPrivacy} className="underline">
           {t("Politique de confidentialité")}
         </button>
