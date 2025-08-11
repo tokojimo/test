@@ -8,7 +8,6 @@ import { todayISO } from "../utils";
 import { loadMap } from "@/services/openstreetmap";
 import Logo from "@/assets/logo.png";
 import { useAppContext } from "../context/AppContext";
-import { EditSpotModal } from "./EditSpotModal";
 
 export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
   const overlayRef = useRef<HTMLDivElement | null>(null);
@@ -19,7 +18,6 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
   );
   const { t } = useT();
   const { dispatch } = useAppContext();
-  const [editing, setEditing] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
 
@@ -51,6 +49,21 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     setHistory((h) => [...h, { date: today, rating: 0, note: "", photos: [] }]);
   };
 
+  const editVisit = (index: number) => {
+    const entry = history[index];
+    const ratingStr = window.prompt("Rating", entry.rating.toString());
+    const noteStr = window.prompt("Note", entry.note);
+    setHistory((h) => {
+      const copy = [...h];
+      copy[index] = {
+        ...entry,
+        rating: ratingStr ? parseInt(ratingStr, 10) : entry.rating,
+        note: noteStr ?? entry.note,
+      };
+      return copy;
+    });
+  };
+
   const handleDelete = () => {
     if (window.confirm(t("Supprimer ce coin ?"))) {
       dispatch({ type: "removeSpot", id: spot.id });
@@ -64,10 +77,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
         <div className="flex items-center justify-between mb-3">
           <div className={`text-lg font-semibold ${T_PRIMARY}`}>{t("Historique du coin")}</div>
           <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={() => setEditing(true)} aria-label={t("modifier")}> 
-              <Pencil className="w-4 h-4" />
-            </Button>
-            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={handleDelete} aria-label={t("supprimer")}> 
+            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={handleDelete} aria-label={t("supprimer")}>
               <Trash2 className="w-4 h-4" />
             </Button>
             <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100"><X className="w-5 h-5" /></button>
@@ -109,7 +119,13 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
                       ))}
                     </div>
                   )}
-                  <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} aria-label={t("modifier")}>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={BTN_GHOST_ICON}
+                    aria-label={t("modifier")}
+                    onClick={() => editVisit(i)}
+                  >
                     <Pencil className="w-4 h-4" />
                   </Button>
                 </div>
@@ -151,16 +167,6 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
             </div>
           </div>
         </div>
-      )}
-      {editing && (
-        <EditSpotModal
-          spot={spot}
-          onClose={() => setEditing(false)}
-          onSave={(u) => {
-            dispatch({ type: "updateSpot", spot: u });
-            setEditing(false);
-          }}
-        />
       )}
     </div>
   );
