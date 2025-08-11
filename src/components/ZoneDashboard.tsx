@@ -34,11 +34,27 @@ export default function ZoneDashboard({ zone, onGo, onAdd, onOpenShroom, onClose
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data} margin={{ top: 8, right: 8, bottom: 0, left: 0 }}>
-                <XAxis dataKey="day" tick={{ fontSize: 10 }} interval={3} />
-                <YAxis domain={[0, 100]} tick={{ fontSize: 10 }} width={28} />
+                <XAxis
+                  dataKey="day"
+                  tick={{ fontSize: 10, fill: "hsl(var(--forest-green))" }}
+                  interval={3}
+                />
+                <YAxis
+                  domain={[0, 100]}
+                  tick={{ fontSize: 10, fill: "hsl(var(--forest-green))" }}
+                  width={28}
+                />
                 <Tooltip />
                 <ReferenceLine x={data[7].day} strokeDasharray="3 3" />
-                <Line type="monotone" dataKey="score" strokeWidth={2} dot={false} />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke="hsl(var(--fern-green))"
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive
+                  animationDuration={800}
+                />
               </LineChart>
             </ResponsiveContainer>
           </div>
