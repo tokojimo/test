@@ -13,11 +13,11 @@ export function Switch({ checked = false, onCheckedChange, className = "" }: Swi
       role="switch"
       aria-checked={checked}
       onClick={() => onCheckedChange?.(!checked)}
-      className={`relative inline-flex h-6 w-10 items-center rounded-full border transition-colors ${
-        checked
-          ? "border-primary bg-primary dark:border-primary dark:bg-primary"
-          : "border-secondary bg-secondary dark:border-secondary dark:bg-secondary"
-      } ${className}`}
+        className={`relative inline-flex h-6 w-10 items-center rounded-full border transition-colors ${
+          checked
+            ? "border-primary bg-primary dark:border-primary dark:bg-primary"
+            : "border-neutral-300 bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800"
+        } ${className}`}
     >
       <span
         className={`pointer-events-none block h-5 w-5 rounded-full bg-white dark:bg-white border border-border shadow transform transition-transform ${
