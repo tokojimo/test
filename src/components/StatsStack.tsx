@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent } from "./ui/card";
 import { Button } from "./ui/button";
 
@@ -28,17 +29,28 @@ export function StatsStack() {
   };
 
   return (
-    <div>
+    <div className="min-h-40">
       <Button onClick={addItem}>Ajouter une carte</Button>
-      <div className="mt-4 flex flex-col gap-2">
-        {items.map((item, idx) => (
-          <Card key={idx} data-testid="stat-card">
-            <CardContent className="flex justify-between">
-              <span className="font-semibold">{item.label}</span>
-              <span className={item.down ? "text-danger" : ""}>{item.percent}</span>
-            </CardContent>
-          </Card>
-        ))}
+      <div className="fixed bottom-4 left-4 flex flex-col gap-2">
+        <AnimatePresence>
+          {items.map((item, idx) => (
+            <motion.div
+              key={idx}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 20 }}
+              transition={{ duration: 0.25 }}
+            >
+              <Card data-testid="stat-card">
+                <CardContent className="flex justify-between">
+                  <span className="font-semibold">{item.label}</span>
+                  <span className={item.down ? "text-danger" : ""}>{item.percent}</span>
+                </CardContent>
+              </Card>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
     </div>
   );
