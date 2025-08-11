@@ -141,7 +141,6 @@ function AppContent() {
                   onBack={goBack}
                   gpsFollow={gpsFollow}
                   setGpsFollow={setGpsFollow}
-                  onMapClick={(msg) => pushToast({ type: "success", text: msg })}
                   onZone={(z) => {
                     setSelectedZone(z);
                     goTo(Scene.Zone);
