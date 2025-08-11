@@ -8,5 +8,6 @@ export enum Scene {
   Mushroom = '/mushroom',
   Settings = '/settings',
   Download = '/download',
-  Privacy = '/privacy'
+  Privacy = '/privacy',
+  Terms = '/terms'
 }

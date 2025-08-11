@@ -12,10 +12,12 @@ import { useT } from "../i18n";
 export default function SettingsScene({
   onOpenPacks,
   onOpenPrivacy,
+  onOpenTerms,
   onBack,
 }: {
   onOpenPacks: () => void;
   onOpenPrivacy: () => void;
+  onOpenTerms: () => void;
   onBack: () => void;
 }) {
   const { state, dispatch } = useAppContext();
@@ -114,6 +116,11 @@ export default function SettingsScene({
       <div className={`text-sm ${T_MUTED}`}>
         <button onClick={onOpenPrivacy} className="underline">
           {t("Politique de confidentialité")}
+        </button>
+      </div>
+      <div className={`text-sm ${T_MUTED}`}>
+        <button onClick={onOpenTerms} className="underline">
+          {t("Conditions d'utilisation")}
         </button>
       </div>
     </motion.section>
