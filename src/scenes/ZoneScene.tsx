@@ -1,5 +1,5 @@
-import React, { useMemo } from "react";
-import { motion } from "framer-motion";
+import React, { useMemo, useEffect, useRef } from "react";
+import { motion, animate } from "framer-motion";
 import { ChevronLeft, Route, Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,6 +16,19 @@ export default function ZoneScene({ zone, onAdd, onOpenShroom, onBack }: { zone:
   const { t } = useT();
   const { state } = useAppContext();
   const data = useMemo(() => generateForecast(state.prefs.lang), [zone?.id, state.prefs.lang]);
+  const chartRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const path = chartRef.current?.querySelector(
+      ".recharts-line-curve"
+    ) as SVGPathElement | null;
+    if (!path) return;
+    const length = path.getTotalLength();
+    path.style.strokeDasharray = `${length}`;
+    path.style.strokeDashoffset = `${length}`;
+    animate(path, { strokeDashoffset: 0 }, { duration: 1.2, ease: "easeInOut" });
+  }, [data]);
+
   if (!zone)
     return <div className={`p-6 ${T_PRIMARY}`}>{t("Sélectionnez une zone…")}</div>;
   const openDirections = () => {
@@ -45,7 +58,7 @@ export default function ZoneScene({ zone, onAdd, onOpenShroom, onBack }: { zone:
           </CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="h-56">
+          <div className="h-56" ref={chartRef}>
               <ResponsiveContainer width="100%" height="100%">
                 <LineChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
                   <XAxis
@@ -73,8 +86,7 @@ export default function ZoneScene({ zone, onAdd, onOpenShroom, onBack }: { zone:
                     stroke="hsl(var(--fern-green))"
                     strokeWidth={2}
                     dot={false}
-                    isAnimationActive
-                    animationDuration={800}
+                    isAnimationActive={false}
                   />
                 </LineChart>
               </ResponsiveContainer>
