@@ -8,7 +8,7 @@ import { StarRating } from "./StarRating";
 import { useT } from "../i18n";
 import type { Spot } from "../types";
 import { todayISO } from "../utils";
-import mapboxgl from "mapbox-gl";
+import maplibregl from "maplibre-gl";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = todayISO();
@@ -22,7 +22,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const [photos, setPhotos] = useState<string[]>([]);
   const photoUrlsRef = useRef<string[]>([]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-  const mapRef = useRef<mapboxgl.Map | null>(null);
+  const mapRef = useRef<maplibregl.Map | null>(null);
 
   useEffect(() => {
     if (!name) {
@@ -63,8 +63,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
 
   useEffect(() => {
     if (mapRef.current || !mapContainerRef.current) return;
-    mapboxgl.accessToken = "pk.eyJ1IjoiZGVtb3VzZXIiLCJhIjoiY2toZ2QzMjEwMDI5djJybXkxdWRwMmd2eSJ9.dummy";
-    const map = new mapboxgl.Map({
+    const map = new maplibregl.Map({
       container: mapContainerRef.current,
       style: "https://demotiles.maplibre.org/style.json",
       center: [2.3522, 48.8566],
