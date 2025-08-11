@@ -9,7 +9,7 @@ import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import logo from "@/assets/logo.png";
-import { loadMap } from "@/services/openstreetmap";
+import { loadMap, geocode } from "@/services/openstreetmap";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
@@ -20,6 +20,14 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>([]);
   const [search, setSearch] = useState("");
+  const handleGeocode = async () => {
+    if (!search) return;
+    const res = await geocode(search);
+    const loc = res[0];
+    if (loc && mapRef.current) {
+      mapRef.current.flyTo({ center: [loc.lon, loc.lat], zoom: 12 });
+    }
+  };
   const results = useMemo(
     () =>
       search
@@ -123,6 +131,11 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           <Input
             value={search}
             onChange={e => setSearch(e.target.value)}
+            onKeyDown={e => {
+              if (e.key === "Enter") {
+                handleGeocode();
+              }
+            }}
             placeholder={t("Rechercher un lieu…")}
             className={`pl-9 bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
           />
