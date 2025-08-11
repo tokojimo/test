@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
-import { X, Image, MapPin } from "lucide-react";
+import { X, Image } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -10,6 +10,7 @@ import { useT } from "../i18n";
 import type { Spot } from "../types";
 import { todayISO } from "../utils";
 import { loadMapKit } from "@/services/mapkit";
+import Logo from "/Logo.png";
 
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = todayISO();
@@ -23,7 +24,8 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const [photos, setPhotos] = useState<string[]>([]);
   const photoUrlsRef = useRef<string[]>([]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
-    const mapRef = useRef<any>(null);
+  const mapRef = useRef<any>(null);
+  const markerRef = useRef<any>(null);
 
   useEffect(() => {
     if (!name) {
@@ -65,16 +67,30 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
         new mapkit.CoordinateSpan(0.2, 0.2)
       );
       mapRef.current = map;
-      const update = () => {
-        const c = map.center;
-        setLocation(`${c.longitude.toFixed(5)}, ${c.latitude.toFixed(5)}`);
+
+      const placeMarker = (lat: number, lng: number) => {
+        setLocation(`${lng.toFixed(5)}, ${lat.toFixed(5)}`);
+        if (markerRef.current) {
+          map.removeAnnotation(markerRef.current);
+        }
+        const marker = new mapkit.MarkerAnnotation(new mapkit.Coordinate(lat, lng), {
+          glyphImage: new mapkit.Image(Logo),
+        });
+        map.addAnnotation(marker);
+        markerRef.current = marker;
       };
-      map.addEventListener("region-change-end", update);
-      update();
+
+      const c = map.center;
+      placeMarker(c.latitude, c.longitude);
+      map.addEventListener("singleTap", (e: any) => {
+        const { latitude, longitude } = e.coordinate;
+        placeMarker(latitude, longitude);
+      });
     });
     return () => {
       mapRef.current?.destroy();
       mapRef.current = null;
+      markerRef.current = null;
     };
   }, []);
 
@@ -105,11 +121,10 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
           />
           <div>
             <div className={`text-sm mb-1 ${T_PRIMARY}`}>{t("Localisation")}</div>
-            <div className="relative h-48 rounded-xl border border-neutral-300 dark:border-neutral-800 overflow-hidden">
+            <div className="relative h-48 rounded-xl border border-neutral-400 dark:border-neutral-700 bg-neutral-200 dark:bg-neutral-800 overflow-hidden">
               <div ref={mapContainerRef} className="absolute inset-0" />
-              <MapPin className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-full text-red-500 pointer-events-none" />
             </div>
-            <div className={`text-xs mt-1 ${T_MUTED}`}>{t("Déplacez la carte pour choisir la localisation")}</div>
+            <div className={`text-xs mt-1 ${T_MUTED}`}>{t("Cliquez sur la carte pour choisir la localisation")}</div>
             <div className={`text-xs mt-1 ${T_PRIMARY}`}>{location}</div>
           </div>
 
