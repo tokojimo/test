@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import { X, Image } from "lucide-react";
+import type { StyleSpecification } from "maplibre-gl";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -60,12 +61,36 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   useEffect(() => {
     if (mapRef.current || !mapContainerRef.current) return;
     loadMap().then(maplibregl => {
+      const osmStyle: StyleSpecification = {
+        version: 8,
+        sources: {
+          osm: {
+            type: "raster",
+            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+            tileSize: 256,
+            attribution: "© OpenStreetMap contributors",
+          },
+        },
+        layers: [
+          {
+            id: "osm",
+            type: "raster",
+            source: "osm",
+            minzoom: 0,
+            maxzoom: 19,
+          },
+        ],
+      };
       const map = new maplibregl.Map({
         container: mapContainerRef.current as HTMLDivElement,
-        style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
+        style: osmStyle,
         center: [2.3522, 48.8566],
-        zoom: 10,
+        zoom: 13,
       });
+      // keep a constant zoom level for consistent screenshots
+      map.scrollZoom.disable();
+      map.doubleClickZoom.disable();
+      map.touchZoomRotate.disable();
       mapRef.current = map;
       map.on("load", () => map.resize());
 
@@ -88,7 +113,15 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   };
 
   const create = () => {
-    const cover = photos[0] || MUSHROOMS[0].photo;
+    let cover = photos[0];
+    if (!cover && mapRef.current) {
+      try {
+        cover = mapRef.current.getCanvas().toDataURL("image/png");
+      } catch {
+        cover = undefined;
+      }
+    }
+    cover = cover || MUSHROOMS[0].photo;
     const history = [{ date: last, rating, note: t("Création"), photos: photos.slice(0, 3) }];
     onCreate({ id: Date.now(), name, species, rating, last, location, cover, photos: photos.length ? photos : [cover], history });
   };
