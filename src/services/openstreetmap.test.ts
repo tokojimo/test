@@ -1,0 +1,24 @@
+import { describe, it, expect, vi } from 'vitest';
+vi.mock('maplibre-gl', () => ({}));
+import { reverseGeocode } from './openstreetmap';
+
+describe('reverseGeocode', () => {
+  it('returns nearest place name', async () => {
+    const fetchMock = vi.fn().mockResolvedValue({
+      ok: true,
+      json: () => Promise.resolve({ address: { village: 'Renage' } })
+    } as any);
+    vi.stubGlobal('fetch', fetchMock);
+    const name = await reverseGeocode(45, 5);
+    expect(name).toBe('Renage');
+    vi.unstubAllGlobals();
+  });
+
+  it('returns null on error', async () => {
+    const fetchMock = vi.fn().mockRejectedValue(new Error('network'));
+    vi.stubGlobal('fetch', fetchMock);
+    const name = await reverseGeocode(0, 0);
+    expect(name).toBeNull();
+    vi.unstubAllGlobals();
+  });
+});

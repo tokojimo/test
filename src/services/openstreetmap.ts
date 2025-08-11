@@ -24,3 +24,25 @@ export async function geocode(query: string) {
     return [];
   }
 }
+
+export async function reverseGeocode(lat: number, lon: number) {
+  const url = `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`;
+  try {
+    const res = await fetch(url);
+    if (!res.ok) return null;
+    const data = await res.json();
+    const addr = data.address || {};
+    return (
+      addr.hamlet ||
+      addr.village ||
+      addr.town ||
+      addr.city ||
+      addr.locality ||
+      addr.county ||
+      data.display_name ||
+      null
+    );
+  } catch {
+    return null;
+  }
+}
