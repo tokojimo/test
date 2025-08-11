@@ -17,12 +17,6 @@ vi.mock('@/services/openstreetmap', () => ({
       getCenter() {
         return { lat: 0, lng: 0 };
       }
-      scrollZoom = { disable: vi.fn() };
-      doubleClickZoom = { disable: vi.fn() };
-      touchZoomRotate = { disable: vi.fn() };
-      getCanvas() {
-        return { toDataURL: vi.fn(() => 'data:image/png;base64,test') };
-      }
     },
   })),
 }));
