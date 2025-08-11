@@ -48,7 +48,10 @@ export default function LoginScene({
           >
             <ChevronLeft className="w-5 h-5" />
           </Button>
-          <Button variant="ghost" onClick={onPremium} className="text-sm underline p-0">
+          <Button
+            onClick={onPremium}
+            className={`${BTN} bg-gold text-foreground hover:bg-gold/90`}
+          >
             {t("Passer en premium")}
           </Button>
         </header>
