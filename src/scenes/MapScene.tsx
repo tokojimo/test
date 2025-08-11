@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,7 +13,6 @@ import { useT } from "../i18n";
 import type { Zone } from "../types";
 
 export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow, onMapClick, onBack }: { onZone: (z: Zone) => void; onOpenShroom: (id: string) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onMapClick?: (msg: string) => void; onBack: () => void }) {
-  const [zoom, setZoom] = useState(5);
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const { t } = useT();
@@ -29,6 +28,7 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
         new mapkit.Coordinate(48.8566, 2.3522),
         new mapkit.CoordinateSpan(0.5, 0.5)
       );
+      (map as any).zoom = 5;
       mapRef.current = map;
       map.addEventListener("singleTap", (e: any) => {
         const { latitude: lat, longitude: lng } = e.coordinate;
@@ -60,12 +60,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
       mapRef.current = null;
     };
   }, []);
-
-  useEffect(() => {
-    if (mapRef.current) {
-      (mapRef.current as any).zoom = zoom;
-    }
-  }, [zoom]);
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
@@ -110,9 +104,6 @@ export default function MapScene({ onZone, onOpenShroom, gpsFollow, setGpsFollow
           ))}
         </div>
 
-        <div className="absolute bottom-3 right-3 bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary">
-          <input type="range" min={1} max={14} value={zoom} onChange={(e) => setZoom(parseInt(e.target.value, 10))} />
-        </div>
       </div>
     </motion.section>
   );
