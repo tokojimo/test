@@ -78,6 +78,10 @@ c3VsdD0ibm9pc2VHdW51IiBpbj0iZG9nZSIgZHVyYXRpb249IjAuM3MiIHN0ZC1kZXZpYXRpb249IjAu
   }
 }
 
+@layer base {
+  main > section {@apply relative min-h-screen overflow-hidden bg-background text-foreground;}
+}
+
 @layer utilities {
   .container { @apply max-w-screen-xl mx-auto px-4 md:px-6; }
   .grid-responsive { @apply grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3; }
