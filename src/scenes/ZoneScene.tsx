@@ -12,12 +12,17 @@ import { useT } from "../i18n";
 import { useAppContext } from "../context/AppContext";
 import type { Zone } from "../types";
 
-export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: { zone: Zone; onGo: () => void; onAdd: () => void; onOpenShroom: (id: string) => void; onBack: () => void }) {
+export default function ZoneScene({ zone, onAdd, onOpenShroom, onBack }: { zone: Zone; onAdd: () => void; onOpenShroom: (id: string) => void; onBack: () => void }) {
   const { t } = useT();
   const { state } = useAppContext();
   const data = useMemo(() => generateForecast(state.prefs.lang), [zone?.id, state.prefs.lang]);
   if (!zone)
     return <div className={`p-6 ${T_PRIMARY}`}>{t("Sélectionnez une zone…")}</div>;
+  const openDirections = () => {
+    if (!zone?.coords) return;
+    const [lat, lng] = zone.coords;
+    window.open(`https://www.google.com/maps/dir/?api=1&destination=${lat},${lng}`, "_blank");
+  };
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
       <Button
@@ -74,7 +79,7 @@ export default function ZoneScene({ zone, onGo, onAdd, onOpenShroom, onBack }: {
           </div>
 
           <div className="mt-4 flex items-center gap-2">
-            <Button onClick={onGo} className={BTN}>
+            <Button onClick={openDirections} className={BTN}>
               <Route className="w-4 h-4 mr-2" />
               {t("Y aller")}
             </Button>

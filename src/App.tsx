@@ -9,7 +9,6 @@ import LandingScene from "./scenes/LandingScene";
 import MapScene from "./scenes/MapScene";
 import ZoneScene from "./scenes/ZoneScene";
 import SpotsScene from "./scenes/SpotsScene";
-import RouteScene from "./scenes/RouteScene";
 import PickerScene from "./scenes/PickerScene";
 import MushroomScene from "./scenes/MushroomScene";
 import SettingsScene from "./scenes/SettingsScene";
@@ -155,7 +154,6 @@ function AppContent() {
               element={
                 <ZoneScene
                   zone={selectedZone}
-                  onGo={() => goTo(Scene.Route)}
                   onAdd={() => {
                     const today = todayISO();
                     dispatch({
@@ -185,14 +183,7 @@ function AppContent() {
                 />
               }
             />
-            <Route
-              path={Scene.Spots}
-              element={<SpotsScene onRoute={() => goTo(Scene.Route)} onBack={goBack} />}
-            />
-            <Route
-              path={Scene.Route}
-              element={<RouteScene onBackToMap={() => goTo(Scene.Map)} onBack={goBack} />}
-            />
+            <Route path={Scene.Spots} element={<SpotsScene onBack={goBack} />} />
             <Route
               path={Scene.Picker}
               element={
