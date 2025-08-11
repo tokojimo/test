@@ -2,7 +2,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { BTN, BTN_GHOST_ICON, T_MUTED } from "../styles/tokens";
+import { BTN, BTN_GHOST_ICON, GLASS_CARD, T_MUTED } from "../styles/tokens";
 import { useT } from "../i18n";
 import logo from "@/assets/logo.png";
 
@@ -59,7 +59,7 @@ export default function LandingScene({
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
           style={{ willChange: "transform, opacity" }}
-          className="max-w-xl p-10 rounded-3xl bg-background/60 backdrop-blur-xl border border-border/50 shadow-2xl"
+          className={`max-w-xl p-10 ${GLASS_CARD}`}
         >
           <img
             src={logo}
