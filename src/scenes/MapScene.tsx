@@ -111,8 +111,8 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             })
             .join("\n");
           const placeName = await reverseGeocode(lat, lng);
-          const title = placeName || nearest.name;
-          const msg = `${title}\n${nearest.score}% ${nearest.trend}\n${speciesLines}`;
+          const locationLine = placeName ? `${placeName}\n` : "";
+          const msg = `${nearest.name}\n${locationLine}${nearest.score}% ${nearest.trend}\n${speciesLines}`;
           showToast(msg, nearest);
         }
       });
