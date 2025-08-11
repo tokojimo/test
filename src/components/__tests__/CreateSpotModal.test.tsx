@@ -12,16 +12,14 @@ vi.mock('@/services/mapkit', () => ({
 }));
 
 describe('CreateSpotModal', () => {
-  const MarkerAnnotation = vi.fn();
+  const addEventListener = vi.fn();
 
   beforeEach(() => {
-    MarkerAnnotation.mockClear();
+    addEventListener.mockClear();
     (global as any).mapkit = {
       Map: class {
         center = { latitude: 0, longitude: 0 };
-        addAnnotation = vi.fn();
-        removeAnnotation = vi.fn();
-        addEventListener = vi.fn();
+        addEventListener = addEventListener;
         destroy = vi.fn();
       },
       Coordinate: class {
@@ -34,30 +32,26 @@ describe('CreateSpotModal', () => {
       },
       CoordinateRegion: class {},
       CoordinateSpan: class {},
-      MarkerAnnotation: MarkerAnnotation,
-      Image: class {
-        image: string;
-        constructor(src: string) {
-          this.image = src;
-        }
-      },
     };
   });
 
-  it('uses app logo for marker and shows map click instruction', async () => {
+  it('shows logo pin and map move instruction', async () => {
     render(
       <AppProvider>
         <CreateSpotModal onClose={() => {}} onCreate={() => {}} />
       </AppProvider>
     );
 
-    await waitFor(() => expect(MarkerAnnotation).toHaveBeenCalled());
-    const [, options] = MarkerAnnotation.mock.calls[0];
-    expect(options.glyphImage.image).toBe(Logo);
-
     expect(
-      screen.getByText('Cliquez sur la carte pour choisir la localisation')
+      screen.getByText('Déplacez la carte pour choisir la localisation')
     ).toBeInTheDocument();
+    expect(screen.getByRole('img', { name: '' })).toHaveAttribute('src', Logo);
+    await waitFor(() =>
+      expect(addEventListener).toHaveBeenCalledWith(
+        'regionDidChange',
+        expect.any(Function)
+      )
+    );
   });
 });
 
