@@ -35,9 +35,11 @@ export default function DownloadScene({ packSize, setPackSize, deviceFree, setDe
             value={search}
             onChange={e => setSearch(e.target.value)}
             placeholder={t("Rechercher une zone…")}
-            className={`pl-9 bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
+            className={`pl-9 ${T_PRIMARY}`}
           />
-          <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
+          <div className="absolute inset-y-0 left-0 flex w-9 items-center justify-center">
+            <Search className={`w-4 h-4 ${T_MUTED}`} />
+          </div>
           {search && results.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-xl z-10">
               {results.map(z => (

@@ -1,11 +1,21 @@
 import React from "react";
 import { T_PRIMARY, T_MUTED } from "../styles/tokens";
 
-export function InfoBlock({ icon, title, text }: { icon: React.ReactNode; title: string; text: string }) {
+export function InfoBlock({
+  icon,
+  title,
+  text,
+}: {
+  icon: React.ReactNode;
+  title: string;
+  text: string;
+}) {
   return (
-    <div className="bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl p-3">
-      <div className={`flex items-center gap-2 mb-1 ${T_PRIMARY}`}>
-        <div className="w-6 h-6 grid place-items-center rounded-lg bg-neutral-200 dark:bg-neutral-800 text-neutral-900 dark:text-neutral-100">{icon}</div>
+    <div className="rounded-2xl border border-border bg-background p-3 shadow-sm">
+      <div className={`mb-1 flex items-center gap-2 ${T_PRIMARY}`}>
+        <div className="grid h-6 w-6 place-items-center rounded-md bg-foreground/10 text-foreground">
+          {icon}
+        </div>
         <div className="text-sm font-medium">{title}</div>
       </div>
       <div className={`text-sm ${T_MUTED}`}>{text}</div>

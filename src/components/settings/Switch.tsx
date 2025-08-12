@@ -1,4 +1,6 @@
 import React from 'react';
+import { Switch as BaseSwitch } from '@/components/ui/switch';
+import { T_PRIMARY } from '../../styles/tokens';
 
 type Props = {
   checked: boolean;
@@ -9,17 +11,9 @@ type Props = {
 
 export const Switch: React.FC<Props> = ({ checked, onChange, label, id }) => {
   return (
-    <button
-      type="button"
-      role="switch"
-      aria-checked={checked}
-      id={id}
-      onClick={() => onChange(!checked)}
-      className={`px-3 py-2 rounded-full border ${
-        checked ? 'bg-green-500 text-white' : 'bg-gray-200'
-      } focus-visible:outline focus-visible:outline-2`}
-    >
-      {label}
-    </button>
+    <label htmlFor={id} className="inline-flex items-center gap-2 cursor-pointer">
+      <BaseSwitch id={id} checked={checked} onCheckedChange={onChange} />
+      <span className={T_PRIMARY}>{label}</span>
+    </label>
   );
 };

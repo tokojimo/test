@@ -36,18 +36,18 @@ export default function SettingsIndex() {
 
   return (
     <div className="container max-w-3xl mx-auto px-4 py-6 space-y-6">
-      <Button
-        variant="ghost"
-        size="icon"
-        onClick={() => navigate(-1)}
-        aria-label={t('Retour')}
-      >
-        <ChevronLeft className="w-5 h-5" />
-      </Button>
-      <header className="space-y-1">
+      <header className="flex items-center gap-2">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          aria-label={t('Retour')}
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </Button>
         <h1 className="text-2xl font-semibold text-foreground">{t('Réglages')}</h1>
-        <p className="text-sm text-foreground/70">{t("Configurer l'application")}</p>
       </header>
+      <p className="text-sm text-foreground/70">{t("Configurer l'application")}</p>
 
       <div className="md:hidden">
         <Accordion

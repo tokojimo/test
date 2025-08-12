@@ -18,7 +18,9 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const mapRef = useRef<any>(null);
   const markersRef = useRef<{ marker: any; timeout: ReturnType<typeof setTimeout> }[]>([]);
   const { t } = useT();
-  const [selected, setSelected] = useState<string[]>([]);
+  const [selected, setSelected] = useState<string[]>([
+    "cepe_de_bordeaux",
+  ]);
   const [search, setSearch] = useState("");
   const handleGeocode = async () => {
     if (!search) return;
@@ -141,9 +143,11 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
               }
             }}
             placeholder={t("Rechercher un lieu…")}
-            className={`pl-9 bg-secondary border-secondary dark:bg-secondary dark:border-secondary ${T_PRIMARY}`}
+            className={`pl-9 ${T_PRIMARY}`}
           />
-          <Search className={`w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 ${T_MUTED}`} />
+          <div className="absolute inset-y-0 left-0 flex w-9 items-center justify-center">
+            <Search className={`w-4 h-4 ${T_MUTED}`} />
+          </div>
           {results.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-xl z-10">
               {results.map(z => (
@@ -164,7 +168,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         <Button
           onClick={() => setGpsFollow(v => !v)}
           className={BTN}
-          variant={gpsFollow ? "secondary" : "primary"}
+          variant={gpsFollow ? "primary" : "secondary"}
         >
           <LocateFixed className="w-4 h-4 mr-2" />
           {t("GPS")}
@@ -223,7 +227,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             key={m.id}
             onClick={() => toggleShroom(m.id)}
             className={BTN}
-            variant={selected.includes(m.id) ? "secondary" : "primary"}
+            variant={selected.includes(m.id) ? "primary" : "secondary"}
           >
             {m.name}
           </Button>
