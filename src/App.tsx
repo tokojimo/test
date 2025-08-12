@@ -23,6 +23,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./components/settings/Toasts";
 import { useT } from "./i18n";
 import { Scene } from "./routes";
+import Callback from "./routes/auth/Callback";
 
 export default function MycoExplorerApp() {
   return (
@@ -194,6 +195,7 @@ function AppContent() {
               element={<MushroomScene item={selectedMushroom} onSeeZones={() => goTo(Scene.Map)} onBack={goBack} />}
             />
             <Route path={Scene.Settings} element={<SettingsIndex />} />
+            <Route path={Scene.AuthCallback} element={<Callback />} />
             <Route
               path={Scene.Download}
               element={

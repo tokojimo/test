@@ -12,4 +12,5 @@ export enum Scene {
   Login = '/login',
   Signup = '/signup',
   Premium = '/premium',
+  AuthCallback = '/auth/callback',
 }

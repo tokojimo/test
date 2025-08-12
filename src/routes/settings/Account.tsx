@@ -1,8 +1,8 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { login, logout } from '../../api/user';
+import { login, logout, deleteAccount } from '../../api/user';
 import { useAccount, useSettingsStore } from '../../stores/settings';
 import { useToasts } from '../../components/settings/Toasts';
 import { Input } from '@/components/ui/input';
@@ -10,6 +10,10 @@ import { Button } from '@/components/ui/button';
 import FieldRow from '@/components/settings/FieldRow';
 import ActionsBar from '@/components/settings/ActionsBar';
 import { useT } from '@/i18n';
+import GoogleButton from '@/components/settings/GoogleButton';
+import AccountSummary from '@/components/settings/AccountSummary';
+import DangerModal from '@/components/settings/DangerModal';
+import { signInGoogle, signOut, getSession } from '@/lib/auth';
 
 const schema = z.object({ email: z.string().email(), password: z.string().min(4) });
 type FormValues = z.infer<typeof schema>;
@@ -19,13 +23,19 @@ export default function Account() {
   const update = useSettingsStore((s) => s.update);
   const { add } = useToasts();
   const { t } = useT();
-  const {
-    register,
-    handleSubmit,
-    formState,
-  } = useForm<FormValues>({
-    resolver: zodResolver(schema),
-  });
+  const { register, handleSubmit, formState } = useForm<FormValues>({ resolver: zodResolver(schema) });
+
+  const [showEmail, setShowEmail] = useState(false);
+  const [loadingGoogle, setLoadingGoogle] = useState(false);
+  const [openDanger, setOpenDanger] = useState(false);
+
+  useEffect(() => {
+    getSession().then((session) => {
+      if (session?.user) {
+        update({ account: { session: 'connected', email: session.user.email || undefined } });
+      }
+    });
+  }, [update]);
 
   const onSubmit = handleSubmit(async (values) => {
     const user = await login(values);
@@ -34,53 +44,79 @@ export default function Account() {
   });
 
   const handleLogout = async () => {
+    try {
+      await signOut();
+    } catch {
+      // ignore
+    }
     await logout();
     update({ account: { session: 'disconnected' } });
     add(t('Déconnecté'));
   };
 
+  const handleGoogle = async () => {
+    try {
+      setLoadingGoogle(true);
+      await signInGoogle();
+    } catch (e) {
+      add(t('Erreur de connexion'));
+      setLoadingGoogle(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    setOpenDanger(false);
+    await deleteAccount();
+    await handleLogout();
+    add(t('Compte supprimé'));
+  };
+
+  const offline = typeof navigator !== 'undefined' && !navigator.onLine;
+
   return (
     <div className="space-y-6">
       <p className="text-sm text-foreground">{t('État de session')}: {account.session === 'connected' ? t('Connecté') : t('Déconnecté')}</p>
       {account.session === 'connected' ? (
-        <div className="space-y-4">
-          <p>{account.email}</p>
-          <ActionsBar>
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={handleLogout}
-              className="w-full md:w-auto h-10 px-4 rounded-lg shadow-sm"
-            >
-              {t('Se déconnecter')}
-            </Button>
-          </ActionsBar>
-        </div>
-      ) : (
-        <form onSubmit={onSubmit} className="space-y-6">
-          <FieldRow
-            label={t('Email')}
-            error={formState.errors.email && t('Email invalide')}
+        <>
+          <AccountSummary email={account.email} provider="Google" onLogout={handleLogout} />
+          <Button
+            type="button"
+            variant="destructive"
+            onClick={() => setOpenDanger(true)}
+            className="h-10 px-4 rounded-lg shadow-sm"
           >
-            <Input {...register('email')} placeholder={t('Email')} />
-          </FieldRow>
-          <FieldRow label={t('Mot de passe')}>
-            <Input
-              {...register('password')}
-              type="password"
-              placeholder={t('Mot de passe')}
-            />
-          </FieldRow>
-          <ActionsBar>
-            <Button
-              type="submit"
-              disabled={formState.isSubmitting}
-              className="w-full md:w-auto h-10 px-4 rounded-lg shadow-sm"
-            >
-              {t('Se connecter')}
-            </Button>
-          </ActionsBar>
-        </form>
+            {t('Supprimer mon compte')}
+          </Button>
+          <DangerModal open={openDanger} onClose={() => setOpenDanger(false)} onConfirm={handleDelete} />
+        </>
+      ) : (
+        <div className="space-y-4">
+          <GoogleButton onClick={handleGoogle} disabled={offline} loading={loadingGoogle} />
+          {offline && <p className="text-sm text-foreground/70">{t('Hors connexion')}</p>}
+          <Button
+            type="button"
+            variant="secondary"
+            onClick={() => setShowEmail((s) => !s)}
+            className="w-full md:w-auto h-10 px-4 rounded-lg shadow-sm"
+          >
+            {t('Se connecter / Créer un compte par email')}
+          </Button>
+          {showEmail && (
+            <form onSubmit={onSubmit} className="space-y-6">
+              <FieldRow label={t('Email')} error={formState.errors.email && t('Email invalide')}>
+                <Input {...register('email')} placeholder={t('Email')} />
+              </FieldRow>
+              <FieldRow label={t('Mot de passe')}>
+                <Input {...register('password')} type="password" placeholder={t('Mot de passe')} />
+              </FieldRow>
+              <ActionsBar>
+                <Button type="submit" disabled={formState.isSubmitting} className="w-full md:w-auto h-10 px-4 rounded-lg shadow-sm">
+                  {t('Se connecter')}
+                </Button>
+              </ActionsBar>
+            </form>
+          )}
+        </div>
       )}
     </div>
   );
