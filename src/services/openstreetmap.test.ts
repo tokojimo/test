@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
 vi.mock('maplibre-gl', () => ({}));
-import { reverseGeocode } from './openstreetmap';
+import { reverseGeocode, getStaticMapUrl } from './openstreetmap';
 
 describe('reverseGeocode', () => {
   it('returns nearest place name', async () => {
@@ -20,5 +20,13 @@ describe('reverseGeocode', () => {
     const name = await reverseGeocode(0, 0);
     expect(name).toBeNull();
     vi.unstubAllGlobals();
+  });
+});
+
+describe('getStaticMapUrl', () => {
+  it('uses Carto tiles with retina suffix when width is large', () => {
+    const url = getStaticMapUrl(48.8566, 2.3522, 400, 200, 13);
+    expect(url).toMatch(/basemaps\.cartocdn\.com/);
+    expect(url).toMatch(/@2x\.png$/);
   });
 });
