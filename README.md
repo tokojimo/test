@@ -49,8 +49,8 @@ Environment variables can be defined in `.env` (see `.env.sample`).
 Required keys:
 
 ```
-NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
-NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+VITE_SUPABASE_URL=<your-supabase-url>
+VITE_SUPABASE_ANON_KEY=<anon-key>
 ```
 
 In the Supabase dashboard, add `https://localhost:5173/auth/callback` (or your deployed origin) to the list of OAuth redirect URLs.
