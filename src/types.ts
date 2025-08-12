@@ -3,6 +3,12 @@ export interface Mushroom {
   name: string;
   latin: string;
   edible: boolean;
+  /** Category label (e.g. cèpe, girolle) used for filters */
+  category?: string;
+  /** Whether the species requires a premium account */
+  premium?: boolean;
+  /** Popularity score used for sorting */
+  popularity?: number;
   season: string;
   habitat: string;
   weatherIdeal: string;
