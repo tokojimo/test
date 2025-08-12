@@ -15,8 +15,8 @@ import Logo from "@/assets/logo.png";
 export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; onCreate: (spot: Spot) => void }) {
   const today = todayISO();
   const overlayRef = useRef<HTMLDivElement | null>(null);
-  const { t, lang } = useT();
-  const [name, setName] = useState("");
+  const { t } = useT();
+  const [name, setName] = useState(() => t("Mon nouveau coin"));
   const [species, setSpecies] = useState<string[]>(["cepe_de_bordeaux"]);
   const [rating, setRating] = useState(4);
   const [last, setLast] = useState(today);
@@ -25,12 +25,6 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
   const photoUrlsRef = useRef<string[]>([]);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
-
-  useEffect(() => {
-    if (!name) {
-      setName(t("Mon nouveau coin"));
-    }
-  }, [lang, name, t]);
 
   const importImages = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files || []);
@@ -106,7 +100,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder={t("Nom du coin")}
-            className={`bg-neutral-100 border-neutral-300 dark:bg-neutral-900 dark:border-neutral-800 ${T_PRIMARY}`}
+            className={T_PRIMARY}
           />
           <div>
             <div className={`text-sm mb-1 ${T_PRIMARY}`}>{t("Localisation")}</div>
