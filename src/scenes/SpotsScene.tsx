@@ -78,7 +78,10 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
           spots.map(s => {
             const [lat, lng] = s.location ? s.location.split(",").map(v => parseFloat(v.trim())) : [NaN, NaN];
             const hasLoc = !Number.isNaN(lat) && !Number.isNaN(lng);
-            const mapUrl = hasLoc ? getStaticMapUrl(lat, lng) : s.cover || s.photos?.[0];
+            const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+            const mapUrl = hasLoc
+              ? getStaticMapUrl(lat, lng, 400 * dpr, 160 * dpr)
+              : s.cover || s.photos?.[0];
             return (
               <Card
                 key={s.id}
