@@ -46,6 +46,14 @@ API helpers are in `src/api`. To extend, add new slice in the store and a
 corresponding component under `src/routes/settings`.
 
 Environment variables can be defined in `.env` (see `.env.sample`).
+Required keys:
+
+```
+NEXT_PUBLIC_SUPABASE_URL=<your-supabase-url>
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon-key>
+```
+
+In the Supabase dashboard, add `https://localhost:5173/auth/callback` (or your deployed origin) to the list of OAuth redirect URLs.
 
 Limitations: offline map downloads and background sync are simplified mocks and
 should be replaced by real implementations when integrating a backend.
