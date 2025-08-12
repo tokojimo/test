@@ -1,6 +1,6 @@
 import React from "react";
 import { motion } from "framer-motion";
-import { Menu } from "lucide-react";
+import { Settings } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_MUTED } from "../styles/tokens";
 import { useT } from "../i18n";
@@ -34,7 +34,7 @@ export default function LandingScene({
           className={BTN_GHOST_ICON}
           aria-label={t("Réglages")}
         >
-          <Menu className="w-7 h-7" />
+          <Settings className="w-7 h-7" />
         </Button>
       </div>
 
