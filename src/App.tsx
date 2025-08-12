@@ -88,7 +88,7 @@ function AppContent() {
       }, 500);
       return () => clearInterval(id);
     }
-  }, [downloading, goTo]);
+  }, [downloading, goTo, pushToast, t]);
 
 
   const filteredMushrooms = useMemo(
