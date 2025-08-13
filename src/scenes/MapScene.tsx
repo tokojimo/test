@@ -230,7 +230,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           </div>
         </div>
         {toasts.length > 0 && (
-          <div className="absolute left-3 top-3 flex flex-col space-y-2">
+          <div className="absolute left-3 bottom-3 flex flex-col space-y-2">
             {toasts.map(toast => (
               <Toast
                 key={toast.id}
