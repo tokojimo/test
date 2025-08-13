@@ -193,14 +193,16 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             <Navigation className="w-4 h-4" />
           </Button>
         )}
-        <div className="absolute top-3 left-3 bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary flex items-center gap-2">
+        <div className="absolute top-3 left-3 bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary flex flex-col sm:flex-row items-start sm:items-center gap-2">
           <span className={`text-xs ${T_PRIMARY}`}>{t("Légende")}</span>
-          {LEGEND.map((l, i) => (
-            <div key={i} className="flex items-center gap-1">
-              <div className={classNames("w-3 h-3 rounded", l.color)} />
-              <span className={`text-[10px] ${T_MUTED}`}>{l.label}</span>
-            </div>
-          ))}
+          <div className="flex flex-col sm:flex-row sm:items-center gap-2">
+            {LEGEND.map((l, i) => (
+              <div key={i} className="flex items-center gap-1">
+                <div className={classNames("w-3 h-3 rounded", l.color)} />
+                <span className={`text-[10px] ${T_MUTED}`}>{l.label}</span>
+              </div>
+            ))}
+          </div>
         </div>
         {toasts.length > 0 && (
           <div className="absolute left-3 top-16 flex flex-col gap-2">
