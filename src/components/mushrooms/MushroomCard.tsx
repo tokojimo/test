@@ -34,7 +34,7 @@ export default function MushroomCard({ mushroom, onSelect, disabled = false }: P
       onClick={handleClick}
         className={`h-full flex flex-col group relative rounded-lg border border-border bg-paper text-foreground shadow-sm transition hover:shadow-md focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] hover:-translate-y-0.5 active:scale-[.99] ${disabled ? "pointer-events-none opacity-50" : ""}`}
     >
-      <div className="aspect-[4/3] w-full overflow-hidden rounded-t-lg bg-[var(--surface-2)]">
+        <div className="aspect-[4/3] overflow-hidden rounded-t-lg bg-[var(--surface-2)]">
         <img
           src={mushroom.photo}
           alt={mushroom.name}

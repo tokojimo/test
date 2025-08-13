@@ -46,14 +46,14 @@ export function MapCard({ center }: { center: [number, number] }) {
   }, [center]);
   const [lat, lng] = center;
   return (
-    <Card className="p-4 lg:p-6">
+    <Card className="h-full p-4 lg:p-6">
       <CardHeader className="p-0 mb-4 border-none">
         <CardTitle>{t("Carte du coin")}</CardTitle>
         <p className="text-sm text-foreground/70">{t("La carte affiche l'historique complet avec détails.")}</p>
       </CardHeader>
       <CardContent className="p-0">
         <div
-          className="relative w-full rounded-md border border-border overflow-hidden aspect-video"
+          className="relative rounded-md border border-border overflow-hidden aspect-video"
           role="img"
           aria-label={t("Carte de l'emplacement situé aux coordonnées latitude {lat}, longitude {lng}", { lat, lng })}
         >
