@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { describe, it, expect, beforeEach, vi } from "vitest";
 import History from "./History";
+import { AppProvider } from "@/context/AppContext";
 
 function setScreenWidth(width: number) {
   Object.defineProperty(window, "innerWidth", { configurable: true, value: width });
@@ -50,19 +51,31 @@ describe("History page", () => {
 
   it("renders bottom CTA on mobile", () => {
     setScreenWidth(500);
-    render(<History />);
+    render(
+      <AppProvider>
+        <History />
+      </AppProvider>
+    );
     expect(screen.getAllByText("Ajouter une cueillette").length).toBe(2);
   });
 
   it("hides bottom CTA on desktop", () => {
     setScreenWidth(1200);
-    render(<History />);
+    render(
+      <AppProvider>
+        <History />
+      </AppProvider>
+    );
     expect(screen.getAllByText("Ajouter une cueillette").length).toBe(1);
   });
 
   it("opens and closes modal", () => {
     setScreenWidth(1200);
-    render(<History />);
+    render(
+      <AppProvider>
+        <History />
+      </AppProvider>
+    );
     fireEvent.click(screen.getByText("Ajouter une cueillette"));
     expect(screen.getByText("Modifier la cueillette")).toBeInTheDocument();
     fireEvent.keyDown(window, { key: "Escape" });
@@ -71,7 +84,11 @@ describe("History page", () => {
 
   it("validates form fields", () => {
     setScreenWidth(1200);
-    render(<History />);
+    render(
+      <AppProvider>
+        <History />
+      </AppProvider>
+    );
     fireEvent.click(screen.getByText("Ajouter une cueillette"));
     const save = screen.getByText("Enregistrer");
     fireEvent.click(save);
@@ -80,7 +97,11 @@ describe("History page", () => {
 
   it("opens modal via keyboard on timeline", async () => {
     setScreenWidth(1200);
-    render(<History />);
+    render(
+      <AppProvider>
+        <History />
+      </AppProvider>
+    );
     const rowText = await screen.findByText("01/09/2024");
     const row = rowText.closest("button") as HTMLButtonElement;
     row.focus();
