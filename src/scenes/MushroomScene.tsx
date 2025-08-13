@@ -27,7 +27,7 @@ export default function MushroomScene({ item, onSeeZones, onBack }: { item: Mush
         <div className="p-4 space-y-4">
           <div className="flex flex-wrap items-center gap-2">
             <h2 className={`text-xl font-semibold ${T_PRIMARY}`}>{item.name}</h2>
-            <Badge variant="secondary">{item.latin}</Badge>
+            <Badge>{item.latin}</Badge>
             {item.edible ? (
               <Badge className="bg-emerald-700">🍴 {t("comestible")}</Badge>
             ) : (
