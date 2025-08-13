@@ -5,6 +5,7 @@ import { vi, describe, it, expect, beforeEach } from "vitest";
 import "@/index.css";
 
 import MushroomsIndex from "../index";
+import { AppProvider } from "@/context/AppContext";
 import type { Mushroom } from "@/types";
 
 const mushrooms: Mushroom[] = [
@@ -59,7 +60,11 @@ describe("MushroomsIndex", () => {
   });
 
   it("searches, filters and sorts", async () => {
-    render(<MushroomsIndex />);
+    render(
+      <AppProvider>
+        <MushroomsIndex />
+      </AppProvider>
+    );
     await waitFor(() => screen.getAllByText("Cèpe"));
     const search = screen.getByPlaceholderText("Rechercher") as HTMLInputElement;
     fireEvent.change(search, { target: { value: "moril" } });
@@ -79,7 +84,11 @@ describe("MushroomsIndex", () => {
   });
 
   it("card is focusable and activable via keyboard", async () => {
-    render(<MushroomsIndex />);
+    render(
+      <AppProvider>
+        <MushroomsIndex />
+      </AppProvider>
+    );
     await waitFor(() => screen.getByRole("link", { name: /Cèpe/ }));
     const card = screen.getByRole("link", { name: /Cèpe/ });
     card.focus();
@@ -90,7 +99,11 @@ describe("MushroomsIndex", () => {
   });
 
   it("activates card with Space key", async () => {
-    render(<MushroomsIndex />);
+    render(
+      <AppProvider>
+        <MushroomsIndex />
+      </AppProvider>
+    );
     await waitFor(() => screen.getByRole("link", { name: /Cèpe/ }));
     const card = screen.getByRole("link", { name: /Cèpe/ });
     card.focus();
@@ -99,7 +112,11 @@ describe("MushroomsIndex", () => {
   });
 
   it("renders responsive columns", async () => {
-    render(<MushroomsIndex />);
+    render(
+      <AppProvider>
+        <MushroomsIndex />
+      </AppProvider>
+    );
     await waitFor(() => screen.getByTestId("mushrooms-grid"));
     const grid = screen.getByTestId("mushrooms-grid");
     const classes = grid.className;
@@ -110,7 +127,11 @@ describe("MushroomsIndex", () => {
   });
 
   it("shows loading and empty states", async () => {
-    const { container } = render(<MushroomsIndex />);
+    const { container } = render(
+      <AppProvider>
+        <MushroomsIndex />
+      </AppProvider>
+    );
     expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(0);
     await waitFor(() => screen.getByRole("link", { name: /Cèpe/ }));
     fireEvent.change(screen.getByPlaceholderText("Rechercher"), { target: { value: "xyz" } });

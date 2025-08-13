@@ -82,8 +82,12 @@ async function createCanvas(width: number, height: number): Promise<any> {
     const canvas = document.createElement('canvas') as any;
     canvas.width = width;
     canvas.height = height;
-    const ctx = canvas.getContext?.('2d');
-    if (ctx) return canvas;
+    try {
+      const ctx = canvas.getContext('2d');
+      if (ctx) return canvas;
+    } catch {
+      // jsdom may not implement canvas, fall back to node canvas
+    }
   }
   const { createCanvas } = await import(/* @vite-ignore */ '@napi-rs/canvas');
   return createCanvas(width, height);
