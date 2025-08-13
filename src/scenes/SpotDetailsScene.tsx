@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect, useMemo } from "react";
-import { X, Plus, Pencil, Maximize2, Trash2 } from "lucide-react";
+import { ChevronLeft, Plus, Pencil, Maximize2, Trash2 } from "lucide-react";
 import { animate } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
@@ -11,18 +11,16 @@ import type { StyleSpecification } from "maplibre-gl";
 import Logo from "@/assets/logo.png";
 import { useAppContext } from "../context/AppContext";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
-import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
-import { EditVisitModal } from "./EditVisitModal";
+import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
+import { EditVisitModal } from "../components/EditVisitModal";
 
-export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () => void }) {
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-  const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
-  const photos = spot.photos || [];
-  const [history, setHistory] = useState<VisitHistory[]>(
-    spot.history || (spot.visits || []).map((d: string) => ({ date: d, rating: spot.rating, note: "", photos: [] }))
-  );
+export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; onBack: () => void }) {
   const { t } = useT();
   const { state, dispatch } = useAppContext();
+  const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
+  const [history, setHistory] = useState<VisitHistory[]>(
+    spot?.history || (spot?.visits || []).map((d: string) => ({ date: d, rating: spot?.rating, note: "", photos: [] }))
+  );
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
@@ -31,7 +29,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
   const data = useMemo(() => generateForecast(state.prefs.lang), [state.prefs.lang]);
 
   useEffect(() => {
-    if (!spot.location || mapRef.current || !mapContainerRef.current) return;
+    if (!spot?.location || mapRef.current || !mapContainerRef.current) return;
     const [lat, lng] = spot.location.split(",").map((v) => parseFloat(v.trim()));
     if (Number.isNaN(lat) || Number.isNaN(lng)) return;
     loadMap().then(maplibregl => {
@@ -40,8 +38,6 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
         sources: {
           osm: {
             type: "raster",
-            // Official OpenStreetMap raster tiles to match openstreetmap.org
-            // See https://tile.openstreetmap.org
             tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
             tileSize: 256,
             attribution: "© OpenStreetMap contributors",
@@ -70,7 +66,7 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [spot.location]);
+  }, [spot?.location]);
 
   useEffect(() => {
     const path = chartRef.current?.querySelector(
@@ -83,9 +79,9 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     animate(path, { strokeDashoffset: 0 }, { duration: 1.2, ease: "easeInOut" });
   }, [data]);
 
-  const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (e.target === overlayRef.current) onClose();
-  };
+  if (!spot) return null;
+  const photos = spot.photos || [];
+
   const addVisit = () => {
     const today = todayISO();
     setHistory((h) => {
@@ -100,15 +96,25 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
   };
 
   return (
-    <div ref={overlayRef} onClick={handleOutside} className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-3">
-      <div className="w-full max-w-3xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl p-4">
-        <div className="flex items-center justify-between mb-3">
-          <div className={`text-lg font-semibold ${T_PRIMARY}`}>{t("Historique du coin")}</div>
-          <div className="flex items-center gap-2">
-            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={handleDelete} aria-label={t("supprimer")}> 
+    <section className="p-3">
+      <div className="w-full max-w-3xl mx-auto bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl p-4">
+        <div className="relative h-10 mb-3">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onBack}
+            className={`absolute left-0 ${BTN_GHOST_ICON}`}
+            aria-label={t("Retour")}
+          >
+            <ChevronLeft className="w-5 h-5" />
+          </Button>
+          <h2 className={`absolute inset-0 grid place-items-center text-lg font-semibold pointer-events-none ${T_PRIMARY}`}>
+            {t("Historique du coin")}
+          </h2>
+          <div className="absolute right-0 flex items-center gap-2">
+            <Button variant="ghost" size="icon" className={BTN_GHOST_ICON} onClick={handleDelete} aria-label={t("supprimer")}>
               <Trash2 className="w-4 h-4" />
             </Button>
-            <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100"><X className="w-5 h-5" /></button>
           </div>
         </div>
 
@@ -257,9 +263,10 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
         onConfirm={() => {
           dispatch({ type: "removeSpot", id: spot.id });
           setConfirmOpen(false);
-          onClose();
+          onBack();
         }}
       />
-    </div>
+    </section>
   );
 }
+

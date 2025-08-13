@@ -6,7 +6,6 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { CreateSpotModal } from "../components/CreateSpotModal";
-import { SpotDetailsModal } from "../components/SpotDetailsModal";
 import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
 import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
@@ -15,11 +14,10 @@ import Logo from "@/assets/logo.png";
 import { MUSHROOMS } from "../data/mushrooms";
 import type { Spot } from "../types";
 
-export default function SpotsScene({ onBack }: { onBack: () => void }) {
+export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void; onOpenSpot: (s: Spot) => void }) {
   const { state, dispatch } = useAppContext();
   const spots = state.mySpots;
   const [createOpen, setCreateOpen] = useState(false);
-  const [details, setDetails] = useState<Spot | null>(null);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const { t } = useT();
@@ -86,7 +84,7 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
             return (
               <Card
                 key={s.id}
-                onClick={() => setDetails(s)}
+                onClick={() => onOpenSpot(s)}
                 className="cursor-pointer bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden relative"
               >
                 {hasLoc ? (
@@ -147,10 +145,6 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
             setCreateOpen(false);
           }}
         />
-      )}
-
-      {details && (
-        <SpotDetailsModal spot={details} onClose={() => setDetails(null)} />
       )}
 
       <ConfirmDeleteModal

@@ -10,6 +10,7 @@ import LandingScene from "./scenes/LandingScene";
 import MapScene from "./scenes/MapScene";
 import ZoneScene from "./scenes/ZoneScene";
 import SpotsScene from "./scenes/SpotsScene";
+import SpotDetailsScene from "./scenes/SpotDetailsScene";
 import PickerScene from "./scenes/PickerScene";
 import MushroomScene from "./scenes/MushroomScene";
 import SettingsIndex from "./routes/settings";
@@ -42,6 +43,7 @@ function AppContent() {
   const [search, setSearch] = useState("");
   const [selectedZone, setSelectedZone] = useState<Zone | null>(null);
   const [selectedMushroom, setSelectedMushroom] = useState<Mushroom | null>(null);
+  const [selectedSpot, setSelectedSpot] = useState<Spot | null>(null);
   const [downloading, setDownloading] = useState(false);
   const [dlProgress, setDlProgress] = useState(0);
   const [includeRelief, setIncludeRelief] = useState(true);
@@ -184,7 +186,22 @@ function AppContent() {
                 />
               }
             />
-            <Route path={Scene.Spots} element={<SpotsScene onBack={goBack} />} />
+            <Route
+              path={Scene.Spots}
+              element={
+                <SpotsScene
+                  onBack={goBack}
+                  onOpenSpot={(s) => {
+                    setSelectedSpot(s);
+                    goTo(Scene.Spot);
+                  }}
+                />
+              }
+            />
+            <Route
+              path={Scene.Spot}
+              element={<SpotDetailsScene spot={selectedSpot} onBack={goBack} />}
+            />
             <Route
               path={Scene.Picker}
               element={
