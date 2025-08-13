@@ -1,6 +1,5 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
-import { useEffect } from 'react';
 
 const data = [
   { day: '01/09', score: 42 },
@@ -11,19 +10,6 @@ const data = [
 ];
 
 export default function AppearingLineChart() {
-  useEffect(() => {
-    const path = document.querySelector('.recharts-line-curve') as SVGPathElement | null;
-    if (!path) return;
-
-    const length = path.getTotalLength();
-    path.style.strokeDasharray = `${length}`;
-    path.style.strokeDashoffset = `${length}`;
-    // Trigger reflow to apply initial dash offset before transitioning
-    path.getBoundingClientRect();
-    path.style.transition = 'stroke-dashoffset 900ms ease-out';
-    path.style.strokeDashoffset = '0';
-  }, [data]);
-
   return (
     <AnimatePresence>
       <motion.section
@@ -36,18 +22,8 @@ export default function AppearingLineChart() {
           <LineChart data={data}>
             <XAxis dataKey="day" stroke="#4b5563" tick={{ fill: '#9ca3af' }} />
             <YAxis stroke="#4b5563" tick={{ fill: '#9ca3af' }} />
-            <Tooltip
-              contentStyle={{ background: '#111827', border: 'none', borderRadius: 4, color: '#fff' }}
-              labelStyle={{ color: '#9ca3af' }}
-            />
-            <Line
-              type="monotone"
-              dataKey="score"
-              stroke="#4ade80"
-              dot={false}
-              // Disable built-in animation in favor of custom "hand-drawn" effect
-              isAnimationActive={false}
-            />
+            <Tooltip contentStyle={{ background: '#111827', border: 'none', borderRadius: 4, color: '#fff' }} labelStyle={{ color: '#9ca3af' }} />
+            <Line type="monotone" dataKey="score" stroke="#4ade80" dot={false} isAnimationActive={true} animationBegin={200} animationDuration={900} animationEasing="ease-out" />
           </LineChart>
         </ResponsiveContainer>
       </motion.section>
