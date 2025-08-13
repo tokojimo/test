@@ -31,7 +31,15 @@ export const useToastStore = create<ToastStore>((set, get) => ({
   show: toast => {
     const id = nextId();
     const max = get().max;
-    set(state => ({ toasts: [{ id, ...toast }, ...state.toasts].slice(0, max) }));
+    set(state => {
+      const toasts = [{ id, ...toast }, ...state.toasts];
+      if (toasts.length > max) {
+        const overflow = toasts[max];
+        // keep overflow item for exit animation then remove next tick
+        setTimeout(() => get().dismiss(overflow.id), 0);
+      }
+      return { toasts: toasts.slice(0, max + 1) };
+    });
     return id;
   },
   dismiss: id => {
