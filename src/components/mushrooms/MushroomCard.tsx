@@ -43,7 +43,7 @@ export default function MushroomCard({ mushroom, compact = false, onView, onAdd,
           <CardTitle className="text-foreground text-lg font-semibold">{mushroom.name}</CardTitle>
           {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
         </div>
-        <p className="text-sm text-foreground/70 italic">{mushroom.latin}</p>
+        <p className="text-sm text-muted-foreground italic">{mushroom.latin}</p>
         <div className="mt-2 flex flex-wrap gap-2">
           <Button onClick={(e) => { e.stopPropagation(); onView(); }} className="text-sm py-1 px-2">
             Voir sur la carte
