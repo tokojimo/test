@@ -46,7 +46,7 @@ export function InsightsCard({ events, onSelect }: { events: TimelineEvent[]; on
     : [];
 
   return (
-    <Card className="p-4 lg:p-6 flex flex-col">
+    <Card className="h-full p-4 lg:p-6 flex flex-col">
       <CardHeader className="p-0 mb-4 border-none">
         <CardTitle>{t("Insights")}</CardTitle>
       </CardHeader>
