@@ -88,6 +88,12 @@ describe("MushroomsIndex", () => {
     expect(select).toHaveFocus();
   });
 
+  it("renders cards as links", async () => {
+    render(<MushroomsIndex />);
+    await waitFor(() => screen.getByRole("link", { name: /Cèpe/ }));
+    expect(screen.getByRole("link", { name: /Cèpe/ })).toBeInTheDocument();
+  });
+
   it("shows loading and empty states", async () => {
     const { container } = render(<MushroomsIndex />);
     expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(0);
