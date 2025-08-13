@@ -176,4 +176,14 @@ export default {
   "⬈ amélioration": { fr: "⬈ amélioration", en: "⬈ improving" },
   "⬊ en baisse": { fr: "⬊ en baisse", en: "⬊ decreasing" },
   "→ stable": { fr: "→ stable", en: "→ stable" },
+  "Historique": { fr: "Historique", en: "History" },
+  "Prévisions locales": { fr: "Prévisions locales", en: "Local forecasts" },
+  "Insights": { fr: "Insights", en: "Insights" },
+  "Visite": { fr: "Visite", en: "Visit" },
+  "Requis": { fr: "Requis", en: "Required" },
+  "Supprimer cette photo ?": { fr: "Supprimer cette photo ?", en: "Delete this photo?" },
+  "© OpenStreetMap contributors | MapLibre": {
+    fr: "© OpenStreetMap contributors | MapLibre",
+    en: "© OpenStreetMap contributors | MapLibre",
+  },
 };
