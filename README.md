@@ -15,7 +15,7 @@ CSS variables are defined in [`src/index.css`](src/index.css) so Tailwind utilit
 New primitive components live in [`src/components/ui`](src/components/ui): buttons, inputs, selects, tabs, chips, cards, modals and toasts.  Buttons support `primary`, `secondary`, `ghost` and `destructive` variants with accessible focus styles.  Cards and chips include subtle hover lift and rounded organic forms.  A lightweight `Skeleton` component provides loading placeholders.
 
 ## Global Styles & Layout
-`src/index.css` applies a reset, theming variables, a lightweight grain texture and container/grid utilities.  Motion respects `prefers-reduced-motion` and all colors meet WCAG AA contrast.
+`src/index.css` applies a reset, theming variables, a lightweight grain texture and container/grid utilities.  All colors meet WCAG AA contrast.
 
 ## Map & Scenes
 The map scene uses the natural palette for tinting and hides default chrome for a cleaner look.  The landing hero now relies solely on organic blobs and color, removing literal mushroom graphics.
