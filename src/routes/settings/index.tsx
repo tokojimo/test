@@ -31,7 +31,12 @@ export default function SettingsIndex() {
   ];
 
   useEffect(() => {
-    if (active) window.location.hash = active;
+    if (active) {
+      const hash = `#${active}`;
+      if (window.location.hash !== hash) {
+        window.history.replaceState(null, '', hash);
+      }
+    }
   }, [active]);
 
   return (
