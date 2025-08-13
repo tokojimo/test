@@ -115,7 +115,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                 {hasLoc ? (
                   <div className="relative w-full h-40">
                     <img src={mapUrl as string} className="w-full h-full object-cover" />
-                    <img src={Logo} className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <img src={Logo} className="w-6 h-6 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-full" />
                   </div>
                 ) : (
                   <img src={mapUrl as string} className="w-full h-40 object-cover" />
