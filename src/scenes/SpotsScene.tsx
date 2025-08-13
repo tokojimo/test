@@ -9,7 +9,7 @@ import { CreateSpotModal } from "../components/CreateSpotModal";
 import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
 import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
-import { getStaticMapUrl } from "../services/openstreetmap";
+import { getStaticMapUrl } from "../services/staticMap";
 import Logo from "@/assets/logo.png";
 import { MUSHROOMS } from "../data/mushrooms";
 import type { Spot } from "../types";
@@ -20,7 +20,9 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
   const [createOpen, setCreateOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [mapUrls, setMapUrls] = useState<Record<number, string>>({});
   const { t } = useT();
+  const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
   const openRoute = (spot: Spot) => {
     if (!spot.location) return;
@@ -33,6 +35,32 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
     const timer = setTimeout(() => setLoading(false), 400);
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      const entries = await Promise.all(
+        spots.map(async (s) => {
+          const [lat, lng] = s.location
+            ? s.location.split(",").map((v) => parseFloat(v.trim()))
+            : [NaN, NaN];
+          if (!Number.isNaN(lat) && !Number.isNaN(lng)) {
+            const url = await getStaticMapUrl(lat, lng, 400 * dpr, 160 * dpr);
+            return [s.id, url] as [number, string];
+          }
+          return [s.id, s.cover || s.photos?.[0] || ""] as [number, string];
+        })
+      );
+      if (!cancelled) {
+        const obj: Record<number, string> = {};
+        for (const [id, url] of entries) obj[id] = url;
+        setMapUrls(obj);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [spots, dpr]);
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3 space-y-3">
@@ -77,10 +105,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
           spots.map(s => {
             const [lat, lng] = s.location ? s.location.split(",").map(v => parseFloat(v.trim())) : [NaN, NaN];
             const hasLoc = !Number.isNaN(lat) && !Number.isNaN(lng);
-            const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
-            const mapUrl = hasLoc
-              ? getStaticMapUrl(lat, lng, 400 * dpr, 160 * dpr)
-              : s.cover || s.photos?.[0];
+            const mapUrl = mapUrls[s.id] || s.cover || s.photos?.[0];
             return (
               <Card
                 key={s.id}
