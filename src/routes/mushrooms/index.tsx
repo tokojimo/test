@@ -3,10 +3,9 @@ import { loadMushrooms } from "@/services/dataLoader";
 import type { Mushroom } from "@/types";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
-import { Tabs } from "@/components/ui/tabs";
-import { Skeleton } from "@/components/ui/skeleton";
 import SpeciesPicker, { SpeciesOption } from "@/components/mushrooms/SpeciesPicker";
 import MushroomCard from "@/components/mushrooms/MushroomCard";
+import MushroomCardSkeleton from "@/components/mushrooms/MushroomCard.skeleton";
 import MushroomDetails from "@/components/mushrooms/MushroomDetails";
 
 function normalize(str: string) {
@@ -49,7 +48,6 @@ export default function MushroomsIndex() {
   const [category, setCategory] = useState("all");
   const [access, setAccess] = useState("all");
   const [sort, setSort] = useState("alpha");
-  const [layout, setLayout] = useState("grid");
   const [selectedSpecies, setSelectedSpecies] = useState<string[]>([]);
   const [details, setDetails] = useState<Mushroom | null>(null);
   const [visible, setVisible] = useState(12);
@@ -119,17 +117,19 @@ export default function MushroomsIndex() {
 
   if (loading) {
     return (
-      <div className="p-4 grid-responsive">
-        {Array.from({ length: 6 }).map((_, i) => (
-          <Skeleton key={i} className="h-48" />
-        ))}
+      <div className="container py-4">
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [grid-auto-rows:1fr]">
+          {Array.from({ length: 8 }).map((_, i) => (
+            <MushroomCardSkeleton key={i} />
+          ))}
+        </div>
       </div>
     );
   }
 
   if (error) {
     return (
-      <div className="p-4 space-y-4">
+      <div className="container py-4 space-y-4">
         <p className="text-foreground">Erreur de chargement.</p>
         <button
           className="underline text-foreground"
@@ -176,14 +176,6 @@ export default function MushroomsIndex() {
           <option value="alpha">Alphabétique</option>
           <option value="popular">Popularité</option>
         </Select>
-        <Tabs
-          tabs={[
-            { id: "grid", label: "Grille" },
-            { id: "list", label: "Liste" },
-          ]}
-          active={layout}
-          onChange={setLayout}
-        />
       </div>
 
       <SpeciesPicker
@@ -197,30 +189,29 @@ export default function MushroomsIndex() {
       />
 
       {filtered.length === 0 ? (
-        <p className="text-center text-foreground/70">Aucun champignon.</p>
-      ) : layout === "grid" ? (
-        <div className="grid-responsive">
-          {displayed.map((m) => (
-            <MushroomCard
-              key={m.id}
-              mushroom={m}
-              onView={() => setDetails(m)}
-              onAdd={() => setDetails(m)}
-              onDetails={() => setDetails(m)}
-            />
-          ))}
+        <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [grid-auto-rows:1fr]">
+          <div className="flex flex-col items-center justify-center rounded-lg border border-border p-6 text-center">
+            <p className="mb-2 text-foreground/70">Aucun résultat</p>
+            <button
+              className="underline"
+              onClick={() => {
+                setSearch("");
+                setCategory("all");
+                setAccess("all");
+                setSelectedSpecies([]);
+              }}
+            >
+              Effacer filtres
+            </button>
+          </div>
         </div>
       ) : (
-        <div className="flex flex-col gap-4">
+        <div
+          data-testid="mushrooms-grid"
+          className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [grid-auto-rows:1fr]"
+        >
           {displayed.map((m) => (
-            <MushroomCard
-              key={m.id}
-              mushroom={m}
-              compact
-              onView={() => setDetails(m)}
-              onAdd={() => setDetails(m)}
-              onDetails={() => setDetails(m)}
-            />
+            <MushroomCard key={m.id} mushroom={m} onSelect={() => setDetails(m)} />
           ))}
         </div>
       )}
