@@ -14,11 +14,12 @@ export function Timeline({ events, onSelect }: { events: TimelineEvent[]; onSele
         <button
           key={ev.id}
           onClick={() => onSelect(ev.id)}
-          className="flex w-full items-center gap-4 h-12 px-4 rounded-md text-left text-sm hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          className="flex items-center w-full h-12 px-4 rounded-md text-left hover:bg-foreground/10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          <span className="flex-1">{ev.date}</span>
-          <span className="w-12 text-center">{ev.rating}</span>
-          <span className="flex-1">{ev.label}</span>
+          <div className="flex flex-col">
+            <span className="text-sm">{ev.date}</span>
+            <span className="text-xs text-foreground/70">Note: {ev.rating}/5{ev.label ? ` • ${ev.label}` : ""}</span>
+          </div>
         </button>
       ))}
     </div>

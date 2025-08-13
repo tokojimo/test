@@ -3,6 +3,7 @@ import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import { Trash2 } from "lucide-react";
 
 type Harvest = {
   id?: string;
@@ -106,6 +107,23 @@ export function EditHarvestModal({
           </div>
           <div className="space-y-2 lg:col-span-2">
             <label className="text-sm">Galerie</label>
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              {photos.map(url => (
+                <div key={url} className="relative aspect-square">
+                  <img src={url} className="w-full h-full object-cover rounded-md border border-border" alt="" />
+                  <Button
+                    type="button"
+                    size="icon"
+                    variant="destructive"
+                    className="absolute top-1 right-1 h-6 w-6 p-0"
+                    onClick={() => removePhoto(url)}
+                    aria-label="Supprimer"
+                  >
+                    <Trash2 className="w-4 h-4" />
+                  </Button>
+                </div>
+              ))}
+            </div>
             <input
               id="file"
               type="file"
@@ -114,27 +132,13 @@ export function EditHarvestModal({
               className="hidden"
               onChange={e => importPhotos(e.target.files)}
             />
-            <div className="flex flex-wrap gap-2">
-              {photos.map(url => (
-                <div key={url} className="relative w-24 h-24">
-                  <img src={url} className="w-full h-full object-cover rounded-md border border-border" alt="" />
-                  <button
-                    type="button"
-                    onClick={() => removePhoto(url)}
-                    className="absolute top-1 right-1 text-foreground/70 hover:text-foreground"
-                    aria-label="Supprimer"
-                  >
-                    ×
-                  </button>
-                </div>
-              ))}
-              <label
-                htmlFor="file"
-                className="w-24 h-24 flex items-center justify-center rounded-md border border-border cursor-pointer hover:bg-foreground/10 text-sm"
-              >
-                Importer des photos
-              </label>
-            </div>
+            <Button
+              type="button"
+              variant="secondary"
+              onClick={() => document.getElementById("file")?.click()}
+            >
+              Importer des photos
+            </Button>
           </div>
         </div>
         <div className="flex items-center justify-between gap-2 flex-wrap mt-2">
