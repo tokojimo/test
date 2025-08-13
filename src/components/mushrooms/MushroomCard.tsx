@@ -1,69 +1,60 @@
 import React from "react";
-import { Card, CardContent, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
 import type { Mushroom } from "@/types";
+import { Badge } from "@/components/ui/badge";
+import { ChevronRight } from "lucide-react";
 
 interface Props {
   mushroom: Mushroom;
-  compact?: boolean;
-  onView: () => void;
-  onAdd: () => void;
-  onDetails: () => void;
+  onSelect: () => void;
+  disabled?: boolean;
 }
 
-export default function MushroomCard({ mushroom, compact = false, onView, onAdd, onDetails }: Props) {
+export default function MushroomCard({ mushroom, onSelect, disabled = false }: Props) {
   const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") onDetails();
+    if (disabled) return;
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect();
+    }
   };
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    if (!disabled) onSelect();
+  };
+
   return (
     <a
-      role="link"
       href="#"
-      onClick={(e) => {
-        e.preventDefault();
-        onDetails();
-      }}
+      role="link"
+      aria-label={mushroom.name}
+      tabIndex={disabled ? -1 : 0}
+      aria-disabled={disabled}
       onKeyDown={handleKey}
-      className="block h-full no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+      onClick={handleClick}
+      className={`group relative h-full flex flex-col rounded-lg border border-border shadow-sm transition-transform transition-shadow duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 hover:shadow-md focus-visible:shadow-md hover:-translate-y-0.5 active:scale-[.99] ${disabled ? "pointer-events-none opacity-50" : ""}`}
     >
-      <Card className={compact ? "flex items-center gap-4 h-full" : "cursor-pointer h-full"}>
-        {compact ? (
-          <img
-            src={mushroom.photo}
-            alt=""
-            className="h-24 w-32 object-cover rounded-l-lg"
-            loading="lazy"
-          />
-        ) : (
-          <img
-            src={mushroom.photo}
-            alt=""
-            className="aspect-[4/3] w-full object-cover rounded-t-lg"
-            loading="lazy"
-          />
+      <div className="aspect-[4/3] w-full overflow-hidden rounded-t-lg bg-paper">
+        <img
+          src={mushroom.photo}
+          alt={mushroom.name}
+          className="h-full w-full object-cover"
+          loading="lazy"
+        />
+      </div>
+      <div className="flex grow flex-col gap-2 p-4">
+        <h3 className="truncate text-base font-medium text-foreground">{mushroom.name}</h3>
+        {mushroom.latin && (
+          <p className="truncate text-sm text-foreground/70">{mushroom.latin}</p>
         )}
-        <CardContent className={compact ? "p-4 flex-1" : "p-4 space-y-2"}>
-          <div className="flex items-center gap-2">
-            <CardTitle className="text-foreground text-lg font-semibold">{mushroom.name}</CardTitle>
-            {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
-          </div>
-          <p className="text-sm text-moss italic">{mushroom.latin}</p>
-          <div className="mt-2 flex flex-wrap gap-2">
-            <Button onClick={(e) => { e.stopPropagation(); onView(); }} className="text-sm py-1 px-2">
-              Voir sur la carte
-            </Button>
-            <Button
-              onClick={(e) => { e.stopPropagation(); onAdd(); }}
-              variant="secondary"
-              className="text-sm py-1 px-2"
-            >
-              Ajouter à mes coins
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="mt-auto flex flex-wrap items-center gap-2">
+          {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
+          <ChevronRight
+            className="ml-auto h-4 w-4 text-foreground/40 transition-transform group-hover:translate-x-0.5"
+            aria-hidden="true"
+          />
+        </div>
+      </div>
     </a>
   );
 }
-

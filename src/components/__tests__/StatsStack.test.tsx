@@ -11,6 +11,15 @@ beforeAll(() => {
   }
   // @ts-ignore
   global.ResizeObserver = ResizeObserver;
+
+  Object.defineProperty(HTMLElement.prototype, "offsetHeight", {
+    configurable: true,
+    value: 300,
+  });
+  Object.defineProperty(HTMLElement.prototype, "offsetWidth", {
+    configurable: true,
+    value: 300,
+  });
 });
 
 describe("StatsStack", () => {

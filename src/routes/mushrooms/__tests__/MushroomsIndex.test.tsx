@@ -2,6 +2,7 @@ import React from "react";
 import { render, screen, waitFor, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { vi, describe, it, expect, beforeEach } from "vitest";
+import "@/index.css";
 
 import MushroomsIndex from "../index";
 import type { Mushroom } from "@/types";
@@ -77,31 +78,34 @@ describe("MushroomsIndex", () => {
     expect(cards[0]).toHaveTextContent("Morille");
   });
 
-  it("allows keyboard navigation", async () => {
-    render(<MushroomsIndex />);
-    await waitFor(() => screen.getByPlaceholderText("Rechercher"));
-    const search = screen.getByPlaceholderText("Rechercher");
-    (search as HTMLElement).focus();
-    expect(search).toHaveFocus();
-    const select = screen.getByDisplayValue("Toutes catégories");
-    (select as HTMLElement).focus();
-    expect(select).toHaveFocus();
-  });
-
-  it("renders cards as links", async () => {
+  it("card is focusable and activable via keyboard", async () => {
     render(<MushroomsIndex />);
     await waitFor(() => screen.getByRole("link", { name: /Cèpe/ }));
-    expect(screen.getByRole("link", { name: /Cèpe/ })).toBeInTheDocument();
+    const card = screen.getByRole("link", { name: /Cèpe/ });
+    card.focus();
+    expect(card).toHaveFocus();
+    fireEvent.keyDown(card, { key: "Enter" });
+    await waitFor(() => screen.getByRole("dialog"));
+  });
+
+  it("renders responsive columns", async () => {
+    render(<MushroomsIndex />);
+    await waitFor(() => screen.getByTestId("mushrooms-grid"));
+    const grid = screen.getByTestId("mushrooms-grid");
+    const classes = grid.className;
+    expect(classes).toContain("grid-cols-1");
+    expect(classes).toContain("sm:grid-cols-2");
+    expect(classes).toContain("lg:grid-cols-3");
+    expect(classes).toContain("xl:grid-cols-4");
   });
 
   it("shows loading and empty states", async () => {
     const { container } = render(<MushroomsIndex />);
     expect(container.querySelectorAll(".animate-pulse").length).toBeGreaterThan(0);
-    await new Promise((r) => setTimeout(r, 0));
-    expect(screen.getAllByText("Cèpe")[0]).toBeInTheDocument();
+    await waitFor(() => screen.getByRole("link", { name: /Cèpe/ }));
     fireEvent.change(screen.getByPlaceholderText("Rechercher"), { target: { value: "xyz" } });
-    await new Promise(r => setTimeout(r,0));
-    expect(screen.getByText("Aucun champignon.")).toBeInTheDocument();
+    await waitFor(() => screen.getByText("Effacer filtres"));
+    expect(screen.getByText("Aucun résultat")).toBeInTheDocument();
   });
 });
 
