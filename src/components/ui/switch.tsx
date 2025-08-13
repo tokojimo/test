@@ -27,15 +27,15 @@ export function Switch({
           toggle();
         }
       }}
-      className={`relative inline-flex h-6 w-10 items-center rounded-full border transition-colors ${
+      className={`relative inline-flex h-6 w-10 items-center rounded-full border-2 transition-colors duration-normal ease-in-out ${
         checked
-          ? "border-primary bg-primary dark:border-primary dark:bg-primary"
-          : "border-neutral-300 bg-neutral-100 dark:border-neutral-700 dark:bg-neutral-800"
-      } ${className}`}
+          ? "bg-primary dark:bg-primary"
+          : "bg-neutral-100 dark:bg-neutral-800"
+      } border-border dark:border-border ${className}`}
       {...props}
     >
       <span
-        className={`pointer-events-none block h-5 w-5 rounded-full bg-white dark:bg-white border border-border shadow transition-transform ${
+        className={`pointer-events-none block h-5 w-5 rounded-full bg-white dark:bg-white border-2 border-border shadow transition-transform duration-normal ease-in-out ${
           checked ? "translate-x-4" : "translate-x-0"
         }`}
       />
