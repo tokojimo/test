@@ -105,8 +105,8 @@ describe("MushroomsIndex", () => {
     const classes = grid.className;
     expect(classes).toContain("grid-cols-1");
     expect(classes).toContain("sm:grid-cols-2");
-    expect(classes).toContain("lg:grid-cols-3");
-    expect(classes).toContain("xl:grid-cols-4");
+    expect(classes).toContain("md:grid-cols-3");
+    expect(classes).toContain("lg:grid-cols-4");
   });
 
   it("shows loading and empty states", async () => {
