@@ -31,7 +31,9 @@ export default function SettingsIndex() {
   ];
 
   useEffect(() => {
-    if (active) window.location.hash = active;
+    if (active) {
+      window.history.replaceState(null, '', `${window.location.pathname}#${active}`);
+    }
   }, [active]);
 
   return (
