@@ -108,9 +108,13 @@ export function EditHarvestModal({
           <div className="space-y-2 lg:col-span-2">
             <label className="text-sm">Galerie</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {photos.map(url => (
+              {photos.map((url, index) => (
                 <div key={url} className="relative aspect-square">
-                  <img src={url} className="w-full h-full object-cover rounded-md border border-border" alt="" />
+                  <img
+                    src={url}
+                    className="w-full h-full object-cover rounded-md border border-border"
+                    alt={`Photo de la cueillette ${index + 1}`}
+                  />
                   <Button
                     type="button"
                     size="icon"
