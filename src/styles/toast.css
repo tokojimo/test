@@ -6,7 +6,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .toast-reduced {
+  [data-reduced='true'] {
     transition: none !important;
     animation: none !important;
   }
