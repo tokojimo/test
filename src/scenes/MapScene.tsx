@@ -98,34 +98,20 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         }
       }
 
-      // Find nearest demo zone to the tapped coordinates
-      let nearest: Zone | null = null;
-      let minDist = Infinity;
-      for (const z of DEMO_ZONES) {
-        const [zLat, zLng] = z.coords;
-        const dist = Math.hypot(lat - zLat, lng - zLng);
-        if (dist < minDist) {
-          minDist = dist;
-          nearest = z;
-        }
-      }
-      if (nearest) {
-        const speciesLines = Object.entries(nearest.species)
-          .map(([id, sc]) => {
-            const name =
-              MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
-            return `${name} ${sc}%`;
-          })
-          .join("\n");
-
-        const placeName = await reverseGeocode(lat, lng);
-        const zone = placeName ? { ...nearest, name: placeName } : nearest;
-        const msg = `${zone.name}\n${zone.score}% ${zone.trend}\n${speciesLines}`;
-        setToasts(curr => [{ id, text: msg, zone }, ...curr].slice(0, 3));
-        setTimeout(() => {
-          setToasts(curr => curr.filter(t => t.id !== id));
-        }, 45000);
-      }
+      // Create a new zone based on the tapped coordinates
+      const placeName = await reverseGeocode(lat, lng);
+      const zone: Zone = {
+        id: `zone-${id}`,
+        name: placeName || "Zone",
+        score: 0,
+        species: {},
+        trend: "",
+        coords: [lat, lng],
+      };
+      setToasts(curr => [{ id, text: zone.name, zone }, ...curr].slice(0, 3));
+      setTimeout(() => {
+        setToasts(curr => curr.filter(t => t.id !== id));
+      }, 45000);
     },
     []
   );
