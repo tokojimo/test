@@ -206,13 +206,17 @@ export default function MushroomsIndex() {
           </div>
         </div>
       ) : (
-        <div
-          data-testid="mushrooms-grid"
-          className="grid w-full gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
-        >
-          {displayed.map((m) => (
-            <MushroomCard key={m.id} mushroom={m} onSelect={() => setDetails(m)} />
-          ))}
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div
+            data-testid="mushrooms-grid"
+            className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [grid-auto-rows:1fr]"
+          >
+            {displayed.map((m) => (
+              <div key={m.id} className="h-full">
+                <MushroomCard mushroom={m} onSelect={() => setDetails(m)} />
+              </div>
+            ))}
+          </div>
         </div>
       )}
       <div ref={moreRef} />
