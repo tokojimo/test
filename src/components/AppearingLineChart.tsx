@@ -1,5 +1,6 @@
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer } from 'recharts';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useEffect } from 'react';
 
 const data = [
   { day: '01/09', score: 42 },
@@ -10,6 +11,19 @@ const data = [
 ];
 
 export default function AppearingLineChart() {
+  useEffect(() => {
+    const path = document.querySelector('.recharts-line-curve') as SVGPathElement | null;
+    if (!path) return;
+
+    const length = path.getTotalLength();
+    path.style.strokeDasharray = `${length}`;
+    path.style.strokeDashoffset = `${length}`;
+    // Trigger reflow to apply initial dash offset before transitioning
+    path.getBoundingClientRect();
+    path.style.transition = 'stroke-dashoffset 900ms ease-out';
+    path.style.strokeDashoffset = '0';
+  }, [data]);
+
   return (
     <AnimatePresence>
       <motion.section
@@ -31,10 +45,8 @@ export default function AppearingLineChart() {
               dataKey="score"
               stroke="#4ade80"
               dot={false}
-              isAnimationActive
-              animationBegin={200}
-              animationDuration={900}
-              animationEasing="ease-out"
+              // Disable built-in animation in favor of custom "hand-drawn" effect
+              isAnimationActive={false}
             />
           </LineChart>
         </ResponsiveContainer>
