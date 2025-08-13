@@ -17,6 +17,13 @@ New primitive components live in [`src/components/ui`](src/components/ui): butto
 ## Global Styles & Layout
 `src/index.css` applies a reset, theming variables, a lightweight grain texture and container/grid utilities.  All colors meet WCAG AA contrast.
 
+## Grid Responsiveness Regression
+The redesign initially dropped the `grid-responsive` rules, so responsive grid utilities were purged and layouts collapsed. The fix adds explicit `grid-cols-*` classes in templates and safelists them in `tailwind.config.cjs`.
+
+### Verification
+1. Inspect the computed `grid-template-columns` at each breakpoint to confirm the expected column counts.
+2. Ensure no other CSS rules override those grid declarations.
+
 ## Map & Scenes
 The map scene uses the natural palette for tinting and hides default chrome for a cleaner look.  The landing hero now relies solely on organic blobs and color, removing literal mushroom graphics.
 
