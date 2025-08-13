@@ -79,9 +79,6 @@ c3VsdD0ibm9pc2VHdW51IiBpbj0iZG9nZSIgZHVyYXRpb249IjAuM3MiIHN0ZC1kZXZpYXRpb249IjAu
     mix-blend-mode:overlay;
   }
 
-  @media (prefers-reduced-motion: reduce) {
-    *, *::before, *::after { transition-duration:0ms!important; animation-duration:0ms!important; }
-  }
 }
 
 @layer base {

@@ -5,9 +5,3 @@
   .toast-error { @apply bg-danger text-paper; }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  [data-reduced='true'] {
-    transition: none !important;
-    animation: none !important;
-  }
-}
