@@ -1,0 +1,13 @@
+@layer components {
+  .toast-success { @apply bg-forest text-paper; }
+  .toast-info { @apply bg-accent text-paper; }
+  .toast-warning { @apply bg-gold text-earth; }
+  .toast-error { @apply bg-danger text-paper; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .toast-reduced {
+    transition: none !important;
+    animation: none !important;
+  }
+}
