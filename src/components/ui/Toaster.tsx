@@ -125,7 +125,7 @@ function ToastView({ toast: t, index }: { toast: ToastItem; index: number }) {
             }
           : {
               opacity: 0,
-              y: -16,
+              y: 16,
               scale: 0.96,
               height: 0,
               marginBottom: 0,
@@ -152,7 +152,6 @@ function ToastView({ toast: t, index }: { toast: ToastItem; index: number }) {
             }
       }
       role={variantRole[t.variant ?? 'info'] as any}
-      aria-live={t.variant === 'error' ? 'assertive' : 'polite'}
       data-reduced={reduced}
       className={classes}
     >
@@ -194,12 +193,13 @@ export function Toaster({
   useEffect(() => setMax(max), [max, setMax]);
 
   const posClass = `${POS[position.mobile]} md:${POS[position.desktop]}`;
+  const live = toasts.some(t => t.variant === 'error') ? 'assertive' : 'polite';
 
   return createPortal(
     <div
       className={`fixed z-50 flex flex-col gap-2 pointer-events-none ${posClass}`}
       role="region"
-      aria-live="polite"
+      aria-live={live}
     >
       <AnimatePresence initial={false}>
         {toasts.map((t, i) => (

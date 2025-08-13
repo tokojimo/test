@@ -86,4 +86,14 @@ describe('toast system', () => {
     fireEvent.keyDown(action, { key: 'Escape' });
     expect(screen.queryByText('Act')).toBeNull();
   });
+
+  it('uses assertive live region for error toasts', () => {
+    render(<Toaster />);
+    const region = screen.getByRole('region');
+    expect(region).toHaveAttribute('aria-live', 'polite');
+    act(() => {
+      toast.show({ message: 'Oops', variant: 'error', duration: 1000 });
+    });
+    expect(region).toHaveAttribute('aria-live', 'assertive');
+  });
 });
