@@ -37,7 +37,7 @@ const variantRole: Record<ToastVariant, string> = {
   error: 'alert',
 };
 
-function ToastView({ toast: t }: { toast: ToastItem }) {
+function ToastView({ toast: t, index }: { toast: ToastItem; index: number }) {
   const { dismiss } = useToastStore.getState();
   const [open, setOpen] = useState(true);
   const reduced = useReducedMotion();
@@ -102,6 +102,7 @@ function ToastView({ toast: t }: { toast: ToastItem }) {
   const classes = `pointer-events-auto w-full min-w-[280px] max-w-[400px] rounded-md px-4 py-3 ${shadow} toast-${
     t.variant ?? 'info'
   }`;
+  const delay = reduced ? 0 : index * 0.05;
 
   return (
     <motion.div
@@ -109,15 +110,47 @@ function ToastView({ toast: t }: { toast: ToastItem }) {
       onMouseEnter={pause}
       onMouseLeave={resume}
       onKeyDown={handleKey}
-      initial={reduced ? false : { opacity: 0, y: 16, scale: 0.96 }}
-      animate={{ opacity: 1, y: 0, scale: 1 }}
-      exit={{ opacity: 0, y: -16, scale: 0.96, height: 0, marginBottom: 0, paddingTop: 0, paddingBottom: 0 }}
-      transition={{
-        opacity: { duration: 0.18, ease: [0.2, 0.7, 0.2, 1] },
-        y: { duration: 0.18, ease: [0.2, 0.7, 0.2, 1] },
-        scale: { duration: 0.18, ease: [0.2, 0.7, 0.2, 1] },
-        height: { duration: 0.28, ease: [0.2, 0.7, 0.2, 1] },
-      }}
+      initial={
+        reduced ? { opacity: 0 } : { opacity: 0, y: -16, scale: 0.96 }
+      }
+      animate={reduced ? { opacity: 1 } : { opacity: 1, y: 0, scale: 1 }}
+      exit={
+        reduced
+          ? {
+              opacity: 0,
+              height: 0,
+              marginBottom: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+            }
+          : {
+              opacity: 0,
+              y: -16,
+              scale: 0.96,
+              height: 0,
+              marginBottom: 0,
+              paddingTop: 0,
+              paddingBottom: 0,
+            }
+      }
+      transition={
+        reduced
+          ? { duration: 0 }
+          : {
+              opacity: {
+                duration: 0.18,
+                ease: [0.2, 0.7, 0.2, 1],
+                delay,
+              },
+              y: { duration: 0.18, ease: [0.2, 0.7, 0.2, 1], delay },
+              scale: { duration: 0.18, ease: [0.2, 0.7, 0.2, 1], delay },
+              height: {
+                duration: 0.28,
+                ease: [0.2, 0.7, 0.2, 1],
+                delay,
+              },
+            }
+      }
       role={variantRole[t.variant ?? 'info'] as any}
       aria-live={t.variant === 'error' ? 'assertive' : 'polite'}
       data-reduced={reduced}
@@ -163,10 +196,14 @@ export function Toaster({
   const posClass = `${POS[position.mobile]} md:${POS[position.desktop]}`;
 
   return createPortal(
-    <div className={`fixed z-50 flex flex-col-reverse gap-2 pointer-events-none ${posClass}`} role="region">
+    <div
+      className={`fixed z-50 flex flex-col gap-2 pointer-events-none ${posClass}`}
+      role="region"
+      aria-live="polite"
+    >
       <AnimatePresence initial={false}>
-        {toasts.map(t => (
-          <ToastView key={t.id} toast={t} />
+        {toasts.map((t, i) => (
+          <ToastView key={t.id} toast={t} index={i} />
         ))}
       </AnimatePresence>
     </div>,
