@@ -13,16 +13,17 @@ interface Props {
 }
 
 export default function MushroomCard({ mushroom, compact = false, onView, onAdd, onDetails }: Props) {
-  const handleKey = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter") onDetails();
-  };
   return (
-    <Card
-      className={compact ? "flex items-center gap-4" : "cursor-pointer"}
-      tabIndex={0}
-      onClick={onDetails}
-      onKeyDown={handleKey}
+    <a
+      href="#"
+      role="link"
+      onClick={(e) => {
+        e.preventDefault();
+        onDetails();
+      }}
+      className="block h-full rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent text-foreground no-underline"
     >
+      <Card className={compact ? "flex items-center gap-4 h-full" : "h-full"}>
       {compact ? (
         <img
           src={mushroom.photo}
@@ -57,7 +58,8 @@ export default function MushroomCard({ mushroom, compact = false, onView, onAdd,
           </Button>
         </div>
       </CardContent>
-    </Card>
+      </Card>
+    </a>
   );
 }
 
