@@ -117,7 +117,7 @@ export default function MushroomsIndex() {
 
   if (loading) {
     return (
-      <div className="container py-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
         <div className="grid-responsive">
           {Array.from({ length: 8 }).map((_, i) => (
             <MushroomCardSkeleton key={i} />
@@ -129,7 +129,7 @@ export default function MushroomsIndex() {
 
   if (error) {
     return (
-      <div className="container py-4 space-y-4">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
         <p className="text-foreground">Erreur de chargement.</p>
         <button
           className="underline text-foreground"
@@ -151,7 +151,7 @@ export default function MushroomsIndex() {
   }
 
   return (
-    <div className="container py-4 space-y-4">
+    <div className="container mx-auto px-4 sm:px-6 lg:px-8 space-y-4">
       <div className="flex flex-col gap-2 md:flex-row md:items-center md:gap-4">
         <Input
           placeholder="Rechercher"
@@ -208,7 +208,7 @@ export default function MushroomsIndex() {
       ) : (
         <div
           data-testid="mushrooms-grid"
-          className="grid w-full gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4"
+          className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 [grid-auto-rows:1fr]"
         >
           {displayed.map((m) => (
             <MushroomCard key={m.id} mushroom={m} onSelect={() => setDetails(m)} />

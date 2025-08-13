@@ -32,7 +32,7 @@ export default function MushroomCard({ mushroom, onSelect, disabled = false }: P
       aria-disabled={disabled}
       onKeyDown={handleKey}
       onClick={handleClick}
-      className={`group relative h-full flex flex-col rounded-lg border border-border bg-paper text-foreground shadow-sm transition hover:shadow-md focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] hover:-translate-y-0.5 active:scale-[.99] ${disabled ? "pointer-events-none opacity-50" : ""}`}
+        className={`h-full flex flex-col group relative rounded-lg border border-border bg-paper text-foreground shadow-sm transition hover:shadow-md focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] hover:-translate-y-0.5 active:scale-[.99] ${disabled ? "pointer-events-none opacity-50" : ""}`}
     >
       <div className="aspect-[4/3] w-full overflow-hidden rounded-t-lg bg-[var(--surface-2)]">
         <img
