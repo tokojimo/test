@@ -129,7 +129,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       const waterWords = ["eau", "lac", "rivière", "river", "mer", "océan", "étang", "sea", "water"];
       if (waterWords.some(w => lower.includes(w))) {
         setToasts(curr => [
-          { id, text: "Tu as cliqué sur l'eau ! Pas de champignons ici 😄", zone },
+          { id, text: "Pas de champignons ici 😄", zone },
           ...curr,
         ].slice(0, 3));
       } else {
@@ -244,7 +244,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           </div>
         </div>
         {toasts.length > 0 && (
-          <div className="absolute left-3 bottom-3 flex flex-col space-y-2">
+          <div className="absolute left-3 top-3 flex flex-col space-y-2">
             <AnimatePresence initial={false}>
               {toasts.map(toast => (
                 <Toast
