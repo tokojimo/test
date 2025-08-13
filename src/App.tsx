@@ -5,7 +5,7 @@ import { classNames, todayISO } from "./utils";
 import { T_PRIMARY } from "./styles/tokens";
 import type { Mushroom, Zone, Spot } from "./types";
 import { MUSHROOMS } from "./data/mushrooms";
-import { getStaticMapUrl } from "./services/openstreetmap";
+import { getStaticMapUrl } from "./services/staticMap";
 import LandingScene from "./scenes/LandingScene";
 import MapScene from "./scenes/MapScene";
 import ZoneScene from "./scenes/ZoneScene";
@@ -148,10 +148,10 @@ function AppContent() {
               element={
                 <ZoneScene
                   zone={selectedZone}
-                  onAdd={() => {
+                  onAdd={async () => {
                     const today = todayISO();
                     const cover = selectedZone?.coords
-                      ? getStaticMapUrl(
+                      ? await getStaticMapUrl(
                           selectedZone.coords[0],
                           selectedZone.coords[1],
                           400,
