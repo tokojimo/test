@@ -72,7 +72,7 @@ async function loadTile(url: string): Promise<any> {
   ) {
     return loadImageBrowser(arr);
   } else {
-    const { loadImage } = await import('@napi-rs/canvas');
+    const { loadImage } = await import(/* @vite-ignore */ '@napi-rs/canvas');
     return loadImage(Buffer.from(arr));
   }
 }
@@ -85,7 +85,7 @@ async function createCanvas(width: number, height: number): Promise<any> {
     const ctx = canvas.getContext?.('2d');
     if (ctx) return canvas;
   }
-  const { createCanvas } = await import('@napi-rs/canvas');
+  const { createCanvas } = await import(/* @vite-ignore */ '@napi-rs/canvas');
   return createCanvas(width, height);
 }
 

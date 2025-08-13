@@ -10,6 +10,9 @@ export default defineConfig({
       '@': path.resolve(__dirname, 'src'),
     },
   },
+  optimizeDeps: {
+    exclude: ['@napi-rs/canvas'],
+  },
   test: {
     environment: 'jsdom',
     globals: true,
