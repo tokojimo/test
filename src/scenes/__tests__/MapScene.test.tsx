@@ -5,7 +5,6 @@ import { vi, describe, it, expect } from 'vitest';
 
 import MapScene from '../MapScene';
 import { AppProvider } from '@/context/AppContext';
-import { DEMO_ZONES } from '../../data/zones';
 
 // Hoist mocks for framer-motion
 const { motionSection } = vi.hoisted(() => ({
@@ -66,7 +65,7 @@ describe('MapScene', () => {
     fireEvent.click(toast);
 
     expect(onZone).toHaveBeenCalledWith(
-      expect.objectContaining({ id: DEMO_ZONES[1].id, name: 'Testville' })
+      expect.objectContaining({ name: 'Testville', coords: [45.7, 5.9] })
     );
   });
 });
