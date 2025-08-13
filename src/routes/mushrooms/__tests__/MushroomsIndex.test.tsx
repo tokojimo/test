@@ -120,10 +120,8 @@ describe("MushroomsIndex", () => {
     await waitFor(() => screen.getByTestId("mushrooms-grid"));
     const grid = screen.getByTestId("mushrooms-grid");
     const classes = grid.className;
-    expect(classes).toContain("grid-cols-1");
-    expect(classes).toContain("sm:grid-cols-2");
-    expect(classes).toContain("md:grid-cols-3");
-    expect(classes).toContain("lg:grid-cols-4");
+    expect(classes).toContain("grid-responsive");
+    expect(classes).toContain("w-full");
   });
 
   it("shows loading and empty states", async () => {
