@@ -1,5 +1,5 @@
 import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -13,15 +13,30 @@ import { loadMap, geocode, reverseGeocode } from "@/services/openstreetmap";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
-function Toast({ message, onClick }: { message: string; onClick: () => void }) {
+function Toast({
+  message,
+  details,
+  onClick,
+}: {
+  message: string;
+  details?: string;
+  onClick: () => void;
+}) {
   return (
-    <button
+    <motion.button
       type="button"
       onClick={onClick}
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: -20 }}
+      transition={{ type: "spring", stiffness: 400, damping: 30 }}
       className="bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary text-left"
     >
-      <div className={`text-xs whitespace-pre-line ${T_PRIMARY}`}>{message}</div>
-    </button>
+      <div className={`text-xs ${T_PRIMARY}`}>
+        <div>{message}</div>
+        {details && <div className="mt-1 whitespace-pre-line">{details}</div>}
+      </div>
+    </motion.button>
   );
 }
 
@@ -54,7 +69,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         : [],
     [search]
   );
-  type Toast = { id: number; text: string; zone: Zone };
+  type Toast = { id: number; text: string; details?: string; zone: Zone };
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [markers, setMarkers] = useState<{
     id: number;
@@ -100,15 +115,28 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
 
       // Create a new zone based on the tapped coordinates
       const placeName = await reverseGeocode(lat, lng);
+      const demo = DEMO_ZONES[1];
       const zone: Zone = {
         id: `zone-${id}`,
-        name: placeName || "Zone",
-        score: 0,
-        species: {},
-        trend: "",
+        name: placeName || demo.name,
+        score: demo.score,
+        species: demo.species,
+        trend: demo.trend,
         coords: [lat, lng],
       };
-      setToasts(curr => [{ id, text: zone.name, zone }, ...curr].slice(0, 3));
+
+      const lower = zone.name.toLowerCase();
+      const waterWords = ["eau", "lac", "rivière", "river", "mer", "océan", "étang", "sea", "water"];
+      if (waterWords.some(w => lower.includes(w))) {
+        setToasts(curr => [
+          { id, text: "Tu as cliqué sur l'eau ! Pas de champignons ici 😄", zone },
+          ...curr,
+        ].slice(0, 3));
+      } else {
+        const details = `${zone.score}% ${zone.trend}\nCèpe ${zone.species.cepe_de_bordeaux}%\nGirolle ${zone.species.girolle}%\nMorille ${zone.species.morille_commune}%`;
+        setToasts(curr => [{ id, text: zone.name, details, zone }, ...curr].slice(0, 3));
+      }
+
       setTimeout(() => {
         setToasts(curr => curr.filter(t => t.id !== id));
       }, 45000);
@@ -217,16 +245,19 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         </div>
         {toasts.length > 0 && (
           <div className="absolute left-3 bottom-3 flex flex-col space-y-2">
-            {toasts.map(toast => (
-              <Toast
-                key={toast.id}
-                message={toast.text}
-                onClick={() => {
-                  onZone(toast.zone);
-                  setToasts(curr => curr.filter(t => t.id !== toast.id));
-                }}
-              />
-            ))}
+            <AnimatePresence initial={false}>
+              {toasts.map(toast => (
+                <Toast
+                  key={toast.id}
+                  message={toast.text}
+                  details={toast.details}
+                  onClick={() => {
+                    onZone(toast.zone);
+                    setToasts(curr => curr.filter(t => t.id !== toast.id));
+                  }}
+                />
+              ))}
+            </AnimatePresence>
           </div>
         )}
 

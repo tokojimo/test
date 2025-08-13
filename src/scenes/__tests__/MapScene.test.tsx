@@ -7,14 +7,17 @@ import MapScene from '../MapScene';
 import { AppProvider } from '@/context/AppContext';
 
 // Hoist mocks for framer-motion
-const { motionSection } = vi.hoisted(() => ({
+const { motionSection, motionButton } = vi.hoisted(() => ({
   motionSection: vi.fn((props: any) => <section {...props} />),
+  motionButton: vi.fn((props: any) => <button {...props} />),
 }));
 
 vi.mock('framer-motion', () => ({
   motion: {
     section: motionSection,
+    button: motionButton,
   },
+  AnimatePresence: ({ children }: any) => <>{children}</>,
 }));
 
 let mapInstance: any;
