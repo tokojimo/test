@@ -1,14 +1,16 @@
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useMemo } from "react";
 import { X, Plus, Pencil, Maximize2, Trash2 } from "lucide-react";
+import { animate } from "framer-motion";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
-import { todayISO } from "../utils";
+import { todayISO, generateForecast } from "../utils";
 import { loadMap } from "@/services/openstreetmap";
 import type { StyleSpecification } from "maplibre-gl";
 import Logo from "@/assets/logo.png";
 import { useAppContext } from "../context/AppContext";
+import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
 import { ConfirmDeleteModal } from "./ConfirmDeleteModal";
 import { EditVisitModal } from "./EditVisitModal";
 
@@ -20,11 +22,13 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     spot.history || (spot.visits || []).map((d: string) => ({ date: d, rating: spot.rating, note: "", photos: [] }))
   );
   const { t } = useT();
-  const { dispatch } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
+  const chartRef = useRef<HTMLDivElement | null>(null);
+  const data = useMemo(() => generateForecast(state.prefs.lang), [state.prefs.lang]);
 
   useEffect(() => {
     if (!spot.location || mapRef.current || !mapContainerRef.current) return;
@@ -68,6 +72,17 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
     };
   }, [spot.location]);
 
+  useEffect(() => {
+    const path = chartRef.current?.querySelector(
+      ".recharts-line-curve"
+    ) as SVGPathElement | null;
+    if (!path) return;
+    const length = path.getTotalLength();
+    path.style.strokeDasharray = `${length}`;
+    path.style.strokeDashoffset = `${length}`;
+    animate(path, { strokeDashoffset: 0 }, { duration: 1.2, ease: "easeInOut" });
+  }, [data]);
+
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
     if (e.target === overlayRef.current) onClose();
   };
@@ -105,6 +120,43 @@ export function SpotDetailsModal({ spot, onClose }: { spot: Spot; onClose: () =>
           </div>
         </div>
         <p className={`text-xs mt-2 ${T_SUBTLE}`}>{t("La carte affiche l'historique complet avec détails.")}</p>
+
+        <div className="mt-3">
+          <div className="h-56" ref={chartRef}>
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={data} margin={{ top: 10, right: 10, bottom: 0, left: 0 }}>
+                <XAxis
+                  dataKey="day"
+                  tick={{ fontSize: 10, fill: "hsl(var(--forest-green))" }}
+                  interval={3}
+                />
+                <YAxis
+                  domain={[0, 100]}
+                  tick={{ fontSize: 10, fill: "hsl(var(--forest-green))" }}
+                  width={28}
+                />
+                <Tooltip
+                  contentStyle={{
+                    background: "#171717",
+                    border: "1px solid #262626",
+                    borderRadius: 12,
+                    color: "#e5e5e5",
+                  }}
+                />
+                <ReferenceLine x={data[7].day} stroke="#525252" strokeDasharray="3 3" />
+                <Line
+                  type="monotone"
+                  dataKey="score"
+                  stroke="hsl(var(--fern-green))"
+                  strokeWidth={2}
+                  dot={false}
+                  isAnimationActive={false}
+                />
+              </LineChart>
+            </ResponsiveContainer>
+          </div>
+          <div className={`mt-2 text-xs ${T_SUBTLE}`}>Prévisions locales (démo)</div>
+        </div>
 
         <div className="mt-3">
           <div className="flex items-center justify-between mb-2">

@@ -12,6 +12,7 @@ import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 import { getStaticMapUrl } from "../services/openstreetmap";
 import Logo from "@/assets/logo.png";
+import { MUSHROOMS } from "../data/mushrooms";
 import type { Spot } from "../types";
 
 export default function SpotsScene({ onBack }: { onBack: () => void }) {
@@ -112,7 +113,9 @@ export default function SpotsScene({ onBack }: { onBack: () => void }) {
                     <div className="flex items-center gap-1 text-amber-400">{"★".repeat(s.rating || 0)}</div>
                   </div>
                   <div className={`text-xs ${T_MUTED}`}>
-                    {t("Espèces :")} {(s.species || []).join(", ")}
+                    {t("Espèces :")} {(s.species || [])
+                      .map(id => MUSHROOMS.find(m => m.id === id)?.name || id.replace(/_/g, " "))
+                      .join(", ")}
                   </div>
                   <div className={`text-xs ${T_MUTED}`}>
                     {t("Dernière visite :")} {s.last || "–"}
