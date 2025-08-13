@@ -244,7 +244,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           </div>
         </div>
         {toasts.length > 0 && (
-          <div className="absolute left-3 top-32 sm:top-24 flex flex-col space-y-2">
+          <div className="absolute left-3 top-56 sm:top-48 flex flex-col space-y-2">
             <AnimatePresence initial={false}>
               {toasts.map(toast => (
                 <Toast
