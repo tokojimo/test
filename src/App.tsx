@@ -159,6 +159,7 @@ function AppContent() {
                           13
                         )
                       : MUSHROOMS[1].photo;
+                    const location = selectedZone?.coords?.join(",");
                     dispatch({
                       type: "addSpot",
                       spot: {
@@ -169,6 +170,7 @@ function AppContent() {
                         species: Object.keys(selectedZone?.species || {}),
                         rating: 5,
                         last: today,
+                        location,
                         history: [
                           { date: today, rating: 5, note: t("Créé"), photos: [cover] },
                         ],
