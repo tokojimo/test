@@ -2,8 +2,10 @@ import React, { useEffect, useRef } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { loadMap } from "@/services/openstreetmap";
 import type { StyleSpecification } from "maplibre-gl";
+import { useT } from "@/i18n";
 
 export function MapCard({ center }: { center: [number, number] }) {
+  const { t } = useT();
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
   useEffect(() => {
@@ -17,7 +19,7 @@ export function MapCard({ center }: { center: [number, number] }) {
             type: "raster",
             tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
             tileSize: 256,
-            attribution: "© OpenStreetMap contributors | MapLibre",
+            attribution: t("© OpenStreetMap contributors | MapLibre"),
           },
         },
         layers: [
@@ -46,20 +48,20 @@ export function MapCard({ center }: { center: [number, number] }) {
   return (
     <Card className="p-4 lg:p-6">
       <CardHeader className="p-0 mb-4 border-none">
-        <CardTitle>Carte du coin</CardTitle>
-        <p className="text-sm text-foreground/70">La carte affiche l’historique complet avec détails.</p>
+        <CardTitle>{t("Carte du coin")}</CardTitle>
+        <p className="text-sm text-foreground/70">{t("La carte affiche l'historique complet avec détails.")}</p>
       </CardHeader>
       <CardContent className="p-0">
         <div
           className="relative w-full rounded-md border border-border overflow-hidden aspect-video"
           role="img"
-          aria-label={`Carte de l’emplacement situé aux coordonnées latitude ${lat}, longitude ${lng}`}
+          aria-label={t("Carte de l'emplacement situé aux coordonnées latitude {lat}, longitude {lng}", { lat, lng })}
         >
           <div ref={mapContainer} className="absolute inset-0" />
         </div>
       </CardContent>
       <CardFooter className="pt-2 flex justify-end">
-        <p className="text-xs text-foreground/50">© OpenStreetMap contributors | MapLibre</p>
+        <p className="text-xs text-foreground/50">{t("© OpenStreetMap contributors | MapLibre")}</p>
       </CardFooter>
     </Card>
   );

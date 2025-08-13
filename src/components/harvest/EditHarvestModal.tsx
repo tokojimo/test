@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
+import { useT } from "@/i18n";
 
 type Harvest = {
   id?: string;
@@ -26,6 +27,7 @@ export function EditHarvestModal({
   onDelete?: () => void;
   initial?: Harvest;
 }) {
+  const { t } = useT();
   const [date, setDate] = useState(initial?.date || "");
   const [rating, setRating] = useState(initial?.rating ?? 0);
   const [comment, setComment] = useState(initial?.comment || "");
@@ -51,7 +53,7 @@ export function EditHarvestModal({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const err: { date?: string } = {};
-    if (!date) err.date = "Requis";
+    if (!date) err.date = t("Requis");
     setErrors(err);
     if (Object.keys(err).length) return;
     setLoading(true);
@@ -67,24 +69,24 @@ export function EditHarvestModal({
   };
 
   const removePhoto = (url: string) => {
-    if (confirm("Supprimer cette photo ?")) setPhotos(p => p.filter(u => u !== url));
+    if (confirm(t("Supprimer cette photo ?"))) setPhotos(p => p.filter(u => u !== url));
   };
 
   return (
     <Modal open={open} onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">Modifier la cueillette</h2>
+        <h2 className="text-lg font-semibold">{t("Modifier la cueillette")}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="date" className="text-sm">
-              Date
+              {t("Date")}
             </label>
             <Input id="date" type="date" value={date} onChange={e => setDate(e.target.value)} />
             {errors.date && <p className="text-xs text-danger">{errors.date}</p>}
           </div>
           <div className="space-y-2">
             <label htmlFor="rating" className="text-sm">
-              Note
+              {t("Note")}
             </label>
             <Select id="rating" value={String(rating)} onChange={e => setRating(parseInt(e.target.value, 10))}>
               {[0, 1, 2, 3, 4, 5].map(n => (
@@ -96,7 +98,7 @@ export function EditHarvestModal({
           </div>
           <div className="space-y-2 lg:col-span-2">
             <label htmlFor="comment" className="text-sm">
-              Commentaire
+              {t("Commentaire")}
             </label>
             <textarea
               id="comment"
@@ -106,14 +108,14 @@ export function EditHarvestModal({
             />
           </div>
           <div className="space-y-2 lg:col-span-2">
-            <label className="text-sm">Galerie</label>
+            <label className="text-sm">{t("Galerie")}</label>
             <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
               {photos.map((url, index) => (
                 <div key={url} className="relative aspect-square">
                   <img
                     src={url}
                     className="w-full h-full object-cover rounded-md border border-border"
-                    alt={`Photo de la cueillette ${index + 1}`}
+                    alt={t("Photo de la cueillette {n}", { n: index + 1 })}
                   />
                   <Button
                     type="button"
@@ -121,7 +123,7 @@ export function EditHarvestModal({
                     variant="destructive"
                     className="absolute top-1 right-1 h-6 w-6 p-0"
                     onClick={() => removePhoto(url)}
-                    aria-label="Supprimer"
+                    aria-label={t("Supprimer")}
                   >
                     <Trash2 className="w-4 h-4" />
                   </Button>
@@ -141,7 +143,7 @@ export function EditHarvestModal({
               variant="secondary"
               onClick={() => document.getElementById("file")?.click()}
             >
-              Importer des photos
+              {t("Importer des photos")}
             </Button>
           </div>
         </div>
@@ -153,18 +155,18 @@ export function EditHarvestModal({
               className="text-danger border border-danger hover:bg-danger/10"
               onClick={onDelete}
             >
-              Supprimer
+              {t("Supprimer")}
             </Button>
           )}
           <div className="ml-auto flex gap-2 w-full sm:w-auto">
             <Button type="button" variant="secondary" onClick={onClose} className="flex-1 sm:flex-none">
-              Annuler
+              {t("Annuler")}
             </Button>
             <Button type="submit" disabled={loading} className="flex-1 sm:flex-none">
               {loading && (
                 <span className="mr-2 inline-block w-4 h-4 rounded-full border-2 border-border border-t-transparent animate-spin" />
               )}
-              Enregistrer
+              {t("Enregistrer")}
             </Button>
           </div>
         </div>

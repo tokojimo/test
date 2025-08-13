@@ -5,12 +5,7 @@ import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, CartesianGrid, Tool
 import ChartSkeleton from "./ChartSkeleton";
 import { Timeline, TimelineEvent } from "./Timeline";
 import TimelineSkeleton from "./TimelineSkeleton";
-
-const tabs = [
-  { id: "history", label: "Historique" },
-  { id: "forecast", label: "Prévisions locales" },
-  { id: "visits", label: "Visites" },
-];
+import { useT } from "@/i18n";
 
 function formatDate(str: string) {
   const d = new Date(str);
@@ -20,6 +15,12 @@ function formatDate(str: string) {
 }
 
 export function InsightsCard({ events, onSelect }: { events: TimelineEvent[]; onSelect: (id: string) => void }) {
+  const { t } = useT();
+  const tabs = [
+    { id: "history", label: t("Historique") },
+    { id: "forecast", label: t("Prévisions locales") },
+    { id: "visits", label: t("Visites") },
+  ];
   const [active, setActive] = useState("history");
   const [loading, setLoading] = useState(true);
   const [data, setData] = useState<{ date: string; value: number }[]>([]);
@@ -47,7 +48,7 @@ export function InsightsCard({ events, onSelect }: { events: TimelineEvent[]; on
   return (
     <Card className="p-4 lg:p-6 flex flex-col">
       <CardHeader className="p-0 mb-4 border-none">
-        <CardTitle>Insights</CardTitle>
+        <CardTitle>{t("Insights")}</CardTitle>
       </CardHeader>
       <CardContent className="p-0 flex-1 flex flex-col">
         <Tabs tabs={tabs} active={active} onChange={setActive} />
