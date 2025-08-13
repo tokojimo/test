@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { loadMap } from "@/services/openstreetmap";
 import type { StyleSpecification } from "maplibre-gl";
 
@@ -52,8 +52,10 @@ export function MapCard({ center }: { center: [number, number] }) {
         <div className="relative w-full rounded-md border border-border overflow-hidden aspect-video">
           <div ref={mapContainer} className="absolute inset-0" />
         </div>
-        <div className="mt-2 text-[10px] text-foreground/50 text-right">© OpenStreetMap contributors | MapLibre</div>
       </CardContent>
+      <CardFooter className="pt-2 flex justify-end">
+        <p className="text-xs text-foreground/50">© OpenStreetMap contributors | MapLibre</p>
+      </CardFooter>
     </Card>
   );
 }
