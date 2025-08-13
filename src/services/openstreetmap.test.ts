@@ -24,9 +24,10 @@ describe('reverseGeocode', () => {
 });
 
 describe('getStaticMapUrl', () => {
-  it('uses Carto tiles with retina suffix when width is large', () => {
+  it('builds a centered OpenStreetMap static map URL', () => {
     const url = getStaticMapUrl(48.8566, 2.3522, 400, 200, 13);
-    expect(url).toMatch(/basemaps\.cartocdn\.com/);
-    expect(url).toMatch(/@2x\.png$/);
+    expect(url).toBe(
+      'https://staticmap.openstreetmap.de/staticmap.php?center=48.8566%2C2.3522&zoom=13&size=400x200&maptype=mapnik'
+    );
   });
 });
