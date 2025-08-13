@@ -4,17 +4,7 @@ import MapCard from "@/components/history/MapCard";
 import InsightsCard from "@/components/history/InsightsCard";
 import EditHarvestModal from "@/components/harvest/EditHarvestModal";
 import { TimelineEvent } from "@/components/history/Timeline";
-
-function useMediaQuery(query: string) {
-  const [matches, setMatches] = React.useState(() => window.matchMedia(query).matches);
-  React.useEffect(() => {
-    const mql = window.matchMedia(query);
-    const handler = (e: MediaQueryListEvent) => setMatches(e.matches);
-    mql.addEventListener("change", handler);
-    return () => mql.removeEventListener("change", handler);
-  }, [query]);
-  return matches;
-}
+import useMediaQuery from "@/hooks/useMediaQuery";
 
 export default function History() {
   const events: TimelineEvent[] = [
