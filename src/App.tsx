@@ -5,6 +5,7 @@ import { classNames, todayISO } from "./utils";
 import { T_PRIMARY } from "./styles/tokens";
 import type { Mushroom, Zone, Spot } from "./types";
 import { MUSHROOMS } from "./data/mushrooms";
+import { getStaticMapUrl } from "./services/openstreetmap";
 import LandingScene from "./scenes/LandingScene";
 import MapScene from "./scenes/MapScene";
 import ZoneScene from "./scenes/ZoneScene";
@@ -147,18 +148,27 @@ function AppContent() {
                   zone={selectedZone}
                   onAdd={() => {
                     const today = todayISO();
+                    const cover = selectedZone?.coords
+                      ? getStaticMapUrl(
+                          selectedZone.coords[0],
+                          selectedZone.coords[1],
+                          400,
+                          160,
+                          13
+                        )
+                      : MUSHROOMS[1].photo;
                     dispatch({
                       type: "addSpot",
                       spot: {
                         id: Date.now(),
-                        cover: MUSHROOMS[1].photo,
-                        photos: [MUSHROOMS[1].photo],
+                        cover,
+                        photos: [cover],
                         name: selectedZone?.name,
                         species: Object.keys(selectedZone?.species || {}),
                         rating: 5,
                         last: today,
                         history: [
-                          { date: today, rating: 5, note: t("Créé"), photos: [MUSHROOMS[1].photo] },
+                          { date: today, rating: 5, note: t("Créé"), photos: [cover] },
                         ],
                       } as Spot,
                     });
