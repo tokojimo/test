@@ -2,6 +2,7 @@
 module.exports = {
   darkMode: "class",
   content: ["./index.html", "./src/**/*.{ts,tsx,js,jsx}"],
+  safelist: ['grid-cols-1','sm:grid-cols-2','lg:grid-cols-3','xl:grid-cols-4'],
   theme: {
     extend: {
       colors: {
