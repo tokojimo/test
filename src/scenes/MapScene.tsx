@@ -1,4 +1,4 @@
-import React, { useRef, useEffect, useState, useMemo } from "react";
+import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
 import { motion } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -13,14 +13,29 @@ import { loadMap, geocode, reverseGeocode } from "@/services/openstreetmap";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
+function Toast({ message, onClick }: { message: string; onClick: () => void }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary text-left"
+    >
+      <div className={`text-xs whitespace-pre-line ${T_PRIMARY}`}>{message}</div>
+    </button>
+  );
+}
+
 export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { onZone: (z: Zone) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
-  const markersRef = useRef<{ marker: any; timeout: ReturnType<typeof setTimeout> }[]>([]);
+  const maplibreRef = useRef<any>(null);
+  const markersRef = useRef<{
+    id: number;
+    marker: any;
+    timeout: ReturnType<typeof setTimeout>;
+  }[]>([]);
   const { t } = useT();
-  const [selected, setSelected] = useState<string[]>([
-    "cepe_de_bordeaux",
-  ]);
+  const [selected, setSelected] = useState<string[]>(["cepe_de_bordeaux"]);
   const [search, setSearch] = useState("");
   const handleGeocode = async () => {
     if (!search) return;
@@ -41,24 +56,84 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   );
   type Toast = { id: number; text: string; zone: Zone };
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const showToast = (text: string, zone: Zone) => {
-    const id = Date.now() + Math.random();
-    setToasts(curr => {
-      const next = [{ id, text, zone }, ...curr];
-      return next.slice(0, 3);
-    });
-    setTimeout(() => {
-      setToasts(curr => curr.filter(t => t.id !== id));
-    }, 45000);
-  };
+  const [markers, setMarkers] = useState<{
+    id: number;
+    lat: number;
+    lng: number;
+  }[]>([]);
   const toggleShroom = (id: string) =>
     setSelected(prev =>
       prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
     );
 
+  const handleMapClick = useCallback(
+    async (e: any) => {
+      if (!maplibreRef.current || !mapRef.current) return;
+      const maplibregl = maplibreRef.current;
+      const map = mapRef.current;
+      const { lat, lng } = e.lngLat;
+      const id = Date.now() + Math.random();
+
+      // Drop a temporary logo marker at the clicked location
+      const el = document.createElement("img");
+      el.src = logo;
+      el.className = "w-6 h-6 pointer-events-none animate-bounce";
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat([lng, lat])
+        .addTo(map);
+      setTimeout(() => el.classList.remove("animate-bounce"), 1000);
+      const timeout = setTimeout(() => {
+        marker.remove();
+        markersRef.current = markersRef.current.filter(m => m.id !== id);
+        setMarkers(curr => curr.filter(m => m.id !== id));
+      }, 45000);
+      markersRef.current.push({ id, marker, timeout });
+      setMarkers(curr => [{ id, lat, lng }, ...curr].slice(0, 3));
+      if (markersRef.current.length > 3) {
+        const oldest = markersRef.current.shift();
+        if (oldest) {
+          clearTimeout(oldest.timeout);
+          oldest.marker.remove();
+          setMarkers(curr => curr.filter(m => m.id !== oldest.id));
+        }
+      }
+
+      // Find nearest demo zone to the tapped coordinates
+      let nearest: Zone | null = null;
+      let minDist = Infinity;
+      for (const z of DEMO_ZONES) {
+        const [zLat, zLng] = z.coords;
+        const dist = Math.hypot(lat - zLat, lng - zLng);
+        if (dist < minDist) {
+          minDist = dist;
+          nearest = z;
+        }
+      }
+      if (nearest) {
+        const speciesLines = Object.entries(nearest.species)
+          .map(([id, sc]) => {
+            const name =
+              MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
+            return `${name} ${sc}%`;
+          })
+          .join("\n");
+
+        const placeName = await reverseGeocode(lat, lng);
+        const zone = placeName ? { ...nearest, name: placeName } : nearest;
+        const msg = `${zone.name}\n${zone.score}% ${zone.trend}\n${speciesLines}`;
+        setToasts(curr => [{ id, text: msg, zone }, ...curr].slice(0, 3));
+        setTimeout(() => {
+          setToasts(curr => curr.filter(t => t.id !== id));
+        }, 45000);
+      }
+    },
+    []
+  );
+
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
     loadMap().then(maplibregl => {
+      maplibreRef.current = maplibregl;
       const map = new maplibregl.Map({
         container: mapContainer.current as HTMLDivElement,
         style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
@@ -66,66 +141,16 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         zoom: 5,
       });
       mapRef.current = map;
-      // Use logo as cursor on desktop
       const canvas = map.getCanvas();
       canvas.style.cursor = `url(${logo}) 16 16, auto`;
 
-      map.on("click", async (e: any) => {
-        const { lat, lng } = e.lngLat;
-
-        // Drop a temporary logo marker at the clicked location
-        const el = document.createElement("img");
-        el.src = logo;
-        el.className = "w-6 h-6 pointer-events-none animate-bounce";
-        const marker = new maplibregl.Marker({ element: el })
-          .setLngLat([lng, lat])
-          .addTo(map);
-        setTimeout(() => el.classList.remove("animate-bounce"), 1000);
-        const timeout = setTimeout(() => {
-          marker.remove();
-          markersRef.current = markersRef.current.filter(m => m.marker !== marker);
-        }, 45000);
-        markersRef.current.push({ marker, timeout });
-        if (markersRef.current.length > 3) {
-          const oldest = markersRef.current.shift();
-          if (oldest) {
-            clearTimeout(oldest.timeout);
-            oldest.marker.remove();
-          }
-        }
-
-        // Find nearest demo zone to the tapped coordinates
-        let nearest: Zone | null = null;
-        let minDist = Infinity;
-        for (const z of DEMO_ZONES) {
-          const [zLat, zLng] = z.coords;
-          const dist = Math.hypot(lat - zLat, lng - zLng);
-          if (dist < minDist) {
-            minDist = dist;
-            nearest = z;
-          }
-        }
-        if (nearest) {
-          const speciesLines = Object.entries(nearest.species)
-            .map(([id, sc]) => {
-              const name =
-                MUSHROOMS.find(m => m.id === id)?.name.split(" ")[0] || id;
-              return `${name} ${sc}%`;
-            })
-            .join("\n");
-
-          const placeName = await reverseGeocode(lat, lng);
-          const zone = placeName ? { ...nearest, name: placeName } : nearest;
-          const msg = `${zone.name}\n${zone.score}% ${zone.trend}\n${speciesLines}`;
-          showToast(msg, zone);
-        }
-      });
+      map.on("click", handleMapClick);
     });
     return () => {
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, []);
+  }, [handleMapClick]);
 
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
@@ -205,19 +230,16 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           </div>
         </div>
         {toasts.length > 0 && (
-          <div className="absolute left-3 bottom-3 flex flex-col gap-2">
+          <div className="absolute left-3 bottom-3 flex flex-col space-y-2">
             {toasts.map(toast => (
-              <button
+              <Toast
                 key={toast.id}
-                type="button"
+                message={toast.text}
                 onClick={() => {
                   onZone(toast.zone);
                   setToasts(curr => curr.filter(t => t.id !== toast.id));
                 }}
-                className="bg-secondary/80 dark:bg-secondary/80 backdrop-blur rounded-xl p-2 border border-secondary dark:border-secondary text-left"
-              >
-                <div className={`text-xs whitespace-pre-line ${T_PRIMARY}`}>{toast.text}</div>
-              </button>
+              />
             ))}
           </div>
         )}
