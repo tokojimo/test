@@ -5,6 +5,7 @@ import { vi, describe, it, expect } from 'vitest';
 
 import MapScene from '../MapScene';
 import { AppProvider } from '@/context/AppContext';
+import { reverseGeocode } from '../../services/openstreetmap';
 
 // Hoist mocks for framer-motion
 const { motionSection, motionButton } = vi.hoisted(() => ({
@@ -70,5 +71,20 @@ describe('MapScene', () => {
     expect(onZone).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'Testville', coords: [45.7, 5.9] })
     );
+  });
+
+  it('shows water message when place has no name', async () => {
+    (reverseGeocode as any).mockResolvedValueOnce(null);
+    render(
+      <AppProvider>
+        <MapScene onZone={() => {}} gpsFollow={false} setGpsFollow={() => {}} onBack={() => {}} />
+      </AppProvider>
+    );
+
+    await new Promise(r => setTimeout(r, 0));
+    mapInstance.handlers.click({ lngLat: { lat: 0, lng: 0 } });
+
+    const toast = await screen.findByRole('button', { name: /Pas de champignons ici/ });
+    expect(toast).toBeInTheDocument();
   });
 });

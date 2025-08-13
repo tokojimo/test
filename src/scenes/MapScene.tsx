@@ -125,9 +125,9 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         coords: [lat, lng],
       };
 
-      const lower = zone.name.toLowerCase();
       const waterWords = ["eau", "lac", "rivière", "river", "mer", "océan", "étang", "sea", "water"];
-      if (waterWords.some(w => lower.includes(w))) {
+      const lower = (placeName || "").toLowerCase();
+      if (!placeName || waterWords.some(w => lower.includes(w))) {
         setToasts(curr => [
           { id, text: "Pas de champignons ici 😄", zone },
           ...curr,

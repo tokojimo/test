@@ -1,3 +1,4 @@
+// @vitest-environment node
 import { describe, it, expect, vi } from 'vitest';
 vi.mock('maplibre-gl', () => ({}));
 import { reverseGeocode } from './openstreetmap';
