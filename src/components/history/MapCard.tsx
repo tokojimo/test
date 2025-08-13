@@ -42,6 +42,7 @@ export function MapCard({ center }: { center: [number, number] }) {
     });
     return () => mapRef.current?.remove();
   }, [center]);
+  const [lat, lng] = center;
   return (
     <Card className="p-4 lg:p-6">
       <CardHeader className="p-0 mb-4 border-none">
@@ -49,7 +50,11 @@ export function MapCard({ center }: { center: [number, number] }) {
         <p className="text-sm text-foreground/70">La carte affiche l’historique complet avec détails.</p>
       </CardHeader>
       <CardContent className="p-0">
-        <div className="relative w-full rounded-md border border-border overflow-hidden aspect-video">
+        <div
+          className="relative w-full rounded-md border border-border overflow-hidden aspect-video"
+          role="img"
+          aria-label={`Carte de l’emplacement situé aux coordonnées latitude ${lat}, longitude ${lng}`}
+        >
           <div ref={mapContainer} className="absolute inset-0" />
         </div>
       </CardContent>
