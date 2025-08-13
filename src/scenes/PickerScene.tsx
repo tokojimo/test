@@ -3,8 +3,15 @@ import { motion } from "framer-motion";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { Select } from "@/components/ui/select";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  BTN,
+  BTN_GHOST_ICON,
+  T_PRIMARY,
+  T_MUTED,
+  T_SUBTLE,
+} from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Mushroom } from "../types";
 
@@ -46,15 +53,40 @@ export default function PickerScene({ items, search, setSearch, onPick, onBack }
         </Select>
       </div>
 
-      <div className="grid md:grid-cols-3 gap-3">
-        {items.map(m => (
-          <button key={m.id} onClick={() => onPick(m)} className="text-left bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden hover:border-secondary dark:hover:border-secondary">
-            <img src={m.photo} className="w-full h-40 object-cover" />
-            <div className="p-3">
-              <div className={`font-medium ${T_PRIMARY}`}>{m.name}</div>
-              <div className={`text-xs ${T_MUTED}`}>{t("Saison :")} {m.season}</div>
-            </div>
-          </button>
+      <div className="grid-responsive">
+        {items.map((m) => (
+          <a
+            key={m.id}
+            href="#"
+            role="link"
+            onClick={(e) => {
+              e.preventDefault();
+              onPick(m);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                onPick(m);
+              }
+            }}
+            className="block h-full no-underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2"
+          >
+            <Card className="h-full flex flex-col">
+              <img
+                src={m.photo}
+                alt=""
+                className="w-full h-40 object-cover rounded-t-lg"
+                loading="lazy"
+              />
+              <CardContent className="p-3 flex flex-col flex-1">
+                <div className={`font-medium ${T_PRIMARY}`}>{m.name}</div>
+                <div className={`text-xs ${T_MUTED}`}>
+                  {t("Saison :")}{" "}
+                  {m.season}
+                </div>
+              </CardContent>
+            </Card>
+          </a>
         ))}
       </div>
       <p className={`text-xs mt-2 ${T_SUBTLE}`}>
