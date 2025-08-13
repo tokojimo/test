@@ -24,9 +24,8 @@ describe('reverseGeocode', () => {
 });
 
 describe('getStaticMapUrl', () => {
-  it('uses Carto tiles with retina suffix when width is large', () => {
+  it('builds a Carto tile URL keeping map style', () => {
     const url = getStaticMapUrl(48.8566, 2.3522, 400, 200, 13);
-    expect(url).toMatch(/basemaps\.cartocdn\.com/);
-    expect(url).toMatch(/@2x\.png$/);
+    expect(url).toMatch(/^https:\/\/[abcd]\.basemaps\.cartocdn\.com\/light_all\/13\/4150\/2818@2x\.png$/);
   });
 });
