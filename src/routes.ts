@@ -3,6 +3,7 @@ export enum Scene {
   Map = '/map',
   Zone = '/zone',
   Spots = '/spots',
+  Spot = '/spot',
   Picker = '/picker',
   Mushroom = '/mushroom',
   Settings = '/settings',
