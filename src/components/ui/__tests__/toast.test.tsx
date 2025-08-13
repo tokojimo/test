@@ -51,6 +51,24 @@ describe('toast system', () => {
     vi.useRealTimers();
   });
 
+  it('reorders when a toast disappears', () => {
+    vi.useFakeTimers();
+    render(<Toaster />);
+    act(() => {
+      toast.show({ message: 'A', duration: 3000 });
+      toast.show({ message: 'B', duration: 1000 });
+    });
+    let items = screen.getAllByRole('status');
+    expect(items[0]).toHaveTextContent('B');
+    act(() => {
+      vi.advanceTimersByTime(1000);
+    });
+    items = screen.getAllByRole('status');
+    expect(items).toHaveLength(1);
+    expect(items[0]).toHaveTextContent('A');
+    vi.useRealTimers();
+  });
+
   it('honors prefers-reduced-motion', () => {
     useReducedMotionMock.mockReturnValue(true);
     render(<Toaster />);
