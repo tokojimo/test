@@ -21,7 +21,7 @@ export default function MushroomDetails({ mushroom, open, onClose }: Props) {
             <h2 className="text-xl font-semibold text-foreground">{mushroom.name}</h2>
             {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
           </div>
-          <p className="text-sm text-foreground/70 italic">{mushroom.latin}</p>
+          <p className="text-sm text-moss italic">{mushroom.latin}</p>
           <p className="text-sm text-foreground/80">{mushroom.description}</p>
           <div className="flex gap-2">
             <Button onClick={onClose}>Voir sur la carte</Button>
