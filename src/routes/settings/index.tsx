@@ -37,7 +37,7 @@ export default function SettingsIndex() {
   }, [active]);
 
   return (
-    <div className="container max-w-3xl mx-auto px-4 py-6 space-y-6">
+    <div className="container max-w-3xl mx-auto py-6 space-y-6">
       <header className="flex items-center gap-2">
         <Button
           variant="ghost"
