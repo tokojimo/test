@@ -84,7 +84,17 @@ describe("MushroomsIndex", () => {
     const card = screen.getByRole("link", { name: /Cèpe/ });
     card.focus();
     expect(card).toHaveFocus();
+    expect(card.className).toContain("focus-visible:ring-[var(--focus)]");
     fireEvent.keyDown(card, { key: "Enter" });
+    await waitFor(() => screen.getByRole("dialog"));
+  });
+
+  it("activates card with Space key", async () => {
+    render(<MushroomsIndex />);
+    await waitFor(() => screen.getByRole("link", { name: /Cèpe/ }));
+    const card = screen.getByRole("link", { name: /Cèpe/ });
+    card.focus();
+    fireEvent.keyDown(card, { key: " " });
     await waitFor(() => screen.getByRole("dialog"));
   });
 
@@ -108,4 +118,3 @@ describe("MushroomsIndex", () => {
     expect(screen.getByText("Aucun résultat")).toBeInTheDocument();
   });
 });
-

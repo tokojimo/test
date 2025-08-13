@@ -32,9 +32,9 @@ export default function MushroomCard({ mushroom, onSelect, disabled = false }: P
       aria-disabled={disabled}
       onKeyDown={handleKey}
       onClick={handleClick}
-      className={`group relative h-full flex flex-col rounded-lg border border-border shadow-sm transition-transform transition-shadow duration-fast focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 hover:shadow-md focus-visible:shadow-md hover:-translate-y-0.5 active:scale-[.99] ${disabled ? "pointer-events-none opacity-50" : ""}`}
+      className={`group relative h-full flex flex-col rounded-lg border border-border bg-paper text-foreground shadow-sm transition hover:shadow-md focus-visible:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[var(--focus)] hover:-translate-y-0.5 active:scale-[.99] ${disabled ? "pointer-events-none opacity-50" : ""}`}
     >
-      <div className="aspect-[4/3] w-full overflow-hidden rounded-t-lg bg-paper">
+      <div className="aspect-[4/3] w-full overflow-hidden rounded-t-lg bg-[var(--surface-2)]">
         <img
           src={mushroom.photo}
           alt={mushroom.name}
@@ -42,10 +42,10 @@ export default function MushroomCard({ mushroom, onSelect, disabled = false }: P
           loading="lazy"
         />
       </div>
-      <div className="flex grow flex-col p-4">
-        <h3 className="truncate text-base font-medium text-foreground">{mushroom.name}</h3>
+      <div className="flex grow flex-col gap-2 p-4">
+        <h3 className="text-base font-medium truncate">{mushroom.name}</h3>
         {mushroom.latin && (
-          <p className="mt-1 truncate text-sm italic text-[var(--muted-foreground)]">{mushroom.latin}</p>
+          <p className="text-sm text-[var(--muted-foreground)] truncate">{mushroom.latin}</p>
         )}
         <div className="mt-auto flex flex-wrap items-center gap-2">
           {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
