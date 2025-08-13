@@ -17,11 +17,13 @@ export default function MushroomDetails({ mushroom, open, onClose }: Props) {
       <div className="md:ml-auto md:h-full md:max-w-md md:w-full md:rounded-none overflow-y-auto">
         <img src={mushroom.photo} alt="" className="w-full aspect-[4/3] object-cover" loading="lazy" />
         <div className="p-4 space-y-4">
-          <div className="flex items-center gap-2">
-            <h2 className="text-xl font-semibold text-foreground">{mushroom.name}</h2>
-            {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-xl font-semibold text-foreground">{mushroom.name}</h2>
+              {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
+            </div>
+            <p className="mt-1 truncate text-sm italic text-[var(--muted-foreground)]">{mushroom.latin}</p>
           </div>
-          <p className="text-sm text-moss italic">{mushroom.latin}</p>
           <p className="text-sm text-foreground/80">{mushroom.description}</p>
           <div className="flex gap-2">
             <Button onClick={onClose}>Voir sur la carte</Button>

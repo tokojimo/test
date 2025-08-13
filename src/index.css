@@ -17,6 +17,7 @@
 
     --background: var(--paper-beige);
     --foreground: var(--forest-green);
+    --muted-foreground: var(--moss-green);
     --border: 148 10% 70%;
     --accent: var(--accent-gold);
     --accent-hover: var(--accent-gold-hover);

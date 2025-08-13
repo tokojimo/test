@@ -42,10 +42,10 @@ export default function MushroomCard({ mushroom, onSelect, disabled = false }: P
           loading="lazy"
         />
       </div>
-      <div className="flex grow flex-col gap-2 p-4">
+      <div className="flex grow flex-col p-4">
         <h3 className="truncate text-base font-medium text-foreground">{mushroom.name}</h3>
         {mushroom.latin && (
-          <p className="truncate text-sm text-foreground/70">{mushroom.latin}</p>
+          <p className="mt-1 truncate text-sm italic text-[var(--muted-foreground)]">{mushroom.latin}</p>
         )}
         <div className="mt-auto flex flex-wrap items-center gap-2">
           {mushroom.premium && <Badge variant="secondary">Premium</Badge>}
