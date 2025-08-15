@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { loadMap, getStaticMapUrl } from "@/services/openstreetmap";
-import type { StyleSpecification } from "maplibre-gl";
 import { useT } from "@/i18n";
 import Logo from "@/assets/logo.png";
 
@@ -19,30 +18,11 @@ export function MapSpotCard({ center }: { center: [number, number] }) {
       return;
     }
     loadMap()
-      .then((maplibregl) => {
+      .then(maplibregl => {
         try {
-          const style: StyleSpecification = {
-            version: 8,
-            sources: {
-              osm: {
-                type: "raster",
-                tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-                tileSize: 256,
-              },
-            },
-            layers: [
-              {
-                id: "osm",
-                type: "raster",
-                source: "osm",
-                minzoom: 0,
-                maxzoom: 19,
-              },
-            ],
-          };
           const map = new maplibregl.Map({
             container: mapContainer.current as HTMLDivElement,
-            style,
+            style: "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json",
             center: [lng, lat],
             zoom: 12,
             attributionControl: false,
