@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Trash2 } from "lucide-react";
 import { useT } from "@/i18n";
 
-type Harvest = {
+export type Harvest = {
   id?: string;
   date: string;
   rating: number;
@@ -14,7 +14,7 @@ type Harvest = {
   photos: string[];
 };
 
-export function EditHarvestModal({
+export function HarvestModal({
   open,
   onClose,
   onSave,
@@ -64,32 +64,35 @@ export function EditHarvestModal({
 
   const importPhotos = (files: FileList | null) => {
     if (!files) return;
-    const urls = Array.from(files).map(f => URL.createObjectURL(f));
-    setPhotos(p => [...p, ...urls]);
+    const urls = Array.from(files).map((f) => URL.createObjectURL(f));
+    setPhotos((p) => [...p, ...urls]);
   };
 
   const removePhoto = (url: string) => {
-    if (confirm(t("Supprimer cette photo ?"))) setPhotos(p => p.filter(u => u !== url));
+    if (confirm(t("Supprimer cette photo ?"))) setPhotos((p) => p.filter((u) => u !== url));
   };
+
+  const title = initial ? t("Modifier la cueillette") : t("Ajouter une cueillette");
+  const isEdit = Boolean(initial);
 
   return (
     <Modal open={open} onClose={onClose}>
       <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">{t("Modifier la cueillette")}</h2>
+        <h2 className="text-lg font-semibold">{title}</h2>
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
           <div className="space-y-2">
             <label htmlFor="date" className="text-sm">
               {t("Date")}
             </label>
-            <Input id="date" type="date" value={date} onChange={e => setDate(e.target.value)} />
+            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
             {errors.date && <p className="text-xs text-danger">{errors.date}</p>}
           </div>
           <div className="space-y-2">
             <label htmlFor="rating" className="text-sm">
               {t("Note")}
             </label>
-            <Select id="rating" value={String(rating)} onChange={e => setRating(parseInt(e.target.value, 10))}>
-              {[0, 1, 2, 3, 4, 5].map(n => (
+            <Select id="rating" value={String(rating)} onChange={(e) => setRating(parseInt(e.target.value, 10))}>
+              {[0, 1, 2, 3, 4, 5].map((n) => (
                 <option key={n} value={n}>
                   {n}
                 </option>
@@ -103,7 +106,7 @@ export function EditHarvestModal({
             <textarea
               id="comment"
               value={comment}
-              onChange={e => setComment(e.target.value)}
+              onChange={(e) => setComment(e.target.value)}
               className="h-24 w-full rounded-md border border-border bg-paper px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             />
           </div>
@@ -136,19 +139,15 @@ export function EditHarvestModal({
               accept="image/*"
               multiple
               className="hidden"
-              onChange={e => importPhotos(e.target.files)}
+              onChange={(e) => importPhotos(e.target.files)}
             />
-            <Button
-              type="button"
-              variant="secondary"
-              onClick={() => document.getElementById("file")?.click()}
-            >
+            <Button type="button" variant="secondary" onClick={() => document.getElementById("file")?.click()}>
               {t("Importer des photos")}
             </Button>
           </div>
         </div>
         <div className="flex items-center justify-between gap-2 flex-wrap mt-2">
-          {onDelete && (
+          {isEdit && onDelete && (
             <Button
               type="button"
               variant="ghost"
@@ -164,7 +163,7 @@ export function EditHarvestModal({
             </Button>
             <Button type="submit" disabled={loading} className="flex-1 sm:flex-none">
               {loading && (
-                <span className="mr-2 inline-block w-4 h-4 rounded-full border-2 border-border border-t-transparent animate-spin" />
+                <span className="mr-2 inline-block w-4 h-4 rounded-full border-2 border-border border-t-transparent motion-safe:animate-spin" />
               )}
               {t("Enregistrer")}
             </Button>
@@ -175,5 +174,5 @@ export function EditHarvestModal({
   );
 }
 
-export default EditHarvestModal;
+export default HarvestModal;
 

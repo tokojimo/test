@@ -133,7 +133,12 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className={`font-medium ${T_PRIMARY}`}>{s.name}</div>
-                    <div className="flex items-center gap-1 text-amber-400">{"★".repeat(s.rating || 0)}</div>
+                    {(() => {
+                      const avg = s.history?.length
+                        ? Math.floor(s.history.reduce((sum, h) => sum + (h.rating || 0), 0) / s.history.length)
+                        : s.rating || 0;
+                      return <div className="flex items-center gap-1 text-gold">{"★".repeat(avg)}</div>;
+                    })()}
                   </div>
                   <div className={`text-xs ${T_MUTED}`}>
                     {t("Espèces :")} {(s.species || [])
