@@ -3,6 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/componen
 import { Button } from "@/components/ui/button";
 import { loadMap } from "@/services/openstreetmap";
 import type { StyleSpecification } from "maplibre-gl";
+import logo from "@/assets/logo.png";
 import { useT } from "@/i18n";
 
 export function MapSpotCard({ center }: { center: [number, number] }) {
@@ -41,7 +42,12 @@ export function MapSpotCard({ center }: { center: [number, number] }) {
         attributionControl: false,
       });
       mapRef.current = map;
-      new maplibregl.Marker().setLngLat([lng, lat]).addTo(map);
+      const el = document.createElement("img");
+      el.src = logo;
+      el.className = "w-6 h-6";
+      new maplibregl.Marker({ element: el, anchor: "bottom" })
+        .setLngLat([lng, lat])
+        .addTo(map);
     });
     return () => mapRef.current?.remove();
   }, [center]);
