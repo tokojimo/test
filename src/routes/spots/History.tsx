@@ -18,14 +18,8 @@ import {
   CartesianGrid,
   Tooltip,
 } from "recharts";
+import { formatDate } from "@/utils/dates";
 
-function formatDate(str: string) {
-  const d = new Date(str);
-  if (Number.isNaN(d.getTime())) return str;
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  return `${dd}/${mm}`;
-}
 
 export default function History() {
   const { t } = useT();
@@ -87,9 +81,18 @@ export default function History() {
           <ResponsiveContainer width="100%" height="100%">
             <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
               <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" />
-              <XAxis dataKey="date" ticks={ticks} tickFormatter={formatDate} stroke="hsl(var(--foreground))" tick={{ fill: "hsl(var(--foreground))" }} />
+              <XAxis
+                dataKey="date"
+                ticks={ticks}
+                tickFormatter={(v) => formatDate(v).slice(0, 5)}
+                stroke="hsl(var(--foreground))"
+                tick={{ fill: "hsl(var(--foreground))" }}
+              />
               <YAxis domain={[0, 5]} stroke="hsl(var(--foreground))" tick={{ fill: "hsl(var(--foreground))" }} />
-              <Tooltip contentStyle={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 4 }} labelFormatter={(v) => formatDate(v as string)} />
+              <Tooltip
+                contentStyle={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 4 }}
+                labelFormatter={(v) => formatDate(v as string).slice(0, 5)}
+              />
               <Line type="monotone" dataKey="value" stroke="hsl(var(--forest-green))" strokeWidth={2} dot={false} isAnimationActive={false} />
             </LineChart>
           </ResponsiveContainer>

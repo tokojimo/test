@@ -2,15 +2,7 @@ import React from "react";
 import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useT } from "@/i18n";
 import type { VisitHistory } from "@/types";
-
-function formatDate(str: string) {
-  const d = new Date(str);
-  if (Number.isNaN(d.getTime())) return str;
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
-}
+import { formatDate } from "@/utils/dates";
 
 function Stars({ value }: { value: number }) {
   return (
