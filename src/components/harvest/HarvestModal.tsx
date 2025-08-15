@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { Modal } from "@/components/ui/modal";
 import { Input } from "@/components/ui/input";
 import { Select } from "@/components/ui/select";
@@ -34,6 +34,7 @@ export function HarvestModal({
   const [photos, setPhotos] = useState<string[]>(initial?.photos || []);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ date?: string }>({});
+  const urlRefs = useRef<string[]>([]);
 
   useEffect(() => {
     setDate(initial?.date || "");
@@ -50,6 +51,13 @@ export function HarvestModal({
     return () => window.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
+  useEffect(() => {
+    return () => {
+      urlRefs.current.forEach((url) => URL.revokeObjectURL(url));
+      urlRefs.current = [];
+    };
+  }, []);
+
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const err: { date?: string } = {};
@@ -64,12 +72,22 @@ export function HarvestModal({
 
   const importPhotos = (files: FileList | null) => {
     if (!files) return;
-    const urls = Array.from(files).map((f) => URL.createObjectURL(f));
+    const urls = Array.from(files).map((f) => {
+      const url = URL.createObjectURL(f);
+      urlRefs.current.push(url);
+      return url;
+    });
     setPhotos((p) => [...p, ...urls]);
   };
 
   const removePhoto = (url: string) => {
-    if (confirm(t("Supprimer cette photo ?"))) setPhotos((p) => p.filter((u) => u !== url));
+    if (confirm(t("Supprimer cette photo ?"))) {
+      if (urlRefs.current.includes(url)) {
+        URL.revokeObjectURL(url);
+        urlRefs.current = urlRefs.current.filter((u) => u !== url);
+      }
+      setPhotos((p) => p.filter((u) => u !== url));
+    }
   };
 
   const title = initial ? t("Modifier la cueillette") : t("Ajouter une cueillette");
