@@ -3,15 +3,7 @@ import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
 import { useT } from "@/i18n";
 import type { VisitHistory } from "@/types";
 import { Stars } from "@/components/common/Stars";
-
-function formatDate(str: string) {
-  const d = new Date(str);
-  if (Number.isNaN(d.getTime())) return str;
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  const yyyy = d.getFullYear();
-  return `${dd}/${mm}/${yyyy}`;
-}
+import { formatDate } from "@/utils";
 
 export function LastHarvestCard({ harvest }: { harvest?: VisitHistory }) {
   const { t } = useT();
@@ -43,7 +35,7 @@ export function LastHarvestCard({ harvest }: { harvest?: VisitHistory }) {
             )}
           </>
         ) : (
-          <p className="text-foreground/70">{t("Aucune cueillette enregistrée")}</p>
+          <p className="text-foreground/70">{t("Aucune cueillette enregistrée.")}</p>
         )}
       </CardContent>
     </Card>

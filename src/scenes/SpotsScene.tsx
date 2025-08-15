@@ -10,6 +10,7 @@ import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
 import { useAppContext } from "../context/AppContext";
 import { useT } from "../i18n";
 import { getStaticMapUrl } from "../services/staticMap";
+import { formatDate } from "../utils";
 import Logo from "@/assets/logo.png";
 import { MUSHROOMS } from "../data/mushrooms";
 import type { Spot } from "../types";
@@ -146,7 +147,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                       .join(", ")}
                   </div>
                   <div className={`text-xs ${T_MUTED}`}>
-                    {t("Dernière visite :")} {s.last || "–"}
+                    {t("Dernière cueillette :")} {s.last ? formatDate(s.last) : "–"}
                   </div>
                   <div className="mt-3 flex gap-2">
                     <Button
