@@ -31,6 +31,7 @@ export interface Zone {
 }
 
 export interface VisitHistory {
+  id: string;
   date: string;
   rating: number;
   note: string;

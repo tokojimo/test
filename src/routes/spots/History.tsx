@@ -37,10 +37,12 @@ export default function History() {
     history: [] as VisitHistory[],
   };
 
-  const [history, setHistory] = useState<VisitHistory[]>(spot.history);
+  const [history, setHistory] = useState<VisitHistory[]>(
+    spot.history.map((h) => ({ id: h.id || crypto.randomUUID(), ...h }))
+  );
   const [chartLoading, setChartLoading] = useState(true);
   const [listLoading] = useState(false);
-  const [modalIndex, setModalIndex] = useState<number | null>(null);
+  const [modalId, setModalId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
 
   useEffect(() => {
@@ -50,10 +52,16 @@ export default function History() {
   }, [history]);
 
   const saveHarvest = (h: Harvest) => {
-    const visit: VisitHistory = { date: h.date, rating: h.rating, note: h.comment, photos: h.photos };
+    const visit: VisitHistory = {
+      id: modalId || crypto.randomUUID(),
+      date: h.date,
+      rating: h.rating,
+      note: h.comment,
+      photos: h.photos,
+    };
     let newHistory: VisitHistory[];
-    if (modalIndex !== null) {
-      newHistory = history.map((v, idx) => (idx === modalIndex ? visit : v));
+    if (modalId !== null) {
+      newHistory = history.map((v) => (v.id === modalId ? visit : v));
     } else {
       newHistory = [visit, ...history];
     }
@@ -62,8 +70,8 @@ export default function History() {
     dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
   };
 
-  const deleteHarvest = (idx: number) => {
-    const newHistory = history.filter((_, i) => i !== idx);
+  const deleteHarvest = (id: string) => {
+    const newHistory = history.filter((v) => v.id !== id);
     setHistory(newHistory);
     dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
   };
@@ -75,7 +83,7 @@ export default function History() {
     ? spot.location.split(",").map((v) => parseFloat(v.trim()))
     : [48.8566, 2.3522];
 
-  const current = modalIndex !== null ? history[modalIndex] : undefined;
+  const current = modalId !== null ? history.find((h) => h.id === modalId) : undefined;
 
   return (
     <section className="p-4 space-y-4">
@@ -97,7 +105,7 @@ export default function History() {
       </div>
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
         <div className="space-y-4">
-          <Button onClick={() => { setModalIndex(null); setModalOpen(true); }}>
+          <Button onClick={() => { setModalId(null); setModalOpen(true); }}>
             {t("Ajouter une cueillette")}
           </Button>
           <LastHarvestCard harvest={history[0]} />
@@ -110,8 +118,8 @@ export default function History() {
         ) : (
           <HarvestList
             items={history}
-            onEdit={(i) => {
-              setModalIndex(i);
+            onEdit={(id) => {
+              setModalId(id);
               setModalOpen(true);
             }}
             onDelete={deleteHarvest}
@@ -122,11 +130,11 @@ export default function History() {
         open={modalOpen}
         onClose={() => {
           setModalOpen(false);
-          setModalIndex(null);
+          setModalId(null);
         }}
         initial={current ? { ...current, comment: current.note } : undefined}
         onSave={saveHarvest}
-        onDelete={current ? () => { deleteHarvest(modalIndex!); setModalOpen(false); setModalIndex(null); } : undefined}
+        onDelete={current ? () => { deleteHarvest(modalId!); setModalOpen(false); setModalId(null); } : undefined}
       />
     </section>
   );

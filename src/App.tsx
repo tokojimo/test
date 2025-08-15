@@ -172,7 +172,13 @@ function AppContent() {
                         last: today,
                         location,
                         history: [
-                          { date: today, rating: 5, note: t("Créé"), photos: [cover] },
+                          {
+                            id: crypto.randomUUID(),
+                            date: today,
+                            rating: 5,
+                            note: t("Créé"),
+                            photos: [cover],
+                          },
                         ],
                       } as Spot,
                     });

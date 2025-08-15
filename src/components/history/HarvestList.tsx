@@ -26,8 +26,8 @@ function Stars({ value }: { value: number }) {
 
 interface HarvestListProps {
   items: VisitHistory[];
-  onEdit: (index: number) => void;
-  onDelete: (index: number) => void;
+  onEdit: (id: string) => void;
+  onDelete: (id: string) => void;
 }
 
 export function HarvestList({ items, onEdit, onDelete }: HarvestListProps) {
@@ -35,17 +35,17 @@ export function HarvestList({ items, onEdit, onDelete }: HarvestListProps) {
 
   return (
     <ul className="space-y-4">
-      {items.map((h, i) => {
+      {items.map((h) => {
         const date = formatDate(h.date);
         return (
-          <li key={i}>
+          <li key={h.id}>
             <div
               tabIndex={0}
               role="button"
               className="p-4 border border-border rounded-md space-y-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-              onClick={() => onEdit(i)}
+              onClick={() => onEdit(h.id)}
               onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") onEdit(i);
+                if (e.key === "Enter" || e.key === " ") onEdit(h.id);
               }}
             >
               <div className="flex items-center justify-between">
@@ -66,7 +66,7 @@ export function HarvestList({ items, onEdit, onDelete }: HarvestListProps) {
                 </div>
               )}
               <div className="flex gap-2 pt-2">
-                <Button type="button" variant="secondary" onClick={(e) => { e.stopPropagation(); onEdit(i); }}>
+                <Button type="button" variant="secondary" onClick={(e) => { e.stopPropagation(); onEdit(h.id); }}>
                   {t("Modifier la cueillette")}
                 </Button>
                 <Button
@@ -75,7 +75,7 @@ export function HarvestList({ items, onEdit, onDelete }: HarvestListProps) {
                   className="text-danger border border-danger hover:bg-danger/10"
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (confirm(t("Supprimer cette cueillette ?"))) onDelete(i);
+                    if (confirm(t("Supprimer cette cueillette ?"))) onDelete(h.id);
                   }}
                 >
                   {t("Supprimer")}
