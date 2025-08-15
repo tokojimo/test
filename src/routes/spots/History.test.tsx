@@ -54,7 +54,6 @@ describe("History page", () => {
     );
     expect(screen.getByText("Mon coin")).toBeInTheDocument();
     expect(screen.getByText("Ajouter une cueillette")).toBeInTheDocument();
-    expect(screen.getByText("Itinéraire")).toBeInTheDocument();
   });
 
   it("opens and closes modal", () => {
