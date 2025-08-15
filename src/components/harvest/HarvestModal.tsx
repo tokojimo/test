@@ -1,16 +1,16 @@
-import React, { useEffect, useState, useRef } from "react";
-import { Modal } from "@/components/ui/modal";
-import { Input } from "@/components/ui/input";
-import { Select } from "@/components/ui/select";
+import React, { useState, useRef } from "react";
+import { X } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Trash2 } from "lucide-react";
 import { useT } from "@/i18n";
+import { BTN, T_PRIMARY } from "@/styles/tokens";
+import CoinFormBase from "../CoinFormBase";
+import { todayISO } from "@/utils";
 
 export type Harvest = {
   id?: string;
   date: string;
   rating: number;
-  comment: string;
+  species: string[];
   photos: string[];
 };
 
@@ -28,169 +28,75 @@ export function HarvestModal({
   initial?: Harvest;
 }) {
   const { t } = useT();
-  const [date, setDate] = useState(initial?.date || "");
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+  const [date, setDate] = useState(initial?.date || todayISO());
   const [rating, setRating] = useState(initial?.rating ?? 0);
-  const [comment, setComment] = useState(initial?.comment || "");
+  const [species, setSpecies] = useState<string[]>(initial?.species || []);
   const [photos, setPhotos] = useState<string[]>(initial?.photos || []);
-  const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<{ date?: string }>({});
-  const urlRefs = useRef<string[]>([]);
 
-  useEffect(() => {
-    setDate(initial?.date || "");
-    setRating(initial?.rating ?? 0);
-    setComment(initial?.comment || "");
-    setPhotos(initial?.photos || []);
-  }, [initial, open]);
+  const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (e.target === overlayRef.current) onClose();
+  };
 
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === "Escape") onClose();
-    };
-    if (open) window.addEventListener("keydown", handler);
-    return () => window.removeEventListener("keydown", handler);
-  }, [open, onClose]);
-
-  useEffect(() => {
-    return () => {
-      urlRefs.current.forEach((url) => URL.revokeObjectURL(url));
-      urlRefs.current = [];
-    };
-  }, []);
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
+  const save = () => {
     const err: { date?: string } = {};
     if (!date) err.date = t("Requis");
     setErrors(err);
     if (Object.keys(err).length) return;
-    setLoading(true);
-    onSave({ id: initial?.id, date, rating, comment, photos });
-    setLoading(false);
-    onClose();
-  };
-
-  const importPhotos = (files: FileList | null) => {
-    if (!files) return;
-    const urls = Array.from(files).map((f) => {
-      const url = URL.createObjectURL(f);
-      urlRefs.current.push(url);
-      return url;
-    });
-    setPhotos((p) => [...p, ...urls]);
-  };
-
-  const removePhoto = (url: string) => {
-    if (confirm(t("Supprimer cette photo ?"))) {
-      if (urlRefs.current.includes(url)) {
-        URL.revokeObjectURL(url);
-        urlRefs.current = urlRefs.current.filter((u) => u !== url);
-      }
-      setPhotos((p) => p.filter((u) => u !== url));
-    }
+    onSave({ id: initial?.id, date, rating, species, photos });
   };
 
   const title = initial ? t("Modifier la cueillette") : t("Ajouter une cueillette");
-  const isEdit = Boolean(initial);
+
+  if (!open) return null;
 
   return (
-    <Modal open={open} onClose={onClose}>
-      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-        <h2 className="text-lg font-semibold">{title}</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-          <div className="space-y-2">
-            <label htmlFor="date" className="text-sm">
-              {t("Date")}
-            </label>
-            <Input id="date" type="date" value={date} onChange={(e) => setDate(e.target.value)} />
-            {errors.date && <p className="text-xs text-danger">{errors.date}</p>}
-          </div>
-          <div className="space-y-2">
-            <label htmlFor="rating" className="text-sm">
-              {t("Note")}
-            </label>
-            <Select id="rating" value={String(rating)} onChange={(e) => setRating(parseInt(e.target.value, 10))}>
-              {[0, 1, 2, 3, 4, 5].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </Select>
-          </div>
-          <div className="space-y-2 lg:col-span-2">
-            <label htmlFor="comment" className="text-sm">
-              {t("Commentaire")}
-            </label>
-            <textarea
-              id="comment"
-              value={comment}
-              onChange={(e) => setComment(e.target.value)}
-              className="h-24 w-full rounded-md border border-border bg-paper px-3 py-2 text-sm text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            />
-          </div>
-          <div className="space-y-2 lg:col-span-2">
-            <label className="text-sm">{t("Galerie")}</label>
-            <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
-              {photos.map((url, index) => (
-                <div key={url} className="relative aspect-square">
-                  <img
-                    src={url}
-                    className="w-full h-full object-cover rounded-md border border-border"
-                    alt={t("Photo de la cueillette {n}", { n: index + 1 })}
-                  />
-                  <Button
-                    type="button"
-                    size="icon"
-                    variant="destructive"
-                    className="absolute top-1 right-1 h-6 w-6 p-0"
-                    onClick={() => removePhoto(url)}
-                    aria-label={t("Supprimer")}
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </Button>
-                </div>
-              ))}
-            </div>
-            <input
-              id="file"
-              type="file"
-              accept="image/*"
-              multiple
-              className="hidden"
-              onChange={(e) => importPhotos(e.target.files)}
-            />
-            <Button type="button" variant="secondary" onClick={() => document.getElementById("file")?.click()}>
-              {t("Importer des photos")}
-            </Button>
-          </div>
+    <div ref={overlayRef} onClick={handleOutside} className="fixed inset-0 z-50 bg-black/70 grid place-items-center p-3">
+      <div className="w-full max-w-2xl bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-2xl p-4">
+        <div className="flex items-center justify-between mb-2">
+          <h2 className={`text-lg font-semibold ${T_PRIMARY}`}>{title}</h2>
+          <button onClick={onClose} className="text-neutral-400 hover:text-neutral-100">
+            <X className="w-5 h-5" />
+          </button>
         </div>
-        <div className="flex items-center justify-between gap-2 flex-wrap mt-2">
-          {isEdit && onDelete && (
+
+        <CoinFormBase
+          species={species}
+          setSpecies={setSpecies}
+          date={date}
+          setDate={setDate}
+          rating={rating}
+          setRating={setRating}
+          photos={photos}
+          setPhotos={setPhotos}
+          dateError={errors.date}
+        />
+
+        <div className="flex items-center gap-2 justify-end mt-3">
+          {initial && onDelete && (
             <Button
-              type="button"
               variant="ghost"
-              className="text-danger border border-danger hover:bg-danger/10"
               onClick={onDelete}
+              className="text-danger border border-danger hover:bg-danger/10 mr-auto"
             >
               {t("Supprimer")}
             </Button>
           )}
-          <div className="ml-auto flex gap-2 w-full sm:w-auto">
-            <Button type="button" variant="secondary" onClick={onClose} className="flex-1 sm:flex-none">
-              {t("Annuler")}
-            </Button>
-            <Button type="submit" disabled={loading} className="flex-1 sm:flex-none">
-              {loading && (
-                <span className="mr-2 inline-block w-4 h-4 rounded-full border-2 border-border border-t-transparent motion-safe:animate-spin" />
-              )}
-              {t("Enregistrer")}
-            </Button>
-          </div>
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className={`rounded-xl hover:bg-neutral-200 dark:hover:bg-neutral-800 ${T_PRIMARY}`}
+          >
+            {t("Annuler")}
+          </Button>
+          <Button className={BTN} onClick={save}>
+            {t("Enregistrer")}
+          </Button>
         </div>
-      </form>
-    </Modal>
+      </div>
+    </div>
   );
 }
 
 export default HarvestModal;
-
