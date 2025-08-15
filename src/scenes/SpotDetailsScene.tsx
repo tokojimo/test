@@ -174,18 +174,18 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
 
         <div className="mt-3">
           <div className="flex items-center justify-between mb-2">
-            <div className={`text-sm ${T_PRIMARY}`}>{t("Visites")}</div>
+            <div className={`text-sm ${T_PRIMARY}`}>{t("Cueillettes")}</div>
             <Button onClick={addVisit} className={BTN}>
               <Plus className="w-4 h-4 mr-2" />
               {t("Ajouter une cueillette")}
             </Button>
           </div>
           <div className="space-y-2">
-            {history.length === 0 && <div className={T_MUTED}>{t("Aucune visite enregistrée.")}</div>}
+            {history.length === 0 && <div className={T_MUTED}>{t("Aucune cueillette enregistrée.")}</div>}
             {history.map((h, i) => (
               <div key={h.id} className="flex items-start justify-between bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-xl p-2">
                 <div>
-                  <div className={`text-sm ${T_PRIMARY}`}>{h.date}</div>
+                  <div className={`text-sm ${T_PRIMARY}`}>{t("Cueillette du {date}", { date: h.date })}</div>
                   <div className={`text-xs ${T_MUTED}`}>
                     {t("Note:")} {h.rating ?? "–"}/5 {h.note ? `• ${h.note}` : ""}
                   </div>

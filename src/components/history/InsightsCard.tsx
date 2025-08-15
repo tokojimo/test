@@ -19,7 +19,7 @@ export function InsightsCard({ events, onSelect }: { events: TimelineEvent[]; on
   const tabs = [
     { id: "history", label: t("Historique") },
     { id: "forecast", label: t("Prévisions locales") },
-    { id: "visits", label: t("Visites") },
+    { id: "visits", label: t("Cueillettes") },
   ];
   const [active, setActive] = useState("history");
   const [loading, setLoading] = useState(true);
