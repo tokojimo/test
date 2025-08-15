@@ -1,7 +1,7 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { loadMap } from "@/services/openstreetmap";
+import { loadMap, getStaticMapUrl } from "@/services/openstreetmap";
 import type { StyleSpecification } from "maplibre-gl";
 import { useT } from "@/i18n";
 import Logo from "@/assets/logo.png";
@@ -10,45 +10,60 @@ export function MapSpotCard({ center }: { center: [number, number] }) {
   const { t } = useT();
   const mapContainer = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
+  const [staticUrl, setStaticUrl] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!mapContainer.current) return;
     const [lat, lng] = center;
-    loadMap().then((maplibregl) => {
-      const style: StyleSpecification = {
-        version: 8,
-        sources: {
-          osm: {
-            type: "raster",
-            tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
-            tileSize: 256,
-          },
-        },
-        layers: [
-          {
-            id: "osm",
-            type: "raster",
-            source: "osm",
-            minzoom: 0,
-            maxzoom: 19,
-          },
-        ],
-      };
-      const map = new maplibregl.Map({
-        container: mapContainer.current as HTMLDivElement,
-        style,
-        center: [lng, lat],
-        zoom: 12,
-        attributionControl: false,
+    if (!mapContainer.current) {
+      setStaticUrl(getStaticMapUrl(lat, lng));
+      return;
+    }
+    loadMap()
+      .then((maplibregl) => {
+        try {
+          const style: StyleSpecification = {
+            version: 8,
+            sources: {
+              osm: {
+                type: "raster",
+                tiles: ["https://tile.openstreetmap.org/{z}/{x}/{y}.png"],
+                tileSize: 256,
+              },
+            },
+            layers: [
+              {
+                id: "osm",
+                type: "raster",
+                source: "osm",
+                minzoom: 0,
+                maxzoom: 19,
+              },
+            ],
+          };
+          const map = new maplibregl.Map({
+            container: mapContainer.current as HTMLDivElement,
+            style,
+            center: [lng, lat],
+            zoom: 12,
+            attributionControl: false,
+          });
+          mapRef.current = map;
+          map.on("error", () => {
+            setStaticUrl(getStaticMapUrl(lat, lng));
+          });
+          const el = document.createElement("img");
+          el.src = Logo;
+          el.className = "w-6 h-6";
+          new maplibregl.Marker({ element: el, anchor: "bottom" })
+            .setLngLat([lng, lat])
+            .addTo(map);
+        } catch {
+          setStaticUrl(getStaticMapUrl(lat, lng));
+        }
+      })
+      .catch(() => {
+        setStaticUrl(getStaticMapUrl(lat, lng));
       });
-      mapRef.current = map;
-      const el = document.createElement("img");
-      el.src = Logo;
-      el.className = "w-6 h-6";
-      new maplibregl.Marker({ element: el, anchor: "bottom" })
-        .setLngLat([lng, lat])
-        .addTo(map);
-    });
     return () => mapRef.current?.remove();
   }, [center]);
 
@@ -68,7 +83,15 @@ export function MapSpotCard({ center }: { center: [number, number] }) {
           role="img"
           aria-label={t("Carte de l'emplacement situé aux coordonnées latitude {lat}, longitude {lng}", { lat, lng })}
         >
-          <div ref={mapContainer} className="absolute inset-0" />
+          {staticUrl ? (
+            <img
+              src={staticUrl}
+              alt=""
+              className="absolute inset-0 w-full h-full object-cover"
+            />
+          ) : (
+            <div ref={mapContainer} className="absolute inset-0" />
+          )}
         </div>
       </CardContent>
       <CardFooter className="pt-2 flex justify-end">

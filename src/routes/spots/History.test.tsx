@@ -8,21 +8,22 @@ import { MemoryRouter } from "react-router-dom";
 
 describe("History page", () => {
   beforeEach(() => {
-    vi.mock("@/services/openstreetmap", () => ({
-      loadMap: vi.fn(async () => ({
-        Map: class {
-          remove() {}
-        },
-        Marker: class {
-          setLngLat() {
-            return this;
+      vi.mock("@/services/openstreetmap", () => ({
+        loadMap: vi.fn(async () => ({
+          Map: class {
+            remove() {}
+          },
+          Marker: class {
+            setLngLat() {
+              return this;
+            }
+            addTo() {
+              return this;
+            }
           }
-          addTo() {
-            return this;
-          }
-        }
-      }))
-    }));
+        })),
+        getStaticMapUrl: vi.fn(() => ""),
+      }));
     vi.mock("recharts", () => {
       const React = require("react");
       const Mock = ({ children }: any) => <div>{children}</div>;

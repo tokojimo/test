@@ -19,6 +19,7 @@ vi.mock('@/services/openstreetmap', () => ({
       }
     },
   })),
+  getStaticMapUrl: vi.fn(() => ''),
 }));
 
 describe('CreateSpotModal', () => {

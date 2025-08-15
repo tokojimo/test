@@ -45,12 +45,13 @@ vi.mock('../../services/openstreetmap', () => {
     addTo() { return this; }
     remove() {}
   }
-  return {
-    loadMap: vi.fn(() => Promise.resolve({ Map, Marker })),
-    geocode: vi.fn(),
-    reverseGeocode: vi.fn(() => Promise.resolve('Testville')),
-  };
-});
+    return {
+      loadMap: vi.fn(() => Promise.resolve({ Map, Marker })),
+      geocode: vi.fn(),
+      reverseGeocode: vi.fn(() => Promise.resolve('Testville')),
+      getStaticMapUrl: vi.fn(() => ''),
+    };
+  });
 
 describe('MapScene', () => {
   it('opens zone when toast is clicked', async () => {
