@@ -45,6 +45,7 @@ export function HarvestModal({
     setErrors(err);
     if (Object.keys(err).length) return;
     onSave({ id: initial?.id, date, rating, species, photos });
+    onClose();
   };
 
   const title = initial ? t("Modifier la cueillette") : t("Ajouter une cueillette");

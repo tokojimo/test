@@ -70,7 +70,10 @@ export default function History() {
     }
     newHistory = newHistory.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
     setHistory(newHistory);
-    dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
+    dispatch({
+      type: "updateSpot",
+      spot: { ...spot, history: newHistory, last: newHistory[0]?.date },
+    });
   };
 
   const deleteHarvest = (id: string) => {
