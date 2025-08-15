@@ -10,7 +10,6 @@ import LandingScene from "./scenes/LandingScene";
 import MapScene from "./scenes/MapScene";
 import ZoneScene from "./scenes/ZoneScene";
 import SpotsScene from "./scenes/SpotsScene";
-import SpotDetailsScene from "./scenes/SpotDetailsScene";
 import PickerScene from "./scenes/PickerScene";
 import MushroomScene from "./scenes/MushroomScene";
 import SettingsIndex from "./routes/settings";
@@ -26,6 +25,7 @@ import { ToastProvider } from "./components/settings/Toasts";
 import { useT } from "./i18n";
 import { Scene } from "./routes";
 import Callback from "./routes/auth/Callback";
+import History from "@/routes/spots/History";
 
 export default function MycoExplorerApp() {
   return (
@@ -206,10 +206,7 @@ function AppContent() {
                 />
               }
             />
-            <Route
-              path={Scene.Spot}
-              element={<SpotDetailsScene spot={selectedSpot} onBack={goBack} />}
-            />
+            <Route path={Scene.Spot} element={<History />} />
             <Route
               path={Scene.Picker}
               element={
