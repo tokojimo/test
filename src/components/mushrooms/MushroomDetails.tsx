@@ -32,7 +32,13 @@ export default function MushroomDetails({ mushroom, open, onClose }: Props) {
         rating: 5,
         last: today,
         history: [
-          { date: today, rating: 5, note: t("Créé"), photos: [mushroom.photo] },
+          {
+            id: crypto.randomUUID(),
+            date: today,
+            rating: 5,
+            note: t("Créé"),
+            photos: [mushroom.photo],
+          },
         ],
       },
     });

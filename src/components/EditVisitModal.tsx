@@ -128,7 +128,7 @@ export function EditVisitModal({ visit, onClose, onSave, onDelete }: Props) {
             </Button>
             <Button
               className={BTN}
-              onClick={() => onSave({ date, rating, note, photos })}
+              onClick={() => onSave({ ...visit, date, rating, note, photos })}
             >
               {t("Enregistrer")}
             </Button>

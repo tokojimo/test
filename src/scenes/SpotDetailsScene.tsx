@@ -19,7 +19,15 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
   const { state, dispatch } = useAppContext();
   const [lightbox, setLightbox] = useState<{ open: boolean; index: number }>({ open: false, index: 0 });
   const [history, setHistory] = useState<VisitHistory[]>(
-    spot?.history || (spot?.visits || []).map((d: string) => ({ date: d, rating: spot?.rating, note: "", photos: [] }))
+    spot?.history
+      ? spot.history.map((h) => ({ id: h.id || crypto.randomUUID(), ...h }))
+      : (spot?.visits || []).map((d: string) => ({
+          id: crypto.randomUUID(),
+          date: d,
+          rating: spot?.rating,
+          note: "",
+          photos: [],
+        }))
   );
   const [editIndex, setEditIndex] = useState<number | null>(null);
   const [confirmOpen, setConfirmOpen] = useState(false);
@@ -85,7 +93,7 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
   const addVisit = () => {
     const today = todayISO();
     setHistory((h) => {
-      const newHistory = [...h, { date: today, rating: 0, note: "", photos: [] }];
+      const newHistory = [...h, { id: crypto.randomUUID(), date: today, rating: 0, note: "", photos: [] }];
       dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
       return newHistory;
     });
@@ -175,7 +183,7 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
           <div className="space-y-2">
             {history.length === 0 && <div className={T_MUTED}>{t("Aucune visite enregistrée.")}</div>}
             {history.map((h, i) => (
-              <div key={i} className="flex items-start justify-between bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-xl p-2">
+              <div key={h.id} className="flex items-start justify-between bg-neutral-100 dark:bg-neutral-900 border border-neutral-300 dark:border-neutral-800 rounded-xl p-2">
                 <div>
                   <div className={`text-sm ${T_PRIMARY}`}>{h.date}</div>
                   <div className={`text-xs ${T_MUTED}`}>
