@@ -13,6 +13,7 @@ import ChartSkeleton from "@/components/history/ChartSkeleton";
 import HarvestModal, { Harvest } from "@/components/harvest/HarvestModal";
 import { formatDate } from "@/utils";
 import { BTN_GHOST_ICON, T_PRIMARY } from "@/styles/tokens";
+import { MUSHROOMS } from "@/data/mushrooms";
 import {
   ResponsiveContainer,
   LineChart,
@@ -50,11 +51,15 @@ export default function History() {
   }, [history]);
 
   const saveHarvest = (h: Harvest) => {
+    const note = h.species
+      .map((id) => MUSHROOMS.find((m) => m.id === id)?.name.split(" ")[0])
+      .filter(Boolean)
+      .join(", ");
     const visit: VisitHistory = {
       id: modalId || crypto.randomUUID(),
       date: h.date,
       rating: h.rating,
-      note: h.comment,
+      note,
       photos: h.photos,
     };
     let newHistory: VisitHistory[];
@@ -143,7 +148,11 @@ export default function History() {
           setModalOpen(false);
           setModalId(null);
         }}
-        initial={current ? { ...current, comment: current.note } : undefined}
+        initial={
+          current
+            ? { id: current.id, date: current.date, rating: current.rating, species: [], photos: current.photos }
+            : undefined
+        }
         onSave={saveHarvest}
         onDelete={current ? () => { deleteHarvest(modalId!); setModalOpen(false); setModalId(null); } : undefined}
       />
