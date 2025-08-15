@@ -1,7 +1,7 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { describe, it, expect, beforeEach, vi } from "vitest";
+import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import History from "./History";
 import { AppProvider } from "@/context/AppContext";
 
@@ -35,6 +35,10 @@ describe("History page", () => {
         Tooltip: Mock
       };
     });
+  });
+
+  afterEach(() => {
+    vi.clearAllMocks();
   });
 
   it("renders base layout", () => {
