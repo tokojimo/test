@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -9,20 +9,10 @@ import LastHarvestCard from "@/components/history/LastHarvestCard";
 import MapSpotCard from "@/components/history/MapSpotCard";
 import HarvestList from "@/components/history/HarvestList";
 import HarvestListSkeleton from "@/components/history/HarvestListSkeleton";
-import ChartSkeleton from "@/components/history/ChartSkeleton";
 import HarvestModal, { Harvest } from "@/components/harvest/HarvestModal";
-import { formatDate } from "@/utils";
 import { BTN_GHOST_ICON, T_PRIMARY } from "@/styles/tokens";
 import { MUSHROOMS } from "@/data/mushrooms";
-import {
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-} from "recharts";
+import ForecastChart from "@/components/ForecastChart";
 
 
 export default function History() {
@@ -39,16 +29,9 @@ export default function History() {
   const [history, setHistory] = useState<VisitHistory[]>(
     spot.history.map((h) => ({ id: h.id || crypto.randomUUID(), ...h }))
   );
-  const [chartLoading, setChartLoading] = useState(true);
   const [listLoading] = useState(false);
   const [modalId, setModalId] = useState<string | null>(null);
   const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    setChartLoading(true);
-    const timer = setTimeout(() => setChartLoading(false), 300);
-    return () => clearTimeout(timer);
-  }, [history]);
 
   const saveHarvest = (h: Harvest) => {
     const note = h.species
@@ -82,9 +65,6 @@ export default function History() {
     dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
   };
 
-  const data = history.map((h) => ({ date: h.date, value: h.rating }));
-  const ticks = data.length ? data.filter((_, i) => i % Math.ceil(data.length / 6) === 0).map((d) => d.date) : [];
-
   const location = spot.location
     ? spot.location.split(",").map((v) => parseFloat(v.trim()))
     : [48.8566, 2.3522];
@@ -107,21 +87,7 @@ export default function History() {
           {spot.name}
         </h2>
       </div>
-      <div style={{ height: 240 }}>
-        {chartLoading ? (
-          <ChartSkeleton />
-        ) : (
-          <ResponsiveContainer width="100%" height="100%">
-            <LineChart data={data} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
-              <CartesianGrid stroke="hsl(var(--border))" strokeDasharray="3 3" />
-              <XAxis dataKey="date" ticks={ticks} tickFormatter={formatDate} stroke="hsl(var(--foreground))" tick={{ fill: "hsl(var(--foreground))" }} />
-              <YAxis domain={[0, 5]} stroke="hsl(var(--foreground))" tick={{ fill: "hsl(var(--foreground))" }} />
-              <Tooltip contentStyle={{ background: "hsl(var(--background))", border: "1px solid hsl(var(--border))", borderRadius: 4 }} labelFormatter={(v) => formatDate(v as string)} />
-              <Line type="monotone" dataKey="value" stroke="hsl(var(--forest-green))" strokeWidth={2} dot={false} isAnimationActive={false} />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
-      </div>
+      <ForecastChart />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
         <div className="space-y-3">
           <Button onClick={() => { setModalId(null); setModalOpen(true); }}>
