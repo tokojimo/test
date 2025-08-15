@@ -35,7 +35,7 @@ export default {
   "Aucun coin enregistré.": { fr: "Aucun coin enregistré.", en: "No spot saved." },
   "modifier": { fr: "modifier", en: "edit" },
   "Espèces :": { fr: "Espèces :", en: "Species:" },
-  "Dernière visite :": { fr: "Dernière visite :", en: "Last visit:" },
+  "Dernière cueillette :": { fr: "Dernière cueillette :", en: "Last harvest:" },
   "Itinéraire": { fr: "Itinéraire", en: "Route" },
   "Données stockées localement. Accès hors‑ligne.": {
     fr: "Données stockées localement. Accès hors‑ligne.",

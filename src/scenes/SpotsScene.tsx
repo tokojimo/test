@@ -146,7 +146,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                       .join(", ")}
                   </div>
                   <div className={`text-xs ${T_MUTED}`}>
-                    {t("Dernière visite :")} {s.last || "–"}
+                    {t("Dernière cueillette :")} {s.last ? new Date(s.last).toLocaleDateString("fr-FR", { day: "2-digit", month: "2-digit", year: "numeric" }) : "–"}
                   </div>
                   <div className="mt-3 flex gap-2">
                     <Button
