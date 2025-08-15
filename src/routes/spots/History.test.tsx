@@ -33,7 +33,8 @@ describe("History page", () => {
         XAxis: Mock,
         YAxis: Mock,
         CartesianGrid: Mock,
-        Tooltip: Mock
+        Tooltip: Mock,
+        ReferenceLine: Mock,
       };
     });
   });
