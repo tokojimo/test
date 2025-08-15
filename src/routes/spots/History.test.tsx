@@ -4,6 +4,7 @@ import "@testing-library/jest-dom";
 import { describe, it, expect, beforeEach, afterEach, vi } from "vitest";
 import History from "./History";
 import { AppProvider } from "@/context/AppContext";
+import { MemoryRouter } from "react-router-dom";
 
 describe("History page", () => {
   beforeEach(() => {
@@ -43,9 +44,11 @@ describe("History page", () => {
 
   it("renders base layout", () => {
     render(
-      <AppProvider>
-        <History />
-      </AppProvider>
+      <MemoryRouter>
+        <AppProvider>
+          <History />
+        </AppProvider>
+      </MemoryRouter>
     );
     expect(screen.getByText("Mon coin")).toBeInTheDocument();
     expect(screen.getByText("Ajouter une cueillette")).toBeInTheDocument();
@@ -54,9 +57,11 @@ describe("History page", () => {
 
   it("opens and closes modal", () => {
     render(
-      <AppProvider>
-        <History />
-      </AppProvider>
+      <MemoryRouter>
+        <AppProvider>
+          <History />
+        </AppProvider>
+      </MemoryRouter>
     );
     fireEvent.click(screen.getByText("Ajouter une cueillette"));
     expect(screen.getByRole("heading", { name: "Ajouter une cueillette" })).toBeInTheDocument();
