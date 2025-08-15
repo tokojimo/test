@@ -64,6 +64,6 @@ INSERT INTO spot_species(spot_id,mushroom_id)
 SELECT s.id,'cepe_de_bordeaux' FROM user_spots s LIMIT 1;
 
 INSERT INTO spot_visits(spot_id,visited_at,rating,note)
-SELECT s.id,now(),5,'Première visite' FROM user_spots s LIMIT 1;
+SELECT s.id,now(),5,'Première cueillette' FROM user_spots s LIMIT 1;
 
 COMMIT;

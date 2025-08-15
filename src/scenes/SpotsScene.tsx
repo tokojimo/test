@@ -146,7 +146,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                       .join(", ")}
                   </div>
                   <div className={`text-xs ${T_MUTED}`}>
-                    {t("Dernière visite :")} {s.last || "–"}
+                    {t("Dernière cueillette :")} {s.last || "–"}
                   </div>
                   <div className="mt-3 flex gap-2">
                     <Button
