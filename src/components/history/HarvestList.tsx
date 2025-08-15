@@ -1,5 +1,6 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import type { VisitHistory } from "@/types";
 import { useT } from "@/i18n";
 import { Stars } from "@/components/common/Stars";
@@ -15,15 +16,15 @@ export function HarvestList({ items, onEdit, onDelete }: HarvestListProps) {
   const { t } = useT();
 
   return (
-    <ul className="space-y-4">
+    <ul className="space-y-3">
       {items.map((h) => {
         const date = formatDate(h.date);
         return (
           <li key={h.id}>
-            <div
+            <Card
               tabIndex={0}
               role="button"
-              className="p-4 border border-border rounded-md space-y-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+              className="p-4 space-y-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
               onClick={() => onEdit(h.id)}
               onKeyDown={(e) => {
                 if (e.key === "Enter" || e.key === " ") onEdit(h.id);
@@ -62,7 +63,7 @@ export function HarvestList({ items, onEdit, onDelete }: HarvestListProps) {
                   {t("Supprimer")}
                 </Button>
               </div>
-            </div>
+            </Card>
           </li>
         );
       })}

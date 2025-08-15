@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useT } from "@/i18n";
 import { useAppContext } from "@/context/AppContext";
@@ -10,6 +12,7 @@ import HarvestListSkeleton from "@/components/history/HarvestListSkeleton";
 import ChartSkeleton from "@/components/history/ChartSkeleton";
 import HarvestModal, { Harvest } from "@/components/harvest/HarvestModal";
 import { formatDate } from "@/utils";
+import { BTN_GHOST_ICON, T_PRIMARY } from "@/styles/tokens";
 import {
   ResponsiveContainer,
   LineChart,
@@ -24,6 +27,7 @@ import {
 export default function History() {
   const { t } = useT();
   const { state, dispatch } = useAppContext();
+  const navigate = useNavigate();
   const spot = state.mySpots[0] || {
     id: 1,
     name: t("Mon coin"),
@@ -80,8 +84,21 @@ export default function History() {
   const current = modalId !== null ? history.find((h) => h.id === modalId) : undefined;
 
   return (
-    <section className="p-4 space-y-4">
-      <h1 className="text-xl font-semibold">{spot.name}</h1>
+    <section className="p-3 space-y-3">
+      <div className="relative h-10">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate(-1)}
+          className={`absolute left-0 ${BTN_GHOST_ICON}`}
+          aria-label={t("Retour")}
+        >
+          <ChevronLeft className="w-5 h-5" />
+        </Button>
+        <h2 className={`absolute inset-0 grid place-items-center text-lg font-semibold pointer-events-none ${T_PRIMARY}`}>
+          {spot.name}
+        </h2>
+      </div>
       <div style={{ height: 240 }}>
         {chartLoading ? (
           <ChartSkeleton />
@@ -97,8 +114,8 @@ export default function History() {
           </ResponsiveContainer>
         )}
       </div>
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-        <div className="space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
+        <div className="space-y-3">
           <Button onClick={() => { setModalId(null); setModalOpen(true); }}>
             {t("Ajouter une cueillette")}
           </Button>
