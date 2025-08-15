@@ -6,7 +6,7 @@ import { useT } from "@/i18n";
 import { useAppContext } from "@/context/AppContext";
 import type { VisitHistory } from "@/types";
 import LastHarvestCard from "@/components/history/LastHarvestCard";
-import MapSpotCard from "@/components/history/MapSpotCard";
+import MapCard from "@/components/history/MapCard";
 import HarvestList from "@/components/history/HarvestList";
 import HarvestListSkeleton from "@/components/history/HarvestListSkeleton";
 import HarvestModal, { Harvest } from "@/components/harvest/HarvestModal";
@@ -95,7 +95,7 @@ export default function History() {
           </Button>
           <LastHarvestCard harvest={history[0]} />
         </div>
-        <MapSpotCard center={[location[0], location[1]] as [number, number]} />
+        <MapCard center={[location[0], location[1]] as [number, number]} />
       </div>
       <div>
         {listLoading ? (
