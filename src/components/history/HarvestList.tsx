@@ -2,6 +2,7 @@ import React from "react";
 import { Button } from "@/components/ui/button";
 import type { VisitHistory } from "@/types";
 import { useT } from "@/i18n";
+import { Stars } from "@/components/common/Stars";
 
 function formatDate(str: string) {
   const d = new Date(str);
@@ -10,18 +11,6 @@ function formatDate(str: string) {
   const mm = String(d.getMonth() + 1).padStart(2, "0");
   const yyyy = d.getFullYear();
   return `${dd}/${mm}/${yyyy}`;
-}
-
-function Stars({ value }: { value: number }) {
-  return (
-    <div className="flex text-gold" aria-label={`note ${value} sur 5`}>
-      {Array.from({ length: 5 }).map((_, i) => (
-        <span key={i} className={i < value ? "" : "text-foreground/20"}>
-          ★
-        </span>
-      ))}
-    </div>
-  );
 }
 
 interface HarvestListProps {
