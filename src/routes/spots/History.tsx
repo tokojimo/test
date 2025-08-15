@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { ChevronLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { useT } from "@/i18n";
 import { useAppContext } from "@/context/AppContext";
 import type { VisitHistory } from "@/types";
@@ -67,7 +68,9 @@ export default function History() {
 
   const location = spot.location
     ? spot.location.split(",").map((v) => parseFloat(v.trim()))
-    : [48.8566, 2.3522];
+    : [];
+  const hasValidLocation =
+    location.length === 2 && location.every((v) => Number.isFinite(v));
 
   const current = modalId !== null ? history.find((h) => h.id === modalId) : undefined;
 
@@ -95,7 +98,15 @@ export default function History() {
           </Button>
           <LastHarvestCard harvest={history[0]} />
         </div>
-        <MapCard center={[location[0], location[1]] as [number, number]} />
+        {hasValidLocation ? (
+          <MapCard center={[location[0], location[1]] as [number, number]} />
+        ) : (
+          <Card className="h-full flex items-center justify-center p-4 lg:p-6">
+            <p className="text-sm text-foreground/70">
+              {t("Coordonnées invalides")}
+            </p>
+          </Card>
+        )}
       </div>
       <div>
         {listLoading ? (
