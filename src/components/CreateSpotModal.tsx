@@ -151,7 +151,7 @@ export function CreateSpotModal({ onClose, onCreate }: { onClose: () => void; on
           </div>
 
           <div>
-            <div className={`text-sm ${T_PRIMARY}`}>{t("Dernière visite")}</div>
+            <div className={`text-sm ${T_PRIMARY}`}>{t("Dernière cueillette")}</div>
             <div className="mt-1">
               <input type="date" value={last} onChange={(e) => setLast(e.target.value)} className="w-full bg-neutral-100 border border-neutral-300 text-neutral-900 dark:bg-neutral-900 dark:border-neutral-800 dark:text-neutral-100 rounded-xl px-3 py-2 text-sm" />
             </div>

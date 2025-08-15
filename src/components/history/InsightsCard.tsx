@@ -6,20 +6,14 @@ import ChartSkeleton from "./ChartSkeleton";
 import { Timeline, TimelineEvent } from "./Timeline";
 import TimelineSkeleton from "./TimelineSkeleton";
 import { useT } from "@/i18n";
-
-function formatDate(str: string) {
-  const d = new Date(str);
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  return `${dd}/${mm}`;
-}
+import { formatDate } from "@/utils";
 
 export function InsightsCard({ events, onSelect }: { events: TimelineEvent[]; onSelect: (id: string) => void }) {
   const { t } = useT();
   const tabs = [
     { id: "history", label: t("Historique") },
     { id: "forecast", label: t("Prévisions locales") },
-    { id: "visits", label: t("Visites") },
+    { id: "visits", label: t("Cueillettes") },
   ];
   const [active, setActive] = useState("history");
   const [loading, setLoading] = useState(true);

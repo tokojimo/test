@@ -9,6 +9,7 @@ import HarvestList from "@/components/history/HarvestList";
 import HarvestListSkeleton from "@/components/history/HarvestListSkeleton";
 import ChartSkeleton from "@/components/history/ChartSkeleton";
 import HarvestModal, { Harvest } from "@/components/harvest/HarvestModal";
+import { formatDate } from "@/utils";
 import {
   ResponsiveContainer,
   LineChart,
@@ -19,13 +20,6 @@ import {
   Tooltip,
 } from "recharts";
 
-function formatDate(str: string) {
-  const d = new Date(str);
-  if (Number.isNaN(d.getTime())) return str;
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
-  return `${dd}/${mm}`;
-}
 
 export default function History() {
   const { t } = useT();

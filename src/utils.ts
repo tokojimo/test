@@ -22,3 +22,11 @@ export function generateForecast(lang: string) {
 export function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
+
+export function formatDate(str: string) {
+  const d = new Date(str);
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
