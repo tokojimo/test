@@ -5,14 +5,14 @@ import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
 import type { Spot, VisitHistory } from "../types";
-import { todayISO, generateForecast, formatDate } from "../utils";
+import { generateForecast, formatDate } from "../utils";
 import { loadMap } from "@/services/openstreetmap";
 import type { StyleSpecification } from "maplibre-gl";
 import Logo from "@/assets/logo.png";
 import { useAppContext } from "../context/AppContext";
 import { ResponsiveContainer, LineChart, Line, XAxis, YAxis, Tooltip, ReferenceLine } from "recharts";
 import { ConfirmDeleteModal } from "../components/ConfirmDeleteModal";
-import { EditVisitModal } from "../components/EditVisitModal";
+import { HarvestModal } from "../components/HarvestModal";
 
 export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; onBack: () => void }) {
   const { t } = useT();
@@ -30,6 +30,7 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
         }))
   );
   const [editIndex, setEditIndex] = useState<number | null>(null);
+  const [harvestOpen, setHarvestOpen] = useState(false);
   const [confirmOpen, setConfirmOpen] = useState(false);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
   const mapRef = useRef<any>(null);
@@ -90,13 +91,35 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
   if (!spot) return null;
   const photos = spot.photos || [];
 
-  const addVisit = () => {
-    const today = todayISO();
+  const openAddHarvest = () => {
+    setEditIndex(null);
+    setHarvestOpen(true);
+  };
+
+  const saveHarvest = (v: VisitHistory) => {
     setHistory((h) => {
-      const newHistory = [...h, { id: crypto.randomUUID(), date: today, rating: 0, note: "", photos: [] }];
-      dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
+      let newHistory;
+      if (editIndex === null) {
+        newHistory = [...h, v];
+      } else {
+        newHistory = h.map((item, idx) => (idx === editIndex ? v : item));
+      }
+      const lastDate = newHistory.reduce((m, item) => (item.date > m ? item.date : m), spot.last);
+      dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory, last: lastDate } });
       return newHistory;
     });
+    setHarvestOpen(false);
+    setEditIndex(null);
+  };
+
+  const deleteHarvest = () => {
+    if (editIndex === null) return;
+    const newHistory = history.filter((_, idx) => idx !== editIndex);
+    setHistory(newHistory);
+    const lastDate = newHistory.reduce((m, item) => (item.date > m ? item.date : m), spot.last);
+    dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory, last: lastDate } });
+    setHarvestOpen(false);
+    setEditIndex(null);
   };
 
   const handleDelete = () => {
@@ -175,7 +198,7 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
         <div className="mt-3">
           <div className="flex items-center justify-between mb-2">
             <div className={`text-sm ${T_PRIMARY}`}>{t("Cueillettes")}</div>
-            <Button onClick={addVisit} className={BTN}>
+            <Button onClick={openAddHarvest} className={BTN}>
               <Plus className="w-4 h-4 mr-2" />
               {t("Ajouter une cueillette")}
             </Button>
@@ -205,7 +228,10 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
                     size="icon"
                     className={BTN_GHOST_ICON}
                     aria-label={t("modifier")}
-                    onClick={() => setEditIndex(i)}
+                    onClick={() => {
+                      setEditIndex(i);
+                      setHarvestOpen(true);
+                    }}
                   >
                     <Pencil className="w-4 h-4" />
                   </Button>
@@ -249,22 +275,15 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
           </div>
         </div>
       )}
-      {editIndex !== null && (
-        <EditVisitModal
-          visit={history[editIndex]}
-          onClose={() => setEditIndex(null)}
-          onSave={(v) => {
-            const newHistory = history.map((h, idx) => (idx === editIndex ? v : h));
-            setHistory(newHistory);
-            dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
+      {harvestOpen && (
+        <HarvestModal
+          visit={editIndex !== null ? history[editIndex] : undefined}
+          onClose={() => {
+            setHarvestOpen(false);
             setEditIndex(null);
           }}
-          onDelete={() => {
-            const newHistory = history.filter((_, idx) => idx !== editIndex);
-            setHistory(newHistory);
-            dispatch({ type: "updateSpot", spot: { ...spot, history: newHistory } });
-            setEditIndex(null);
-          }}
+          onSave={saveHarvest}
+          onDelete={editIndex !== null ? deleteHarvest : undefined}
         />
       )}
       <ConfirmDeleteModal

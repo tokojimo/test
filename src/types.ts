@@ -36,6 +36,7 @@ export interface VisitHistory {
   rating: number;
   note: string;
   photos: string[];
+  species?: string[];
 }
 
 export interface Spot {
