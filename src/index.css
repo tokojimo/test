@@ -95,9 +95,14 @@ c3VsdD0ibm9pc2VHdW51IiBpbj0iZG9nZSIgZHVyYXRpb249IjAuM3MiIHN0ZC1kZXZpYXRpb249IjAu
   .no-scrollbar::-webkit-scrollbar {
     width: 0;
     height: 0;
+    display: none;
+    background: transparent;
   }
   .no-scrollbar::-webkit-scrollbar-thumb,
-  .no-scrollbar::-webkit-scrollbar-track {
+  .no-scrollbar::-webkit-scrollbar-track,
+  .no-scrollbar::-webkit-scrollbar-track-piece,
+  .no-scrollbar::-webkit-scrollbar-corner {
     background: transparent;
+    border: none;
   }
 }
