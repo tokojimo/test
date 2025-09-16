@@ -87,4 +87,6 @@ c3VsdD0ibm9pc2VHdW51IiBpbj0iZG9nZSIgZHVyYXRpb249IjAuM3MiIHN0ZC1kZXZpYXRpb249IjAu
 
 @layer utilities {
   .container { @apply max-w-screen-xl mx-auto px-4 md:px-6; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+  .no-scrollbar::-webkit-scrollbar { display: none; }
 }

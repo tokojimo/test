@@ -262,17 +262,29 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         )}
 
       </div>
-      <div className="mt-4 flex flex-wrap gap-2">
-        {MUSHROOMS.map(m => (
-          <Button
-            key={m.id}
-            onClick={() => toggleShroom(m.id)}
-            className={BTN}
-            variant={selected.includes(m.id) ? "primary" : "secondary"}
-          >
-            {m.name}
-          </Button>
-        ))}
+      <div className="mt-4">
+        <div className="relative -mx-3 px-3">
+          <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory flex-nowrap no-scrollbar pb-1">
+            {MUSHROOMS.map(m => (
+              <Button
+                key={m.id}
+                onClick={() => toggleShroom(m.id)}
+                className={BTN}
+                variant={selected.includes(m.id) ? "primary" : "secondary"}
+              >
+                {m.name}
+              </Button>
+            ))}
+          </div>
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-1 left-3 w-8 bg-gradient-to-r from-background via-background/80 to-transparent dark:from-background/80 dark:via-background/40"
+          />
+          <div
+            aria-hidden
+            className="pointer-events-none absolute inset-y-1 right-3 w-8 bg-gradient-to-l from-background via-background/80 to-transparent dark:from-background/80 dark:via-background/40"
+          />
+        </div>
       </div>
     </motion.section>
   );
