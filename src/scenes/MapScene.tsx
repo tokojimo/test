@@ -263,27 +263,29 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
 
       </div>
       <div className="mt-4">
-        <div className="relative -mx-3 px-3">
-          <div className="flex gap-2 overflow-x-auto snap-x snap-mandatory flex-nowrap no-scrollbar pb-1">
-            {MUSHROOMS.map(m => (
-              <Button
-                key={m.id}
-                onClick={() => toggleShroom(m.id)}
-                className={BTN}
-                variant={selected.includes(m.id) ? "primary" : "secondary"}
-              >
-                {m.name}
-              </Button>
-            ))}
+        <div className="relative -mx-3 sm:-mx-6 px-3 sm:px-6">
+          <div className="relative overflow-hidden rounded-[28px] border border-white/40 dark:border-white/10 bg-gradient-to-br from-white/95 via-white/75 to-white/95 dark:from-slate-900/80 dark:via-slate-900/65 dark:to-slate-900/80 backdrop-blur-2xl shadow-[0_28px_60px_-30px_rgba(15,23,42,0.55)]">
+            <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory flex-nowrap no-scrollbar px-5 py-4">
+              {MUSHROOMS.map(m => (
+                <Button
+                  key={m.id}
+                  onClick={() => toggleShroom(m.id)}
+                  className={classNames(BTN, "shrink-0 snap-start")}
+                  variant={selected.includes(m.id) ? "primary" : "secondary"}
+                >
+                  {m.name}
+                </Button>
+              ))}
+            </div>
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 left-0 w-16 bg-gradient-to-r from-white via-white/70 to-transparent dark:from-slate-900/80 dark:via-slate-900/60"
+            />
+            <div
+              aria-hidden
+              className="pointer-events-none absolute inset-y-0 right-0 w-16 bg-gradient-to-l from-white via-white/70 to-transparent dark:from-slate-900/80 dark:via-slate-900/60"
+            />
           </div>
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-1 left-3 w-8 bg-gradient-to-r from-background via-background/80 to-transparent dark:from-background/80 dark:via-background/40"
-          />
-          <div
-            aria-hidden
-            className="pointer-events-none absolute inset-y-1 right-3 w-8 bg-gradient-to-l from-background via-background/80 to-transparent dark:from-background/80 dark:via-background/40"
-          />
         </div>
       </div>
     </motion.section>
