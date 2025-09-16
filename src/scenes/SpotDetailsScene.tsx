@@ -1,5 +1,5 @@
-import React, { useRef, useState, useEffect } from "react";
-import { ChevronLeft, Plus, Pencil, Maximize2, Trash2 } from "lucide-react";
+import React, { useRef, useState, useEffect, useCallback } from "react";
+import { ChevronLeft, ChevronRight, Plus, Pencil, Maximize2, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED, T_SUBTLE } from "../styles/tokens";
 import { useT } from "../i18n";
@@ -89,6 +89,39 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
   const handleDelete = () => {
     setConfirmOpen(true);
   };
+
+  const goToPreviousPhoto = useCallback(() => {
+    setLightbox((s) => ({ ...s, index: Math.max(0, s.index - 1) }));
+  }, []);
+
+  const goToNextPhoto = useCallback(() => {
+    setLightbox((s) => {
+      const maxIndex = Math.max(photos.length - 1, 0);
+      return { ...s, index: Math.min(maxIndex, s.index + 1) };
+    });
+  }, [photos.length]);
+
+  useEffect(() => {
+    if (!lightbox.open) return;
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        goToPreviousPhoto();
+      }
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        goToNextPhoto();
+      }
+    };
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => {
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [goToNextPhoto, goToPreviousPhoto, lightbox.open]);
+
+  const isFirstPhoto = lightbox.index === 0;
+  const isLastPhoto = lightbox.index === photos.length - 1;
 
   return (
     <section className="p-3">
@@ -194,13 +227,55 @@ export default function SpotDetailsScene({ spot, onBack }: { spot: Spot | null; 
       </div>
 
       {lightbox.open && (
-        <div onClick={() => setLightbox({ open: false, index: 0 })} className="fixed inset-0 z-50 bg-black/90 grid place-items-center p-3">
+        <div
+          onClick={() => setLightbox({ open: false, index: 0 })}
+          className="fixed inset-0 z-50 bg-black/90 grid place-items-center p-3"
+        >
           <div className="relative w-full max-w-4xl">
             <img src={photos[lightbox.index]} className="w-full max-h-[80vh] object-contain rounded-xl" />
-            <div className="absolute inset-0 flex items-center justify-between px-2">
-              <button onClick={(e) => { e.stopPropagation(); setLightbox((s) => ({ ...s, index: Math.max(0, s.index - 1) })); }} className="p-2 text-neutral-300">◀</button>
-              <button onClick={(e) => { e.stopPropagation(); setLightbox((s) => ({ ...s, index: Math.min(photos.length - 1, s.index + 1) })); }} className="p-2 text-neutral-300">▶</button>
+            <div className="pointer-events-none absolute inset-0 flex items-center justify-between px-2 sm:px-4">
+              <div className="pointer-events-auto">
+                <div className="rounded-full bg-gradient-to-r from-foreground/40 via-foreground/10 to-transparent p-1 dark:from-foreground/60 dark:via-foreground/20">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`${BTN_GHOST_ICON} rounded-full bg-transparent text-white/80 hover:text-white hover:bg-transparent focus-visible:ring-offset-0 disabled:bg-transparent disabled:text-white/40 disabled:hover:text-white/40`}
+                    aria-label={t("Photo précédente")}
+                    disabled={isFirstPhoto}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      goToPreviousPhoto();
+                    }}
+                  >
+                    <ChevronLeft className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
+              <div className="pointer-events-auto">
+                <div className="rounded-full bg-gradient-to-l from-foreground/40 via-foreground/10 to-transparent p-1 dark:from-foreground/60 dark:via-foreground/20">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className={`${BTN_GHOST_ICON} rounded-full bg-transparent text-white/80 hover:text-white hover:bg-transparent focus-visible:ring-offset-0 disabled:bg-transparent disabled:text-white/40 disabled:hover:text-white/40`}
+                    aria-label={t("Photo suivante")}
+                    disabled={isLastPhoto}
+                    onClick={(event) => {
+                      event.stopPropagation();
+                      goToNextPhoto();
+                    }}
+                  >
+                    <ChevronRight className="h-5 w-5" />
+                  </Button>
+                </div>
+              </div>
             </div>
+            {photos.length > 0 && (
+              <div
+                className={`pointer-events-none absolute bottom-4 left-1/2 -translate-x-1/2 rounded-full bg-neutral-100/80 px-3 py-1 text-xs font-medium shadow-sm ${T_PRIMARY} dark:bg-neutral-900/80 dark:text-neutral-100`}
+              >
+                {lightbox.index + 1}/{photos.length}
+              </div>
+            )}
           </div>
         </div>
       )}
