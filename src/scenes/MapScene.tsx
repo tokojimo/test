@@ -49,9 +49,24 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
     marker: any;
     timeout: ReturnType<typeof setTimeout>;
   }[]>([]);
+  const watchIdRef = useRef<number | null>(null);
+  const positionMarkerRef = useRef<any>(null);
+  const positionMarkerDirectionRef = useRef<HTMLDivElement | null>(null);
+  const lastKnownPositionRef = useRef<{ lat: number; lng: number } | null>(null);
+  const userPositionRef = useRef<{
+    lat: number;
+    lng: number;
+    accuracy?: number;
+  } | null>(null);
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>(["cepe_de_bordeaux"]);
   const [search, setSearch] = useState("");
+  const [userPosition, setUserPosition] = useState<{
+    lat: number;
+    lng: number;
+    accuracy?: number;
+  } | null>(null);
+  const [heading, setHeading] = useState<number | null>(null);
   const handleGeocode = async () => {
     if (!search) return;
     const res = await geocode(search);
@@ -69,17 +84,76 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         : [],
     [search]
   );
-  type Toast = { id: number; text: string; details?: string; zone: Zone };
+  type Toast = { id: number; text: string; details?: string; zone?: Zone };
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [markers, setMarkers] = useState<{
     id: number;
     lat: number;
     lng: number;
   }[]>([]);
+  const notifyGpsError = useCallback(
+    (message: string, details?: string) => {
+      const id = Date.now() + Math.random();
+      setToasts(curr => [{ id, text: message, details }, ...curr].slice(0, 3));
+      setTimeout(() => {
+        setToasts(curr => curr.filter(t => t.id !== id));
+      }, 8000);
+    },
+    [setToasts]
+  );
   const toggleShroom = (id: string) =>
     setSelected(prev =>
       prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
     );
+
+  const clearGpsWatcher = useCallback(() => {
+    if (
+      watchIdRef.current !== null &&
+      typeof navigator !== "undefined" &&
+      navigator.geolocation
+    ) {
+      navigator.geolocation.clearWatch(watchIdRef.current);
+    }
+    watchIdRef.current = null;
+  }, []);
+
+  const removePositionMarker = useCallback(() => {
+    if (positionMarkerRef.current) {
+      positionMarkerRef.current.remove();
+      positionMarkerRef.current = null;
+    }
+    positionMarkerDirectionRef.current = null;
+  }, []);
+
+  const updateMarkerHeading = useCallback((angle: number | null) => {
+    if (!positionMarkerDirectionRef.current) return;
+    const rotation = angle ?? 0;
+    positionMarkerDirectionRef.current.style.transform =
+      `translate(-50%, calc(-100% - 2px)) rotate(${rotation}deg)`;
+  }, []);
+
+  const stopGpsTracking = useCallback(
+    (clearPosition = true) => {
+      clearGpsWatcher();
+      removePositionMarker();
+      if (clearPosition) {
+        setUserPosition(null);
+        userPositionRef.current = null;
+        lastKnownPositionRef.current = null;
+      }
+    },
+    [clearGpsWatcher, removePositionMarker, setUserPosition]
+  );
+
+  const recenterOnPosition = useCallback(
+    (position?: { lat: number; lng: number }) => {
+      const target = position ?? lastKnownPositionRef.current ?? userPositionRef.current;
+      if (target && mapRef.current) {
+        mapRef.current.flyTo({ center: [target.lng, target.lat], zoom: 15 });
+      }
+    },
+    []
+  );
 
   const handleMapClick = useCallback(
     async (e: any) => {
@@ -145,6 +219,144 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   );
 
   useEffect(() => {
+    if (!gpsFollow) {
+      stopGpsTracking();
+      return;
+    }
+
+    if (
+      typeof window === "undefined" ||
+      typeof navigator === "undefined" ||
+      !navigator.geolocation
+    ) {
+      stopGpsTracking();
+      notifyGpsError(
+        "Localisation indisponible",
+        "La géolocalisation n'est pas supportée par ce navigateur."
+      );
+      setGpsFollow(false);
+      return;
+    }
+
+    const success = (position: GeolocationPosition) => {
+      const { latitude, longitude, accuracy } = position.coords;
+      const coords = {
+        lat: latitude,
+        lng: longitude,
+        accuracy: typeof accuracy === "number" ? accuracy : undefined,
+      };
+      userPositionRef.current = coords;
+      lastKnownPositionRef.current = { lat: latitude, lng: longitude };
+      setUserPosition(coords);
+      recenterOnPosition(coords);
+    };
+
+    const error = (err: GeolocationPositionError) => {
+      stopGpsTracking();
+      setGpsFollow(false);
+      let message = "Localisation impossible";
+      if (err.code === err.PERMISSION_DENIED) {
+        message = "Permission de localisation refusée";
+      } else if (err.code === err.POSITION_UNAVAILABLE) {
+        message = "Position indisponible";
+      } else if (err.code === err.TIMEOUT) {
+        message = "Localisation expirée";
+      }
+      notifyGpsError(message, err.message);
+    };
+
+    const watchId = navigator.geolocation.watchPosition(success, error, {
+      enableHighAccuracy: true,
+      maximumAge: 0,
+      timeout: 20000,
+    });
+    watchIdRef.current = watchId;
+
+    return () => {
+      clearGpsWatcher();
+    };
+  }, [
+    clearGpsWatcher,
+    gpsFollow,
+    notifyGpsError,
+    recenterOnPosition,
+    setGpsFollow,
+    stopGpsTracking,
+  ]);
+
+  useEffect(() => {
+    if (!gpsFollow) {
+      setHeading(null);
+      return;
+    }
+
+    if (typeof window === "undefined") return;
+    if (!("DeviceOrientationEvent" in window)) return;
+
+    const handleOrientation = (event: DeviceOrientationEvent) => {
+      if (typeof event.alpha === "number") {
+        setHeading(event.alpha);
+      } else {
+        setHeading(null);
+      }
+    };
+
+    window.addEventListener("deviceorientation", handleOrientation);
+
+    return () => {
+      window.removeEventListener("deviceorientation", handleOrientation);
+    };
+  }, [gpsFollow]);
+
+  useEffect(() => {
+    if (!mapRef.current || !maplibreRef.current) return;
+
+    if (!userPosition) {
+      removePositionMarker();
+      return;
+    }
+
+    if (!positionMarkerRef.current) {
+      const container = document.createElement("div");
+      container.className =
+        "relative flex items-center justify-center pointer-events-none";
+
+      const direction = document.createElement("div");
+      direction.className =
+        "absolute left-1/2 top-0 h-0 w-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[12px] border-b-blue-500 drop-shadow-md transition-transform duration-150";
+      direction.style.transformOrigin = "50% 100%";
+
+      const dot = document.createElement("div");
+      dot.className =
+        "h-4 w-4 rounded-full border-2 border-white bg-blue-500 shadow-[0_0_0_6px_rgba(59,130,246,0.35)]";
+
+      container.appendChild(direction);
+      container.appendChild(dot);
+
+      positionMarkerDirectionRef.current = direction;
+
+      const marker = new maplibreRef.current.Marker({
+        element: container,
+        anchor: "center",
+      }).addTo(mapRef.current);
+      positionMarkerRef.current = marker;
+    }
+
+    positionMarkerRef.current
+      ?.setLngLat([userPosition.lng, userPosition.lat])
+      .addTo(mapRef.current);
+
+    updateMarkerHeading(heading);
+  }, [
+    heading,
+    mapRef,
+    maplibreRef,
+    removePositionMarker,
+    updateMarkerHeading,
+    userPosition,
+  ]);
+
+  useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
     loadMap().then(maplibregl => {
       maplibreRef.current = maplibregl;
@@ -165,12 +377,18 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       canvas.style.cursor = `url(${logo}) 16 16, auto`;
 
       map.on("click", handleMapClick);
+
+      if (userPositionRef.current) {
+        const latest = userPositionRef.current;
+        recenterOnPosition(latest);
+        setUserPosition({ ...latest });
+      }
     });
     return () => {
       mapRef.current?.remove();
       mapRef.current = null;
     };
-  }, [handleMapClick]);
+  }, [handleMapClick, recenterOnPosition, setUserPosition]);
 
   return (
     <motion.section
@@ -232,11 +450,11 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           style={{ cursor: `url(${logo}) 16 16, auto` }}
         />
 
-        {gpsFollow && (
+        {gpsFollow && userPosition && (
           <Button
             variant="ghost"
             size="icon"
-            onClick={() => setGpsFollow(true)}
+            onClick={() => recenterOnPosition()}
             className={`absolute top-3 right-3 ${BTN_GHOST_ICON}`}
             aria-label={t("Centrer sur ma position")}
           >
@@ -263,7 +481,9 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
                   message={toast.text}
                   details={toast.details}
                   onClick={() => {
-                    onZone(toast.zone);
+                    if (toast.zone) {
+                      onZone(toast.zone);
+                    }
                     setToasts(curr => curr.filter(t => t.id !== toast.id));
                   }}
                 />
