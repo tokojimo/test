@@ -265,12 +265,28 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       notifyGpsError(message, err.message);
     };
 
-    const watchId = navigator.geolocation.watchPosition(success, error, {
-      enableHighAccuracy: true,
-      maximumAge: 0,
-      timeout: 20000,
-    });
-    watchIdRef.current = watchId;
+    try {
+      const watchId = navigator.geolocation.watchPosition(success, error, {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 20000,
+      });
+      watchIdRef.current = watchId;
+    } catch (err) {
+      stopGpsTracking();
+      setGpsFollow(false);
+      const details =
+        err instanceof Error
+          ? `${err.name ? `${err.name}: ` : ""}${err.message}`
+          : undefined;
+      notifyGpsError(
+        "Localisation indisponible",
+        `La géolocalisation n'est pas disponible dans ce contexte.${
+          details ? `\n${details}` : ""
+        }`
+      );
+      return;
+    }
 
     return () => {
       clearGpsWatcher();
