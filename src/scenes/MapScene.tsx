@@ -155,6 +155,12 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         zoom: 5,
       });
       mapRef.current = map;
+      if (typeof map.resize === "function") {
+        requestAnimationFrame(() => {
+          map.resize();
+          requestAnimationFrame(() => map.resize());
+        });
+      }
       const canvas = map.getCanvas();
       canvas.style.cursor = `url(${logo}) 16 16, auto`;
 
@@ -167,8 +173,13 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   }, [handleMapClick]);
 
   return (
-    <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3">
-      <div className="flex items-center gap-2 mb-3">
+    <motion.section
+      initial={{ x: 20, opacity: 0 }}
+      animate={{ x: 0, opacity: 1 }}
+      exit={{ x: -20, opacity: 0 }}
+      className="flex h-dvh max-h-dvh flex-col overflow-hidden p-3"
+    >
+      <div className="mb-3 flex shrink-0 items-center gap-2">
         <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
           <ChevronLeft className="w-5 h-5" />
         </Button>
@@ -214,10 +225,10 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         </Button>
       </div>
 
-      <div className="relative h-[60vh] rounded-2xl border border-secondary dark:border-secondary bg-secondary dark:bg-secondary overflow-hidden">
+      <div className="relative flex-1 min-h-[320px] overflow-hidden rounded-2xl border border-secondary bg-secondary dark:border-secondary dark:bg-secondary">
         <div
           ref={mapContainer}
-          className="absolute inset-0 w-full h-full"
+          className="absolute inset-0 h-full w-full"
           style={{ cursor: `url(${logo}) 16 16, auto` }}
         />
 
@@ -260,9 +271,8 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             </AnimatePresence>
           </div>
         )}
-
       </div>
-      <div className="mt-4">
+      <div className="mt-4 shrink-0">
         <div className="relative -mx-3 sm:-mx-6 px-3 sm:px-6">
           <div className="relative overflow-hidden rounded-[28px] border border-white/40 dark:border-white/10 bg-gradient-to-br from-white/95 via-white/75 to-white/95 dark:from-slate-900/80 dark:via-slate-900/65 dark:to-slate-900/80 backdrop-blur-2xl shadow-[0_28px_60px_-30px_rgba(15,23,42,0.55)]">
             <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory flex-nowrap no-scrollbar px-5 py-4">
