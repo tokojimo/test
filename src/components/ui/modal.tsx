@@ -1,6 +1,16 @@
 import React from "react";
 
-export function Modal({ open, onClose, children }: { open: boolean; onClose: () => void; children: React.ReactNode }) {
+export function Modal({
+  open,
+  onClose,
+  children,
+  contentClassName,
+}: {
+  open: boolean;
+  onClose: () => void;
+  children: React.ReactNode;
+  contentClassName?: string;
+}) {
   if (!open) return null;
   return (
     <div
@@ -10,7 +20,7 @@ export function Modal({ open, onClose, children }: { open: boolean; onClose: () 
       onClick={onClose}
     >
       <div
-        className="bg-background rounded-lg shadow-lg p-6 max-w-lg w-full"
+        className={`bg-background rounded-lg shadow-lg p-6 max-w-lg w-full ${contentClassName ?? ""}`}
         onClick={e => e.stopPropagation()}
       >
         {children}
