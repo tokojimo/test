@@ -19,6 +19,7 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: Spot; onClose: 
   const [location, setLocation] = useState(spot.location || "");
   const [photos, setPhotos] = useState<string[]>(spot.photos || [spot.cover].filter(Boolean));
   const photoUrlsRef = useRef<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useT();
 
   const importImages = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -125,13 +126,20 @@ export function EditSpotModal({ spot, onClose, onSave }: { spot: Spot; onClose: 
         <div className="mt-3 pt-3 border-t border-neutral-300 dark:border-neutral-800">
           <div className="flex items-center justify-between mb-2">
             <div className={`text-sm ${T_PRIMARY}`}>{t("Photos")}</div>
-            <label className="inline-flex items-center">
-              <input type="file" accept="image/*" multiple className="hidden" onChange={importImages} />
-                <Button type="button" className={BTN}>
-                  <Image className="w-4 h-4 mr-2" />
+            <div className="inline-flex items-center">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                multiple
+                className="hidden"
+                onChange={importImages}
+              />
+              <Button type="button" className={BTN} onClick={() => fileInputRef.current?.click()}>
+                <Image className="w-4 h-4 mr-2" />
                 {t("Importer des photos")}
               </Button>
-            </label>
+            </div>
           </div>
           {photos.length > 0 && (
             <div className="grid grid-cols-4 gap-2">
