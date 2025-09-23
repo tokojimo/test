@@ -20,6 +20,7 @@ export function EditVisitModal({ visit, onClose, onSave, onDelete }: Props) {
   const [note, setNote] = useState(visit.note || "");
   const [photos, setPhotos] = useState<string[]>(visit.photos || []);
   const photoUrlsRef = useRef<string[]>([]);
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const { t } = useT();
 
   const handleOutside = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -81,13 +82,20 @@ export function EditVisitModal({ visit, onClose, onSave, onDelete }: Props) {
           <div>
             <div className="flex items-center justify-between mb-2">
               <div className={`text-sm ${T_PRIMARY}`}>{t("Photos")}</div>
-              <label className="inline-flex items-center">
-                <input type="file" accept="image/*" multiple className="hidden" onChange={importImages} />
-                <Button type="button" className={BTN}>
+              <div className="inline-flex items-center">
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  multiple
+                  className="hidden"
+                  onChange={importImages}
+                />
+                <Button type="button" className={BTN} onClick={() => fileInputRef.current?.click()}>
                   <Image className="w-4 h-4 mr-2" />
                   {t("Importer des photos")}
                 </Button>
-              </label>
+              </div>
             </div>
             {photos.length > 0 && (
               <div className="grid grid-cols-3 gap-2">
