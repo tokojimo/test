@@ -34,6 +34,9 @@ module.exports = {
         md: "var(--radius-md)",
         lg: "var(--radius-lg)",
       },
+      borderWidth: {
+        5: "5px",
+      },
       boxShadow: {
         sm: "var(--shadow-sm)",
         md: "var(--shadow-md)",
