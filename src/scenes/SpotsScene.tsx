@@ -77,18 +77,33 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
       }
 
       const nav = typeof navigator !== "undefined" ? navigator : undefined;
-      const hasShare = !!nav?.share;
-      const filesShareable =
-        file instanceof File && (!nav?.canShare || (typeof nav.canShare === "function" && nav.canShare({ files: [file] })));
+      let fileShared = false;
+      let shareTriggered = false;
 
-      if (hasShare && filesShareable && file instanceof File) {
-        const shareData: ShareData = {
-          files: [file],
-          title: t("Mes coins"),
-          text: shareText,
-        };
-        await navigator.share(shareData);
-      } else if (typeof window !== "undefined") {
+      if (nav?.share) {
+        try {
+          if (file instanceof File && typeof nav.canShare === "function" && nav.canShare({ files: [file] })) {
+            const shareData: ShareData = {
+              files: [file],
+              title: t("Mes coins"),
+              text: shareText,
+            };
+            await nav.share(shareData);
+            fileShared = true;
+            shareTriggered = true;
+          } else {
+            await nav.share({
+              title: t("Mes coins"),
+              text: shareText,
+            });
+            shareTriggered = true;
+          }
+        } catch (err) {
+          console.warn("navigator.share failed", err);
+        }
+      }
+
+      if (!fileShared && typeof window !== "undefined") {
         const blobUrl = URL.createObjectURL(file);
         try {
           if (typeof document !== "undefined") {
@@ -100,25 +115,27 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
             document.body.removeChild(link);
           }
 
-          const fallbackText = `${shareText}\n${t("Téléchargez le fichier ici :")} ${blobUrl}`;
-          const encoded = encodeURIComponent(fallbackText);
+          if (!shareTriggered) {
+            const fallbackText = `${shareText}\n${t("Téléchargez le fichier ici :")} ${blobUrl}`;
+            const encoded = encodeURIComponent(fallbackText);
 
-          const promptAndOpen = (messageKey: string, url: string) => {
-            if (window.confirm(t(messageKey))) {
-              window.open(url, "_blank", "noopener,noreferrer");
-            }
-          };
+            const promptAndOpen = (messageKey: string, url: string) => {
+              if (window.confirm(t(messageKey))) {
+                window.open(url, "_blank", "noopener,noreferrer");
+              }
+            };
 
-          promptAndOpen(
-            "Ouvrir votre application email pour partager ?",
-            `mailto:?subject=${encodeURIComponent(t("Mes coins"))}&body=${encoded}`,
-          );
-          promptAndOpen("Ouvrir WhatsApp pour partager ?", `https://api.whatsapp.com/send?text=${encoded}`);
-          promptAndOpen(
-            "Ouvrir Messenger pour partager ?",
-            `https://www.messenger.com/share?link=${encodeURIComponent(blobUrl)}`,
-          );
-          alert(t("Le fichier KMZ a été téléchargé. Si aucune application ne s'est ouverte, partagez-le manuellement."));
+            promptAndOpen(
+              "Ouvrir votre application email pour partager ?",
+              `mailto:?subject=${encodeURIComponent(t("Mes coins"))}&body=${encoded}`,
+            );
+            promptAndOpen("Ouvrir WhatsApp pour partager ?", `https://api.whatsapp.com/send?text=${encoded}`);
+            promptAndOpen(
+              "Ouvrir Messenger pour partager ?",
+              `https://www.messenger.com/share?link=${encodeURIComponent(blobUrl)}`,
+            );
+            alert(t("Le fichier KMZ a été téléchargé. Si aucune application ne s'est ouverte, partagez-le manuellement."));
+          }
         } finally {
           setTimeout(() => {
             URL.revokeObjectURL(blobUrl);
@@ -173,6 +190,12 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
     };
   }, [spots, dpr]);
 
+  useEffect(() => {
+    if (shareMode && spots.length === 0) {
+      resetShare();
+    }
+  }, [shareMode, spots.length]);
+
   return (
     <motion.section initial={{ x: 20, opacity: 0 }} animate={{ x: 0, opacity: 1 }} exit={{ x: -20, opacity: 0 }} className="p-3 space-y-3">
       <div className="relative h-10">
@@ -214,17 +237,19 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
             </>
           ) : (
             <>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShareMode(true);
-                  setSelectedIds(new Set());
-                }}
-                className={BTN}
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                {t("Partager")}
-              </Button>
+              {spots.length > 0 && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShareMode(true);
+                    setSelectedIds(new Set());
+                  }}
+                  className={BTN}
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  {t("Partager")}
+                </Button>
+              )}
               <Button onClick={() => setCreateOpen(true)} className={BTN}>
                 <Plus className="w-4 h-4 mr-2" />
                 {t("Nouveau coin")}
@@ -277,13 +302,13 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                     }}
                     aria-pressed={isSelected}
                     aria-label={isSelected ? t("Retirer de la sélection") : t("Ajouter à la sélection")}
-                    className={`absolute top-3 left-3 w-8 h-8 rounded-full border ${
+                    className={`absolute top-3 left-3 w-9 h-9 rounded-full border transition-colors ${
                       isSelected
                         ? "border-primary bg-primary text-primary-foreground"
-                        : "border-primary/50 bg-background/70"
+                        : "border-primary/70 bg-background/90 text-primary"
                     } flex items-center justify-center shadow`}
                   >
-                    {isSelected ? <Check className="w-4 h-4" /> : null}
+                    <Check className={`w-4 h-4 transition-opacity ${isSelected ? "opacity-100" : "opacity-0"}`} />
                   </button>
                 )}
                 {hasLoc ? (
