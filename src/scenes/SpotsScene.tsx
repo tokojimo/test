@@ -319,16 +319,18 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                 ) : (
                   <img src={mapUrl as string} className="w-full h-40 object-cover" />
                 )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    setDeleteId(s.id);
-                  }}
-                  className="absolute top-2 right-2 bg-secondary/80 hover:bg-secondary/80 dark:bg-secondary/80 dark:hover:bg-secondary/80 border border-secondary dark:border-secondary rounded-full p-2"
-                  aria-label={t("supprimer")}
-                >
-                  <X className="w-4 h-4 text-secondary" />
-                </button>
+                {!shareMode && (
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      setDeleteId(s.id);
+                    }}
+                    className="absolute top-2 right-2 bg-secondary/80 hover:bg-secondary/80 dark:bg-secondary/80 dark:hover:bg-secondary/80 border border-secondary dark:border-secondary rounded-full p-2"
+                    aria-label={t("supprimer")}
+                  >
+                    <X className="w-4 h-4 text-secondary" />
+                  </button>
+                )}
                 <CardContent className="p-4">
                   <div className="flex items-center justify-between">
                     <div className={`font-medium ${T_PRIMARY}`}>{s.name}</div>
