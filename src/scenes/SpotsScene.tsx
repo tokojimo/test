@@ -301,10 +301,10 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                     className="absolute top-3 left-3 z-10 w-9 h-9 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
                   >
                     <span
-                      className={`flex h-full w-full items-center justify-center rounded-full border-2 backdrop-blur-sm shadow transition-all ${
+                      className={`flex h-full w-full items-center justify-center rounded-full backdrop-blur-sm shadow transition-all ${
                         isSelected
-                          ? "border-primary bg-primary text-primary-foreground"
-                          : "border-primary bg-transparent text-transparent"
+                          ? "border-2 border-primary bg-primary text-primary-foreground"
+                          : "border-[5px] border-primary bg-background/80 text-transparent"
                       }`}
                     >
                       <Check className="h-4 w-4" />
