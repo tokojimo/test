@@ -304,7 +304,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                       className={`flex h-full w-full items-center justify-center rounded-full border-2 backdrop-blur-sm shadow transition-all ${
                         isSelected
                           ? "border-primary bg-primary text-primary-foreground"
-                          : "border-primary/70 bg-background/90 text-transparent"
+                          : "border-primary bg-transparent text-transparent"
                       }`}
                     >
                       <Check className="h-4 w-4" />
