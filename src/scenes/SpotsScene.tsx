@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, Loader2, Plus, Route, Send, Share2, X, Check } from "lucide-react";
+import { ChevronLeft, Loader2, Plus, Route, Send, Share2, X, Check, Circle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -30,6 +30,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
 
   const selectedCount = selectedIds.size;
+  const hasSpots = spots.length > 0;
 
   const toggleSelection = (id: number) => {
     setSelectedIds(prev => {
@@ -48,6 +49,12 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
     setSelectedIds(new Set());
     setSharing(false);
   };
+
+  useEffect(() => {
+    if (!hasSpots && shareMode) {
+      resetShare();
+    }
+  }, [hasSpots, shareMode]);
 
   const handleShare = async () => {
     if (selectedCount === 0) {
@@ -77,18 +84,30 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
       }
 
       const nav = typeof navigator !== "undefined" ? navigator : undefined;
-      const hasShare = !!nav?.share;
-      const filesShareable =
+      const hasShare = typeof nav?.share === "function";
+      const canShareFiles =
         file instanceof File && (!nav?.canShare || (typeof nav.canShare === "function" && nav.canShare({ files: [file] })));
 
-      if (hasShare && filesShareable && file instanceof File) {
+      if (hasShare) {
         const shareData: ShareData = {
-          files: [file],
           title: t("Mes coins"),
           text: shareText,
         };
-        await navigator.share(shareData);
-      } else if (typeof window !== "undefined") {
+
+        if (canShareFiles && file instanceof File) {
+          shareData.files = [file];
+        }
+
+        try {
+          await nav.share(shareData);
+          resetShare();
+          return;
+        } catch (err) {
+          console.warn("Native share failed, falling back to download", err);
+        }
+      }
+
+      if (typeof window !== "undefined") {
         const blobUrl = URL.createObjectURL(file);
         try {
           if (typeof document !== "undefined") {
@@ -214,17 +233,19 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
             </>
           ) : (
             <>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShareMode(true);
-                  setSelectedIds(new Set());
-                }}
-                className={BTN}
-              >
-                <Share2 className="w-4 h-4 mr-2" />
-                {t("Partager")}
-              </Button>
+              {hasSpots && (
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShareMode(true);
+                    setSelectedIds(new Set());
+                  }}
+                  className={BTN}
+                >
+                  <Share2 className="w-4 h-4 mr-2" />
+                  {t("Partager")}
+                </Button>
+              )}
               <Button onClick={() => setCreateOpen(true)} className={BTN}>
                 <Plus className="w-4 h-4 mr-2" />
                 {t("Nouveau coin")}
@@ -277,13 +298,13 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                     }}
                     aria-pressed={isSelected}
                     aria-label={isSelected ? t("Retirer de la sélection") : t("Ajouter à la sélection")}
-                    className={`absolute top-3 left-3 w-8 h-8 rounded-full border ${
+                    className={`absolute top-3 left-3 w-8 h-8 rounded-full border transition-colors ${
                       isSelected
                         ? "border-primary bg-primary text-primary-foreground"
-                        : "border-primary/50 bg-background/70"
+                        : "border-primary bg-background text-primary"
                     } flex items-center justify-center shadow`}
                   >
-                    {isSelected ? <Check className="w-4 h-4" /> : null}
+                    {isSelected ? <Check className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
                   </button>
                 )}
                 {hasLoc ? (
