@@ -14,6 +14,8 @@ module.exports = {
         border: "hsl(var(--border))",
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
+        primary: "hsl(var(--forest-green))",
+        "primary-foreground": "hsl(var(--paper-beige))",
         accent: "hsl(var(--accent))",
         forest: "hsl(var(--forest-green))",
         moss: "hsl(var(--moss-green))",

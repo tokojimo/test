@@ -298,7 +298,7 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                     }}
                     aria-pressed={isSelected}
                     aria-label={isSelected ? t("Retirer de la sélection") : t("Ajouter à la sélection")}
-                    className="absolute top-3 left-3 w-9 h-9 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
+                    className="absolute top-3 left-3 z-10 w-9 h-9 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
                   >
                     <span
                       className={`flex h-full w-full items-center justify-center rounded-full border-2 backdrop-blur-sm shadow transition-all ${
