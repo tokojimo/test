@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, Loader2, Plus, Route, Send, Share2, X, Check, Circle } from "lucide-react";
+import { ChevronLeft, Loader2, Plus, Route, Send, Share2, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -298,13 +298,17 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                     }}
                     aria-pressed={isSelected}
                     aria-label={isSelected ? t("Retirer de la sélection") : t("Ajouter à la sélection")}
-                    className={`absolute top-3 left-3 w-8 h-8 rounded-full border transition-colors ${
-                      isSelected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "border-primary bg-background text-primary"
-                    } flex items-center justify-center shadow`}
+                    className="absolute top-3 left-3 w-9 h-9 rounded-full focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-primary"
                   >
-                    {isSelected ? <Check className="w-4 h-4" /> : <Circle className="w-4 h-4" />}
+                    <span
+                      className={`flex h-full w-full items-center justify-center rounded-full border-2 backdrop-blur-sm shadow transition-all ${
+                        isSelected
+                          ? "border-primary bg-primary text-primary-foreground"
+                          : "border-primary/70 bg-background/90 text-transparent"
+                      }`}
+                    >
+                      <Check className="h-4 w-4" />
+                    </span>
                   </button>
                 )}
                 {hasLoc ? (
