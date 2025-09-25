@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ChevronLeft, Plus, Route, X } from "lucide-react";
+import { ChevronLeft, Loader2, Plus, Route, Send, Share2, X, Check } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -14,6 +14,7 @@ import { formatDate } from "../utils";
 import Logo from "@/assets/logo.png";
 import { MUSHROOMS } from "../data/mushrooms";
 import type { Spot } from "../types";
+import { createKmzFromSpots } from "@/utils/kmz";
 
 export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void; onOpenSpot: (s: Spot) => void }) {
   const { state, dispatch } = useAppContext();
@@ -22,8 +23,117 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
   const [loading, setLoading] = useState(true);
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [mapUrls, setMapUrls] = useState<Record<number, string>>({});
+  const [shareMode, setShareMode] = useState(false);
+  const [sharing, setSharing] = useState(false);
+  const [selectedIds, setSelectedIds] = useState<Set<number>>(new Set());
   const { t } = useT();
   const dpr = typeof window !== "undefined" ? window.devicePixelRatio || 1 : 1;
+
+  const selectedCount = selectedIds.size;
+
+  const toggleSelection = (id: number) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const resetShare = () => {
+    setShareMode(false);
+    setSelectedIds(new Set());
+    setSharing(false);
+  };
+
+  const handleShare = async () => {
+    if (selectedCount === 0) {
+      alert(t("Sélectionnez au moins un coin à partager."));
+      return;
+    }
+
+    const chosen = spots.filter(spot => selectedIds.has(spot.id));
+    if (chosen.length === 0) {
+      alert(t("Sélectionnez au moins un coin à partager."));
+      return;
+    }
+
+    setSharing(true);
+    try {
+      const timestamp = new Date();
+      const filename = `spots-${timestamp.toISOString().replace(/[:.]/g, "-")}.kmz`;
+      const kmzFile = await createKmzFromSpots(chosen, {
+        documentName: t("Mes coins"),
+        fileName: filename,
+      });
+
+      const shareText = t("Export de {count} coins.", { count: chosen.length });
+      let file: Blob | File = kmzFile;
+      if (typeof File !== "undefined") {
+        file = kmzFile instanceof File ? kmzFile : new File([kmzFile], filename, { type: "application/vnd.google-earth.kmz" });
+      }
+
+      const nav = typeof navigator !== "undefined" ? navigator : undefined;
+      const hasShare = !!nav?.share;
+      const filesShareable =
+        file instanceof File && (!nav?.canShare || (typeof nav.canShare === "function" && nav.canShare({ files: [file] })));
+
+      if (hasShare && filesShareable && file instanceof File) {
+        const shareData: ShareData = {
+          files: [file],
+          title: t("Mes coins"),
+          text: shareText,
+        };
+        await navigator.share(shareData);
+      } else if (typeof window !== "undefined") {
+        const blobUrl = URL.createObjectURL(file);
+        try {
+          if (typeof document !== "undefined") {
+            const link = document.createElement("a");
+            link.href = blobUrl;
+            link.download = file instanceof File ? file.name : filename;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+          }
+
+          const fallbackText = `${shareText}\n${t("Téléchargez le fichier ici :")} ${blobUrl}`;
+          const encoded = encodeURIComponent(fallbackText);
+
+          const promptAndOpen = (messageKey: string, url: string) => {
+            if (window.confirm(t(messageKey))) {
+              window.open(url, "_blank", "noopener,noreferrer");
+            }
+          };
+
+          promptAndOpen(
+            "Ouvrir votre application email pour partager ?",
+            `mailto:?subject=${encodeURIComponent(t("Mes coins"))}&body=${encoded}`,
+          );
+          promptAndOpen("Ouvrir WhatsApp pour partager ?", `https://api.whatsapp.com/send?text=${encoded}`);
+          promptAndOpen(
+            "Ouvrir Messenger pour partager ?",
+            `https://www.messenger.com/share?link=${encodeURIComponent(blobUrl)}`,
+          );
+          alert(t("Le fichier KMZ a été téléchargé. Si aucune application ne s'est ouverte, partagez-le manuellement."));
+        } finally {
+          setTimeout(() => {
+            URL.revokeObjectURL(blobUrl);
+          }, 10000);
+        }
+      }
+
+      resetShare();
+    } catch (error) {
+      console.error(error);
+      alert(t("Impossible de partager ces coins pour le moment."));
+    } finally {
+      setSharing(false);
+    }
+  };
 
   const openRoute = (spot: Spot) => {
     if (!spot.location) return;
@@ -81,11 +191,46 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
       </div>
 
       {!createOpen && (
-        <div className="flex justify-end">
-          <Button onClick={() => setCreateOpen(true)} className={BTN}>
-            <Plus className="w-4 h-4 mr-2" />
-            {t("Nouveau coin")}
-          </Button>
+        <div className="flex justify-end gap-2">
+          {shareMode ? (
+            <>
+              <Button
+                onClick={handleShare}
+                disabled={sharing || selectedCount === 0}
+                className={BTN}
+              >
+                {sharing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Send className="w-4 h-4 mr-2" />}
+                {t("Envoyer")}
+              </Button>
+              <Button
+                variant="ghost"
+                onClick={resetShare}
+                className={BTN}
+                aria-label={t("Annuler le partage")}
+              >
+                <X className="w-4 h-4 mr-2" />
+                {t("Annuler")}
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShareMode(true);
+                  setSelectedIds(new Set());
+                }}
+                className={BTN}
+              >
+                <Share2 className="w-4 h-4 mr-2" />
+                {t("Partager")}
+              </Button>
+              <Button onClick={() => setCreateOpen(true)} className={BTN}>
+                <Plus className="w-4 h-4 mr-2" />
+                {t("Nouveau coin")}
+              </Button>
+            </>
+          )}
         </div>
       )}
 
@@ -107,12 +252,40 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
             const [lat, lng] = s.location ? s.location.split(",").map(v => parseFloat(v.trim())) : [NaN, NaN];
             const hasLoc = !Number.isNaN(lat) && !Number.isNaN(lng);
             const mapUrl = mapUrls[s.id] || s.cover || s.photos?.[0];
+            const isSelected = selectedIds.has(s.id);
+            const cardClasses = `${
+              shareMode && isSelected ? "ring-2 ring-primary" : ""
+            } cursor-pointer bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden relative`;
             return (
               <Card
                 key={s.id}
-                onClick={() => onOpenSpot(s)}
-                className="cursor-pointer bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-2xl overflow-hidden relative"
+                onClick={() => {
+                  if (shareMode) {
+                    toggleSelection(s.id);
+                  } else {
+                    onOpenSpot(s);
+                  }
+                }}
+                className={cardClasses}
               >
+                {shareMode && (
+                  <button
+                    type="button"
+                    onClick={e => {
+                      e.stopPropagation();
+                      toggleSelection(s.id);
+                    }}
+                    aria-pressed={isSelected}
+                    aria-label={isSelected ? t("Retirer de la sélection") : t("Ajouter à la sélection")}
+                    className={`absolute top-3 left-3 w-8 h-8 rounded-full border ${
+                      isSelected
+                        ? "border-primary bg-primary text-primary-foreground"
+                        : "border-primary/50 bg-background/70"
+                    } flex items-center justify-center shadow`}
+                  >
+                    {isSelected ? <Check className="w-4 h-4" /> : null}
+                  </button>
+                )}
                 {hasLoc ? (
                   <div className="relative w-full h-40">
                     <img src={mapUrl as string} className="w-full h-full object-cover" />
@@ -153,9 +326,12 @@ export default function SpotsScene({ onBack, onOpenSpot }: { onBack: () => void;
                     <Button
                       onClick={(e) => {
                         e.stopPropagation();
-                        openRoute(s);
+                        if (!shareMode) {
+                          openRoute(s);
+                        }
                       }}
                       className={BTN}
+                      disabled={shareMode}
                     >
                       <Route className="w-4 h-4 mr-2" />
                       {t("Itinéraire")}

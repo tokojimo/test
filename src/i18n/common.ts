@@ -32,6 +32,37 @@ export default {
   "Passez en premium pour plus de fonctionnalités": { fr: "Passez en premium pour plus de fonctionnalités", en: "Upgrade to premium for more features" },
   "Mes coins": { fr: "Mes coins", en: "My spots" },
   "Nouveau coin": { fr: "Nouveau coin", en: "New spot" },
+  "Partager": { fr: "Partager", en: "Share" },
+  "Envoyer": { fr: "Envoyer", en: "Send" },
+  "Annuler le partage": { fr: "Annuler le partage", en: "Cancel sharing" },
+  "Export de {count} coins.": { fr: "Export de {count} coins.", en: "Export of {count} spots." },
+  "Sélectionnez au moins un coin à partager.": {
+    fr: "Sélectionnez au moins un coin à partager.",
+    en: "Select at least one spot to share.",
+  },
+  "Téléchargez le fichier ici :": { fr: "Téléchargez le fichier ici :", en: "Download the file here:" },
+  "Le fichier KMZ a été téléchargé. Si aucune application ne s'est ouverte, partagez-le manuellement.": {
+    fr: "Le fichier KMZ a été téléchargé. Si aucune application ne s'est ouverte, partagez-le manuellement.",
+    en: "The KMZ file has been downloaded. If no app opened, share it manually.",
+  },
+  "Ouvrir votre application email pour partager ?": {
+    fr: "Ouvrir votre application email pour partager ?",
+    en: "Open your email app to share?",
+  },
+  "Ouvrir WhatsApp pour partager ?": {
+    fr: "Ouvrir WhatsApp pour partager ?",
+    en: "Open WhatsApp to share?",
+  },
+  "Ouvrir Messenger pour partager ?": {
+    fr: "Ouvrir Messenger pour partager ?",
+    en: "Open Messenger to share?",
+  },
+  "Impossible de partager ces coins pour le moment.": {
+    fr: "Impossible de partager ces coins pour le moment.",
+    en: "Unable to share these spots right now.",
+  },
+  "Retirer de la sélection": { fr: "Retirer de la sélection", en: "Remove from selection" },
+  "Ajouter à la sélection": { fr: "Ajouter à la sélection", en: "Add to selection" },
   "Aucun coin enregistré.": { fr: "Aucun coin enregistré.", en: "No spot saved." },
   "modifier": { fr: "modifier", en: "edit" },
   "Espèces :": { fr: "Espèces :", en: "Species:" },
