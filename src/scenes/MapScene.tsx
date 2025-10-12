@@ -10,6 +10,7 @@ import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import logo from "@/assets/logo.png";
 import { loadMap, geocode, reverseGeocode } from "@/services/openstreetmap";
+import { RASTER_LAYERS, combinedBounds } from "@/config/rasterLayers";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
@@ -383,6 +384,35 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         zoom: 5,
       });
       mapRef.current = map;
+      map.on("load", () => {
+        RASTER_LAYERS.forEach(layer => {
+          const sourceId = `raster-${layer.id}`;
+          if (!map.getSource || map.getSource(sourceId)) return;
+          map.addSource(sourceId, {
+            type: "raster",
+            tiles: [layer.tiles],
+            tileSize: 256,
+            minzoom: layer.minzoom,
+            maxzoom: layer.maxzoom,
+          });
+          map.addLayer({
+            id: `raster-layer-${layer.id}`,
+            type: "raster",
+            source: sourceId,
+            paint: {
+              "raster-opacity": 0.7,
+            },
+          });
+        });
+        if (combinedBounds) {
+          const maxZoom = RASTER_LAYERS.reduce((acc, layer) => Math.max(acc, layer.maxzoom), 0);
+          map.fitBounds(combinedBounds, {
+            padding: 48,
+            maxZoom: maxZoom || 16,
+            duration: 0,
+          });
+        }
+      });
       if (typeof map.resize === "function") {
         requestAnimationFrame(() => {
           map.resize();
