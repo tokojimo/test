@@ -62,6 +62,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const { t } = useT();
   const [selected, setSelected] = useState<string[]>(["cepe_de_bordeaux"]);
   const [search, setSearch] = useState("");
+  const [mapReady, setMapReady] = useState(false);
   const [userPosition, setUserPosition] = useState<{
     lat: number;
     lng: number;
@@ -106,6 +107,20 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
     setSelected(prev =>
       prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
     );
+
+  const applyRasterVisibility = useCallback((map: any, selection: string[]) => {
+    RASTER_LAYERS.forEach(layer => {
+      const layerId = `raster-layer-${layer.id}`;
+      if (!map.getLayer || !map.getLayer(layerId)) return;
+      const shouldShow =
+        layer.species.length === 0 ||
+        layer.species.some(speciesId => selection.includes(speciesId));
+      const visibility = shouldShow ? "visible" : "none";
+      if (map.getLayoutProperty(layerId, "visibility") !== visibility) {
+        map.setLayoutProperty(layerId, "visibility", visibility);
+      }
+    });
+  }, []);
 
   const clearGpsWatcher = useCallback(() => {
     if (
@@ -302,6 +317,11 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   ]);
 
   useEffect(() => {
+    if (!mapReady || !mapRef.current) return;
+    applyRasterVisibility(mapRef.current, selected);
+  }, [applyRasterVisibility, mapReady, selected]);
+
+  useEffect(() => {
     if (!gpsFollow) {
       setHeading(null);
       return;
@@ -404,6 +424,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             },
           });
         });
+        applyRasterVisibility(map, selected);
         if (combinedBounds) {
           const maxZoom = RASTER_LAYERS.reduce((acc, layer) => Math.max(acc, layer.maxzoom), 0);
           map.fitBounds(combinedBounds, {
@@ -412,6 +433,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             duration: 0,
           });
         }
+        setMapReady(true);
       });
       if (typeof map.resize === "function") {
         requestAnimationFrame(() => {
@@ -433,8 +455,9 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
     return () => {
       mapRef.current?.remove();
       mapRef.current = null;
+      setMapReady(false);
     };
-  }, [handleMapClick, recenterOnPosition, setUserPosition]);
+  }, [applyRasterVisibility, handleMapClick, recenterOnPosition, setUserPosition]);
 
   return (
     <motion.section
