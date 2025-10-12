@@ -38,6 +38,10 @@ vi.mock('../../services/openstreetmap', () => {
     }
     flyTo() {}
     remove() {}
+    addSource() {}
+    addLayer() {}
+    getSource() { return null; }
+    fitBounds() {}
   }
   class Marker {
     constructor() {}
