@@ -5,6 +5,8 @@ export type RasterLayer = {
   id: string;
   /** Human readable label shown in logs or future legends */
   name: string;
+  /** Species identifiers that should display this raster layer */
+  species: string[];
   /** Template URL pointing to the XYZ PNG tiles */
   tiles: string;
   /** Inclusive zoom range supported by the tiles */
@@ -20,6 +22,7 @@ export const RASTER_LAYERS: RasterLayer[] = [
   {
     id: "boletus_edulis_suitability_styled",
     name: "Boletus edulis – aptitude",
+    species: ["cepe_de_bordeaux"],
     tiles: `${baseUrl}/tiles/boletus_edulis_suitability_styled/{z}/{x}/{y}.png`,
     minzoom: 6,
     maxzoom: 16,
