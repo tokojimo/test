@@ -71,10 +71,13 @@ Update `VITE_TILE_CDN_BASE_URL` and `src/config/rasterLayers.ts` accordingly.
    ```ts
    {
      id: 'boletus_edulis_suitability_styled',
-     name: 'Boletus edulis – aptitude',
-     tiles: `${baseUrl}/tiles/boletus_edulis_suitability_styled/{z}/{x}/{y}.png`,
+     title: 'Boletus edulis – aptitude',
+     species: ['cepe_de_bordeaux'],
+     url: `${baseUrl}/tiles/boletus_edulis_suitability_styled/{z}/{x}/{y}.png`,
      minzoom: 6,
      maxzoom: 16,
+     opacity: 0.7,
+     isVisible: true,
      bounds: [
        [5.507812, 44.706649],
        [7.558594, 45.992813],
@@ -82,7 +85,7 @@ Update `VITE_TILE_CDN_BASE_URL` and `src/config/rasterLayers.ts` accordingly.
    }
    ```
 
-3. The map automatically loads all configured raster layers above the base OSM map with opacity 0.7 and fits the viewport to the combined extent of the rasters.
+3. The map automatically loads all configured raster layers above the base OSM map, applies the configured opacity and fits the viewport to the combined extent of the rasters.
 
 ## 4. Adding a new layer
 
