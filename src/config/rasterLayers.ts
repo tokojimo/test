@@ -24,6 +24,29 @@ const baseUrl =
   import.meta.env.VITE_TILE_CDN_BASE_URL?.replace(/\/$/, "") ??
   "https://68f397967cd13ea1432d50cc--magenta-sopapillas-5042bd.netlify.app";
 
+const parseBoundingBox = (value?: string): BoundingBox | null => {
+  if (!value) return null;
+  const parts = value
+    .split(",")
+    .map(v => Number.parseFloat(v.trim()))
+    .filter(n => Number.isFinite(n));
+  if (parts.length !== 4) return null;
+  const [minLon, minLat, maxLon, maxLat] = parts as [number, number, number, number];
+  return [
+    [Math.min(minLon, maxLon), Math.min(minLat, maxLat)],
+    [Math.max(minLon, maxLon), Math.max(minLat, maxLat)],
+  ];
+};
+
+const overrideBounds = parseBoundingBox(import.meta.env.VITE_TILE_DEFAULT_BBOX);
+
+export const FALLBACK_GRENOBLE_BOUNDS: BoundingBox = [
+  [5.507812, 44.706649],
+  [7.558594, 45.992813],
+];
+
+export const DEFAULT_VIEW_BOUNDS = overrideBounds ?? FALLBACK_GRENOBLE_BOUNDS;
+
 export const RASTER_LAYERS: RasterLayer[] = [
   {
     id: "grenoble-canopy",
@@ -34,10 +57,7 @@ export const RASTER_LAYERS: RasterLayer[] = [
     maxzoom: 16,
     opacity: 0.7,
     isVisible: true,
-    bounds: [
-      [5.507812, 44.706649],
-      [7.558594, 45.992813],
-    ],
+    bounds: FALLBACK_GRENOBLE_BOUNDS,
   },
 ];
 
@@ -52,3 +72,5 @@ export const combinedBounds = RASTER_LAYERS.reduce<BoundingBox | null>((acc, lay
     [Math.max(acc[1][0], layer.bounds[1][0]), Math.max(acc[1][1], layer.bounds[1][1])],
   ];
 }, null);
+
+export const effectiveBounds = combinedBounds ?? DEFAULT_VIEW_BOUNDS;

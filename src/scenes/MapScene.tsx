@@ -10,7 +10,7 @@ import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import logo from "@/assets/logo.png";
 import { loadMap, geocode, reverseGeocode } from "@/services/openstreetmap";
-import { RASTER_LAYERS, combinedBounds } from "@/config/rasterLayers";
+import { RASTER_LAYERS, effectiveBounds } from "@/config/rasterLayers";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
@@ -443,9 +443,10 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           });
         });
         applyRasterVisibility(map, selected);
-        if (combinedBounds) {
+        const boundsToFit = effectiveBounds;
+        if (boundsToFit) {
           const maxZoom = RASTER_LAYERS.reduce((acc, layer) => Math.max(acc, layer.maxzoom), 0);
-          map.fitBounds(combinedBounds, {
+          map.fitBounds(boundsToFit, {
             padding: 48,
             maxZoom: maxZoom || 16,
             duration: 0,
