@@ -112,12 +112,17 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
     RASTER_LAYERS.forEach(layer => {
       const layerId = `raster-layer-${layer.id}`;
       if (!map.getLayer || !map.getLayer(layerId)) return;
-      const shouldShow =
+      const matchesSelection =
         layer.species.length === 0 ||
         layer.species.some(speciesId => selection.includes(speciesId));
+      const shouldShow = layer.isVisible && matchesSelection;
       const visibility = shouldShow ? "visible" : "none";
       if (map.getLayoutProperty(layerId, "visibility") !== visibility) {
         map.setLayoutProperty(layerId, "visibility", visibility);
+      }
+      const currentOpacity = map.getPaintProperty(layerId, "raster-opacity");
+      if (currentOpacity !== layer.opacity) {
+        map.setPaintProperty(layerId, "raster-opacity", layer.opacity);
       }
     });
   }, []);
@@ -404,13 +409,23 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         zoom: 5,
       });
       mapRef.current = map;
+      map.on("error", event => {
+        const err: any = event?.error;
+        const status = err?.status ?? err?.statusCode;
+        const message = typeof err?.message === "string" ? err.message : "";
+        if (status === 404 || /404/.test(message)) {
+          console.debug("Raster tile missing", { status, message });
+          event?.preventDefault?.();
+        }
+      });
+
       map.on("load", () => {
         RASTER_LAYERS.forEach(layer => {
           const sourceId = `raster-${layer.id}`;
           if (!map.getSource || map.getSource(sourceId)) return;
           map.addSource(sourceId, {
             type: "raster",
-            tiles: [layer.tiles],
+            tiles: [layer.url],
             tileSize: 256,
             minzoom: layer.minzoom,
             maxzoom: layer.maxzoom,
@@ -420,7 +435,10 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
             type: "raster",
             source: sourceId,
             paint: {
-              "raster-opacity": 0.7,
+              "raster-opacity": layer.opacity,
+            },
+            layout: {
+              visibility: layer.isVisible ? "visible" : "none",
             },
           });
         });
