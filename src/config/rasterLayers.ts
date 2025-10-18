@@ -51,7 +51,7 @@ export const RASTER_LAYERS: RasterLayer[] = [
   {
     id: "boletus-edulis",
     title: "Boletus edulis suitability",
-    species: ["boletus_edulis"],
+    species: ["cepe_de_bordeaux", "boletus_edulis"],
     url: `${baseUrl}/boletus_edulis/tiles/{z}/{x}/{y}.png`,
     minzoom: 6,
     maxzoom: 16,
