@@ -22,7 +22,7 @@ export type RasterLayer = {
 
 const baseUrl =
   import.meta.env.VITE_TILE_CDN_BASE_URL?.replace(/\/$/, "") ??
-  "https://68f397967cd13ea1432d50cc--magenta-sopapillas-5042bd.netlify.app";
+  "https://68f3c30043b68c1c1ad2a06e--famous-pothos-6309bc.netlify.app";
 
 const parseBoundingBox = (value?: string): BoundingBox | null => {
   if (!value) return null;
@@ -49,10 +49,10 @@ export const DEFAULT_VIEW_BOUNDS = overrideBounds ?? FALLBACK_GRENOBLE_BOUNDS;
 
 export const RASTER_LAYERS: RasterLayer[] = [
   {
-    id: "grenoble-canopy",
-    title: "Grenoble canopy",
-    species: ["cepe_de_bordeaux"],
-    url: `${baseUrl}/tiles/{z}/{x}/{y}.png`,
+    id: "boletus-edulis",
+    title: "Boletus edulis suitability",
+    species: ["boletus_edulis"],
+    url: `${baseUrl}/boletus_edulis/tiles/{z}/{x}/{y}.png`,
     minzoom: 6,
     maxzoom: 16,
     opacity: 0.7,
