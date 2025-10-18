@@ -68,6 +68,6 @@ should be replaced by real implementations when integrating a backend.
 ## Raster tiles
 - XYZ rasters must be hosted under `<cdn-root>/tiles/{z}/{x}/{y}.png` (PNG or WEBP).
 - Set `VITE_TILE_CDN_BASE_URL` (see `.env.sample`) to switch between preview and production tile CDNs.
-- Layers are configured in `src/config/rasterLayers.ts` with `id`, `title`, `url`, `minzoom`, `maxzoom`, `opacity` and `isVisible` fields.
-- Duplicate the Grenoble layer object to add a new dataset or region and update its `bounds` to describe the coverage.
-- The map fits the combined bounds automatically and quietly ignores missing (404) tiles.
+- Optional: override the Grenoble fallback fit bounds via `VITE_TILE_DEFAULT_BBOX=minLon,minLat,maxLon,maxLat`.
+- Layers live in `src/config/rasterLayers.ts` with `id`, `title`, `url`, `minzoom`, `maxzoom`, `opacity`, `isVisible` and `bounds` fields.
+- Duplicate the Grenoble layer block to add new datasets/regions; the map fits their combined bounds and ignores missing (404) tiles.
