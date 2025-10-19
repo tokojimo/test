@@ -70,6 +70,17 @@ export const RASTER_LAYERS: RasterLayer[] = [
     isVisible: true,
     bounds: FALLBACK_GRENOBLE_BOUNDS,
   },
+    {
+    id: "morchella-esculenta",
+    title: "Morchella esculenta suitability",
+    species: ["morille_commune", "morchella_esculenta"],
+    url: `${baseUrl}/morchella_conica/tiles/{z}/{x}/{y}.webp`,
+    minzoom: 6,
+    maxzoom: 16,
+    opacity: 0.7,
+    isVisible: true,
+    bounds: FALLBACK_GRENOBLE_BOUNDS,
+  },
 ];
 
 export const combinedBounds = RASTER_LAYERS.reduce<BoundingBox | null>((acc, layer) => {
