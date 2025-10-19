@@ -59,6 +59,17 @@ export const RASTER_LAYERS: RasterLayer[] = [
     isVisible: true,
     bounds: FALLBACK_GRENOBLE_BOUNDS,
   },
+  {
+    id: "morchella-conica",
+    title: "Morchella conica suitability",
+    species: ["morille_conique", "morchella_conica"],
+    url: `${baseUrl}/morchella_conica/tiles/{z}/{x}/{y}.webp`,
+    minzoom: 6,
+    maxzoom: 16,
+    opacity: 0.7,
+    isVisible: true,
+    bounds: FALLBACK_GRENOBLE_BOUNDS,
+  },
 ];
 
 export const combinedBounds = RASTER_LAYERS.reduce<BoundingBox | null>((acc, layer) => {
