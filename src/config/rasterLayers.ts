@@ -74,7 +74,7 @@ export const RASTER_LAYERS: RasterLayer[] = [
     id: "morchella-esculenta",
     title: "Morchella esculenta suitability",
     species: ["morille_commune", "morchella_esculenta"],
-    url: `${baseUrl}/morchella_conica/tiles/{z}/{x}/{y}.webp`,
+    url: `${baseUrl}/morchella_esculenta/tiles/{z}/{x}/{y}.webp`,
     minzoom: 6,
     maxzoom: 16,
     opacity: 0.7,
