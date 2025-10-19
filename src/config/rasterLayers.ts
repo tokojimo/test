@@ -22,7 +22,7 @@ export type RasterLayer = {
 
 const baseUrl =
   import.meta.env.VITE_TILE_CDN_BASE_URL?.replace(/\/$/, "") ??
-  "https://68f3c30043b68c1c1ad2a06e--famous-pothos-6309bc.netlify.app";
+  "http://localhost";
 
 const parseBoundingBox = (value?: string): BoundingBox | null => {
   if (!value) return null;
@@ -52,7 +52,7 @@ export const RASTER_LAYERS: RasterLayer[] = [
     id: "boletus-edulis",
     title: "Boletus edulis suitability",
     species: ["cepe_de_bordeaux", "boletus_edulis"],
-    url: `${baseUrl}/boletus_edulis/tiles/{z}/{x}/{y}.png`,
+    url: `${baseUrl}/boletus_edulis/tiles/{z}/{x}/{y}.webp`,
     minzoom: 6,
     maxzoom: 16,
     opacity: 0.7,
