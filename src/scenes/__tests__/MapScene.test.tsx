@@ -7,7 +7,7 @@ import {
   waitFor,
 } from "@testing-library/react";
 import "@testing-library/jest-dom";
-import { vi, describe, it, expect } from "vitest";
+import { vi, describe, it, expect, beforeEach } from "vitest";
 
 import MapScene, { getNextMushroomSelection } from "../MapScene";
 import { AppProvider } from "@/context/AppContext";
@@ -28,6 +28,7 @@ vi.mock("framer-motion", () => ({
 }));
 
 let mapInstance: any;
+let markerInstances: any[] = [];
 
 // Mock OpenStreetMap services
 vi.mock("../../services/openstreetmap", () => {
@@ -52,13 +53,28 @@ vi.mock("../../services/openstreetmap", () => {
     fitBounds() {}
   }
   class Marker {
-    constructor() {}
+    options: any;
+    lngLatSet = false;
+    addToCalls = 0;
+
+    constructor(options?: any) {
+      this.options = options;
+      markerInstances.push(this);
+    }
+
     setLngLat() {
+      this.lngLatSet = true;
       return this;
     }
+
     addTo() {
+      if (!this.lngLatSet) {
+        throw new Error("Marker added before coordinates were set");
+      }
+      this.addToCalls += 1;
       return this;
     }
+
     remove() {}
   }
   return {
@@ -70,6 +86,11 @@ vi.mock("../../services/openstreetmap", () => {
 });
 
 describe("MapScene", () => {
+  beforeEach(() => {
+    mapInstance = undefined;
+    markerInstances = [];
+  });
+
   it("keeps GPS inactive until the user explicitly taps the GPS button", () => {
     const watchPosition = vi.fn();
     const setGpsFollow = vi.fn();
@@ -137,6 +158,52 @@ describe("MapScene", () => {
     ).toBeInTheDocument();
     expect(watchPosition).not.toHaveBeenCalled();
     expect(setGpsFollow).toHaveBeenCalledWith(false);
+  });
+
+  it("sets GPS marker coordinates before adding it to the map", async () => {
+    const watchPosition = vi.fn((success) => {
+      success({
+        coords: {
+          latitude: 48.8566,
+          longitude: 2.3522,
+          accuracy: 12,
+        },
+      });
+      return 7;
+    });
+
+    Object.defineProperty(window, "isSecureContext", {
+      configurable: true,
+      value: true,
+    });
+    Object.defineProperty(navigator, "geolocation", {
+      configurable: true,
+      value: {
+        watchPosition,
+        clearWatch: vi.fn(),
+      },
+    });
+
+    render(
+      <AppProvider>
+        <MapScene
+          onZone={() => {}}
+          gpsFollow={true}
+          setGpsFollow={() => {}}
+          onBack={() => {}}
+        />
+      </AppProvider>,
+    );
+
+    await waitFor(() => {
+      const gpsMarker = markerInstances.find(
+        (marker) => marker.options?.anchor === "center",
+      );
+
+      expect(gpsMarker).toBeDefined();
+      expect(gpsMarker.lngLatSet).toBe(true);
+      expect(gpsMarker.addToCalls).toBe(1);
+    });
   });
 
   it("keeps only the three most recently activated mushroom maps", () => {

@@ -535,13 +535,14 @@ export default function MapScene({
       const marker = new maplibreRef.current.Marker({
         element: container,
         anchor: "center",
-      }).addTo(mapRef.current);
+      });
+      marker
+        .setLngLat([userPosition.lng, userPosition.lat])
+        .addTo(mapRef.current);
       positionMarkerRef.current = marker;
+    } else {
+      positionMarkerRef.current.setLngLat([userPosition.lng, userPosition.lat]);
     }
-
-    positionMarkerRef.current
-      ?.setLngLat([userPosition.lng, userPosition.lat])
-      .addTo(mapRef.current);
 
     updateMarkerHeading(heading);
   }, [
