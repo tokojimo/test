@@ -1,7 +1,7 @@
 export const LEGEND = [
-  { label: ">85", color: "bg-emerald-700" },
-  { label: "84–75", color: "bg-emerald-600" },
-  { label: "74–50", color: "bg-yellow-600" },
-  { label: "49–35", color: "bg-orange-600" },
-  { label: "34–25", color: "bg-red-600" }
+  { label: ">90 %", color: "#00441B" },
+  { label: "90–80 %", color: "#237A3B" },
+  { label: "80–70 %", color: "#5FA45D" },
+  { label: "70–60 %", color: "#A8D5A2" },
+  { label: "60–50 %", color: "#DDEED8" }
 ];
