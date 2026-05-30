@@ -256,11 +256,27 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       return;
     }
 
-    if (
-      typeof window === "undefined" ||
-      typeof navigator === "undefined" ||
-      !navigator.geolocation
-    ) {
+    if (typeof window === "undefined" || typeof navigator === "undefined") {
+      stopGpsTracking();
+      notifyGpsError(
+        "Localisation indisponible",
+        "La géolocalisation n'est pas disponible dans ce contexte."
+      );
+      setGpsFollow(false);
+      return;
+    }
+
+    if (window.isSecureContext === false) {
+      stopGpsTracking();
+      notifyGpsError(
+        "Localisation indisponible",
+        "Le GPS du navigateur fonctionne uniquement en HTTPS ou sur localhost."
+      );
+      setGpsFollow(false);
+      return;
+    }
+
+    if (!navigator.geolocation) {
       stopGpsTracking();
       notifyGpsError(
         "Localisation indisponible",

@@ -52,7 +52,7 @@ function AppContent() {
   const [deviceFree, setDeviceFree] = useState(2048);
   type Toast = { id: number; type: "success" | "warn"; text: string };
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [gpsFollow, setGpsFollow] = useState(true);
+  const [gpsFollow, setGpsFollow] = useState(false);
 
   const { dispatch } = useAppContext();
   const { t } = useT();
