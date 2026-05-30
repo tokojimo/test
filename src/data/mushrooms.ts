@@ -1,5 +1,7 @@
 import type { Mushroom } from "../types";
 
+const mushroomImage = (fileName: string) => `/images/mushrooms/${fileName}`;
+
 export const MUSHROOMS: Mushroom[] = [
   {
     id: "cepe_de_bordeaux",
@@ -59,20 +61,21 @@ export const MUSHROOMS: Mushroom[] = [
     photo: "https://images.unsplash.com/photo-1587307360679-f20b5cbd9e03?q=80&w=1600&auto=format&fit=crop"
   },
   { id: "morille_conique", name: "Morille conique", latin: "Morchella conica", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
+  { id: "morille_delicieuse", name: "Morille délicieuse", latin: "Morchella deliciosa", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Morchella_deliciosa.png") },
   { id: "cepe_d_ete", name: "Cèpe d'été", latin: "Boletus reticulatus", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
   { id: "cepe_des_pins", name: "Cèpe des pins", latin: "Boletus pinophilus", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
   { id: "cepe_bronze", name: "Cèpe bronze", latin: "Boletus aereus", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
   { id: "chanterelle_en_tube", name: "Chanterelle en tube", latin: "Cantharellus tubaeformis", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
-  { id: "trompette_de_la_mort", name: "Trompette de la mort", latin: "Craterellus cornucopioides", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
-  { id: "pied_de_mouton", name: "Pied-de-mouton", latin: "Hydnum repandum", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
+  { id: "trompette_de_la_mort", name: "Trompette de la mort", latin: "Craterellus cornucopioides", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Craterellus_cornucopioides.png") },
+  { id: "pied_de_mouton", name: "Pied-de-mouton", latin: "Hydnum repandum", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Hydnum_repandum.png") },
   { id: "lactaire_delicieux", name: "Lactaire délicieux", latin: "Lactarius deliciosus", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
-  { id: "oronge", name: "Oronge", latin: "Amanita caesarea", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
-  { id: "pleurote_en_huitre", name: "Pleurote en huître", latin: "Pleurotus ostreatus", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
-  { id: "pholiote_du_peuplier", name: "Pholiote du peuplier", latin: "Agrocybe aegerita", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
+  { id: "oronge", name: "Oronge", latin: "Amanita caesarea", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Amanita_caesarea.png") },
+  { id: "pleurote_en_huitre", name: "Pleurote en huître", latin: "Pleurotus ostreatus", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Pleurotus_ostreatus.png") },
+  { id: "pholiote_du_peuplier", name: "Pholiote du peuplier", latin: "Cyclocybe cylindracea (Agrocybe aegerita)", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Cyclocybe_cylindracea.png") },
   { id: "lepiote_elevee", name: "Lépiote élevée", latin: "Macrolepiota procera", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
   { id: "bolet_jaune", name: "Bolet jaune", latin: "Suillus luteus", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
-  { id: "sparassis_crepu", name: "Sparassis crépu", latin: "Sparassis crispa", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
+  { id: "sparassis_crepu", name: "Sparassis crépu", latin: "Sparassis crispa", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Sparassis_crispa.png") },
   { id: "bolet_bai", name: "Bolet bai", latin: "Imleria badia", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
   { id: "collybie_pied_veloute", name: "Collybie à pied velouté", latin: "Flammulina velutipes", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" },
-  { id: "truffe_noire", name: "Truffe noire", latin: "Tuber melanosporum", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: "" }
+  { id: "truffe_noire", name: "Truffe noire", latin: "Tuber melanosporum", edible: true, season: "", habitat: "", weatherIdeal: "", description: "", culinary: "", cookingTips: "", dishes: [], confusions: [], picking: "", photo: mushroomImage("Tuber_melanosporum.png") }
 ];
