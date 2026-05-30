@@ -565,7 +565,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
             {LEGEND.map((l, i) => (
               <div key={i} className="flex items-center gap-1">
-                <div className={classNames("w-3 h-3 rounded", l.color)} />
+                <div className="w-3 h-3 rounded" style={{ backgroundColor: l.color }} />
                 <span className={`text-[10px] ${T_MUTED}`}>{l.label}</span>
               </div>
             ))}
