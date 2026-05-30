@@ -14,6 +14,19 @@ import { RASTER_LAYERS, effectiveBounds } from "@/config/rasterLayers";
 import { useT } from "../i18n";
 import type { Zone } from "../types";
 
+const MAX_ACTIVE_MUSHROOM_MAPS = 3;
+
+export function getNextMushroomSelection(previous: string[], id: string) {
+  if (previous.includes(id)) {
+    return previous.filter(selectedId => selectedId !== id);
+  }
+
+  const next = [...previous, id];
+  return next.length > MAX_ACTIVE_MUSHROOM_MAPS
+    ? next.slice(next.length - MAX_ACTIVE_MUSHROOM_MAPS)
+    : next;
+}
+
 function Toast({
   message,
   details,
@@ -104,9 +117,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
     [setToasts]
   );
   const toggleShroom = (id: string) =>
-    setSelected(prev =>
-      prev.includes(id) ? prev.filter(s => s !== id) : [...prev, id]
-    );
+    setSelected(prev => getNextMushroomSelection(prev, id));
 
   const applyRasterVisibility = useCallback((map: any, selection: string[]) => {
     RASTER_LAYERS.forEach(layer => {
@@ -590,6 +601,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
                   onClick={() => toggleShroom(m.id)}
                   className={classNames(BTN, "shrink-0 snap-start")}
                   variant={selected.includes(m.id) ? "primary" : "secondary"}
+                  aria-pressed={selected.includes(m.id)}
                 >
                   {m.name}
                 </Button>
