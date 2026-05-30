@@ -15,6 +15,7 @@ import { LEGEND } from "../data/legend";
 import { classNames } from "../utils";
 import { BTN, BTN_GHOST_ICON, T_PRIMARY, T_MUTED } from "../styles/tokens";
 import logo from "@/assets/logo.png";
+import logoPanier from "@/assets/logo_panier.png";
 import { loadMap, geocode, reverseGeocode } from "@/services/openstreetmap";
 import { RASTER_LAYERS, effectiveBounds } from "@/config/rasterLayers";
 import { useT } from "../i18n";
@@ -523,12 +524,14 @@ export default function MapScene({
         "absolute left-1/2 top-0 h-0 w-0 border-l-[6px] border-l-transparent border-r-[6px] border-r-transparent border-b-[12px] border-b-blue-500 drop-shadow-md transition-transform duration-150";
       direction.style.transformOrigin = "50% 100%";
 
-      const dot = document.createElement("div");
-      dot.className =
-        "h-4 w-4 rounded-full border-2 border-white bg-blue-500 shadow-[0_0_0_6px_rgba(59,130,246,0.35)]";
+      const positionLogo = document.createElement("img");
+      positionLogo.src = logoPanier;
+      positionLogo.alt = "Position GPS";
+      positionLogo.className =
+        "h-8 w-8 rounded-full border-2 border-white bg-white object-contain p-0.5 shadow-[0_0_0_6px_rgba(34,197,94,0.28)]";
 
       container.appendChild(direction);
-      container.appendChild(dot);
+      container.appendChild(positionLogo);
 
       positionMarkerDirectionRef.current = direction;
 
