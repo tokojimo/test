@@ -1,4 +1,10 @@
-import React, { useRef, useEffect, useState, useMemo, useCallback } from "react";
+import React, {
+  useRef,
+  useEffect,
+  useState,
+  useMemo,
+  useCallback,
+} from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, LocateFixed, Search, Navigation } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -15,10 +21,14 @@ import { useT } from "../i18n";
 import type { Zone } from "../types";
 
 const MAX_ACTIVE_MUSHROOM_MAPS = 3;
+const MAX_VISIBLE_MAP_NOTIFICATIONS = 3;
+const MAP_NOTIFICATION_DURATION_MS = 45000;
+const GPS_NOTIFICATION_DURATION_MS = 8000;
+const MAP_NOTIFICATION_REPLACE_DELAY_MS = 220;
 
 export function getNextMushroomSelection(previous: string[], id: string) {
   if (previous.includes(id)) {
-    return previous.filter(selectedId => selectedId !== id);
+    return previous.filter((selectedId) => selectedId !== id);
   }
 
   const next = [...previous, id];
@@ -54,19 +64,33 @@ function Toast({
   );
 }
 
-export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { onZone: (z: Zone) => void; gpsFollow: boolean; setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>; onBack: () => void }) {
+export default function MapScene({
+  onZone,
+  gpsFollow,
+  setGpsFollow,
+  onBack,
+}: {
+  onZone: (z: Zone) => void;
+  gpsFollow: boolean;
+  setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>;
+  onBack: () => void;
+}) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
   const maplibreRef = useRef<any>(null);
-  const markersRef = useRef<{
-    id: number;
-    marker: any;
-    timeout: ReturnType<typeof setTimeout>;
-  }[]>([]);
+  const markersRef = useRef<
+    {
+      id: number;
+      marker: any;
+      timeout: ReturnType<typeof setTimeout>;
+    }[]
+  >([]);
   const watchIdRef = useRef<number | null>(null);
   const positionMarkerRef = useRef<any>(null);
   const positionMarkerDirectionRef = useRef<HTMLDivElement | null>(null);
-  const lastKnownPositionRef = useRef<{ lat: number; lng: number } | null>(null);
+  const lastKnownPositionRef = useRef<{ lat: number; lng: number } | null>(
+    null,
+  );
   const userPositionRef = useRef<{
     lat: number;
     lng: number;
@@ -93,39 +117,131 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const results = useMemo(
     () =>
       search
-        ? DEMO_ZONES.filter(z =>
-            z.name.toLowerCase().includes(search.toLowerCase())
+        ? DEMO_ZONES.filter((z) =>
+            z.name.toLowerCase().includes(search.toLowerCase()),
           )
         : [],
-    [search]
+    [search],
   );
   type Toast = { id: number; text: string; details?: string; zone?: Zone };
   const [toasts, setToasts] = useState<Toast[]>([]);
-  const [markers, setMarkers] = useState<{
-    id: number;
-    lat: number;
-    lng: number;
-  }[]>([]);
+  const toastsRef = useRef<Toast[]>([]);
+  const toastDismissTimersRef = useRef<
+    Map<number, ReturnType<typeof setTimeout>>
+  >(new Map());
+  const toastReplaceTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const [markers, setMarkers] = useState<
+    {
+      id: number;
+      lat: number;
+      lng: number;
+    }[]
+  >([]);
+  useEffect(() => {
+    toastsRef.current = toasts;
+  }, [toasts]);
+
+  const clearToastDismissTimer = useCallback((id: number) => {
+    const timer = toastDismissTimersRef.current.get(id);
+    if (timer) {
+      clearTimeout(timer);
+      toastDismissTimersRef.current.delete(id);
+    }
+  }, []);
+
+  const removeToast = useCallback(
+    (id: number) => {
+      clearToastDismissTimer(id);
+      setToasts((curr) => {
+        const next = curr.filter((t) => t.id !== id);
+        toastsRef.current = next;
+        return next;
+      });
+    },
+    [clearToastDismissTimer],
+  );
+
+  const scheduleToastDismiss = useCallback(
+    (id: number, duration: number) => {
+      clearToastDismissTimer(id);
+      const timer = setTimeout(() => {
+        toastDismissTimersRef.current.delete(id);
+        setToasts((curr) => {
+          const next = curr.filter((t) => t.id !== id);
+          toastsRef.current = next;
+          return next;
+        });
+      }, duration);
+      toastDismissTimersRef.current.set(id, timer);
+    },
+    [clearToastDismissTimer],
+  );
+
+  const insertToast = useCallback(
+    (toast: Toast, duration: number) => {
+      setToasts((curr) => {
+        const next = [toast, ...curr.filter((t) => t.id !== toast.id)].slice(
+          0,
+          MAX_VISIBLE_MAP_NOTIFICATIONS,
+        );
+        toastsRef.current = next;
+        return next;
+      });
+      scheduleToastDismiss(toast.id, duration);
+    },
+    [scheduleToastDismiss],
+  );
+
+  const addToast = useCallback(
+    (toast: Toast, duration = MAP_NOTIFICATION_DURATION_MS) => {
+      const isFull = toastsRef.current.length >= MAX_VISIBLE_MAP_NOTIFICATIONS;
+
+      if (!isFull) {
+        insertToast(toast, duration);
+        return;
+      }
+
+      const removedToast = toastsRef.current[MAX_VISIBLE_MAP_NOTIFICATIONS - 1];
+      if (removedToast) {
+        clearToastDismissTimer(removedToast.id);
+      }
+      setToasts((curr) => {
+        const next = curr.slice(0, MAX_VISIBLE_MAP_NOTIFICATIONS - 1);
+        toastsRef.current = next;
+        return next;
+      });
+
+      const replaceTimer = setTimeout(() => {
+        toastReplaceTimersRef.current = toastReplaceTimersRef.current.filter(
+          (timer) => timer !== replaceTimer,
+        );
+        insertToast(toast, duration);
+      }, MAP_NOTIFICATION_REPLACE_DELAY_MS);
+
+      toastReplaceTimersRef.current.push(replaceTimer);
+    },
+    [clearToastDismissTimer, insertToast],
+  );
+
   const notifyGpsError = useCallback(
     (message: string, details?: string) => {
-      const id = Date.now() + Math.random();
-      setToasts(curr => [{ id, text: message, details }, ...curr].slice(0, 3));
-      setTimeout(() => {
-        setToasts(curr => curr.filter(t => t.id !== id));
-      }, 8000);
+      addToast(
+        { id: Date.now() + Math.random(), text: message, details },
+        GPS_NOTIFICATION_DURATION_MS,
+      );
     },
-    [setToasts]
+    [addToast],
   );
   const toggleShroom = (id: string) =>
-    setSelected(prev => getNextMushroomSelection(prev, id));
+    setSelected((prev) => getNextMushroomSelection(prev, id));
 
   const applyRasterVisibility = useCallback((map: any, selection: string[]) => {
-    RASTER_LAYERS.forEach(layer => {
+    RASTER_LAYERS.forEach((layer) => {
       const layerId = `raster-layer-${layer.id}`;
       if (!map.getLayer || !map.getLayer(layerId)) return;
       const matchesSelection =
         layer.species.length === 0 ||
-        layer.species.some(speciesId => selection.includes(speciesId));
+        layer.species.some((speciesId) => selection.includes(speciesId));
       const shouldShow = layer.isVisible && matchesSelection;
       const visibility = shouldShow ? "visible" : "none";
       if (map.getLayoutProperty(layerId, "visibility") !== visibility) {
@@ -160,8 +276,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
   const updateMarkerHeading = useCallback((angle: number | null) => {
     if (!positionMarkerDirectionRef.current) return;
     const rotation = angle ?? 0;
-    positionMarkerDirectionRef.current.style.transform =
-      `translate(-50%, calc(-100% - 2px)) rotate(${rotation}deg)`;
+    positionMarkerDirectionRef.current.style.transform = `translate(-50%, calc(-100% - 2px)) rotate(${rotation}deg)`;
   }, []);
 
   const stopGpsTracking = useCallback(
@@ -174,17 +289,18 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         lastKnownPositionRef.current = null;
       }
     },
-    [clearGpsWatcher, removePositionMarker, setUserPosition]
+    [clearGpsWatcher, removePositionMarker, setUserPosition],
   );
 
   const recenterOnPosition = useCallback(
     (position?: { lat: number; lng: number }) => {
-      const target = position ?? lastKnownPositionRef.current ?? userPositionRef.current;
+      const target =
+        position ?? lastKnownPositionRef.current ?? userPositionRef.current;
       if (target && mapRef.current) {
         mapRef.current.flyTo({ center: [target.lng, target.lat], zoom: 15 });
       }
     },
-    []
+    [],
   );
 
   const handleMapClick = useCallback(
@@ -205,17 +321,17 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       setTimeout(() => el.classList.remove("animate-bounce"), 1000);
       const timeout = setTimeout(() => {
         marker.remove();
-        markersRef.current = markersRef.current.filter(m => m.id !== id);
-        setMarkers(curr => curr.filter(m => m.id !== id));
+        markersRef.current = markersRef.current.filter((m) => m.id !== id);
+        setMarkers((curr) => curr.filter((m) => m.id !== id));
       }, 45000);
       markersRef.current.push({ id, marker, timeout });
-      setMarkers(curr => [{ id, lat, lng }, ...curr].slice(0, 3));
+      setMarkers((curr) => [{ id, lat, lng }, ...curr].slice(0, 3));
       if (markersRef.current.length > 3) {
         const oldest = markersRef.current.shift();
         if (oldest) {
           clearTimeout(oldest.timeout);
           oldest.marker.remove();
-          setMarkers(curr => curr.filter(m => m.id !== oldest.id));
+          setMarkers((curr) => curr.filter((m) => m.id !== oldest.id));
         }
       }
 
@@ -231,24 +347,36 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         coords: [lat, lng],
       };
 
-      const waterWords = ["eau", "lac", "rivière", "river", "mer", "océan", "étang", "sea", "water"];
+      const waterWords = [
+        "eau",
+        "lac",
+        "rivière",
+        "river",
+        "mer",
+        "océan",
+        "étang",
+        "sea",
+        "water",
+      ];
       const lower = (placeName || "").toLowerCase();
-      if (!placeName || waterWords.some(w => lower.includes(w))) {
-        setToasts(curr => [
-          { id, text: "Pas de champignons ici 😄", zone },
-          ...curr,
-        ].slice(0, 3));
+      if (!placeName || waterWords.some((w) => lower.includes(w))) {
+        addToast({ id, text: "Pas de champignons ici 😄", zone });
       } else {
         const details = `${zone.score}% ${zone.trend}\nCèpe ${zone.species.cepe_de_bordeaux}%\nGirolle ${zone.species.girolle}%\nMorille ${zone.species.morille_commune}%`;
-        setToasts(curr => [{ id, text: zone.name, details, zone }, ...curr].slice(0, 3));
+        addToast({ id, text: zone.name, details, zone });
       }
-
-      setTimeout(() => {
-        setToasts(curr => curr.filter(t => t.id !== id));
-      }, 45000);
     },
-    []
+    [addToast],
   );
+
+  useEffect(() => {
+    return () => {
+      toastDismissTimersRef.current.forEach((timer) => clearTimeout(timer));
+      toastDismissTimersRef.current.clear();
+      toastReplaceTimersRef.current.forEach((timer) => clearTimeout(timer));
+      toastReplaceTimersRef.current = [];
+    };
+  }, []);
 
   useEffect(() => {
     if (!gpsFollow) {
@@ -260,7 +388,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       stopGpsTracking();
       notifyGpsError(
         "Localisation indisponible",
-        "La géolocalisation n'est pas disponible dans ce contexte."
+        "La géolocalisation n'est pas disponible dans ce contexte.",
       );
       setGpsFollow(false);
       return;
@@ -270,7 +398,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       stopGpsTracking();
       notifyGpsError(
         "Localisation indisponible",
-        "Le GPS du navigateur fonctionne uniquement en HTTPS ou sur localhost."
+        "Le GPS du navigateur fonctionne uniquement en HTTPS ou sur localhost.",
       );
       setGpsFollow(false);
       return;
@@ -280,7 +408,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       stopGpsTracking();
       notifyGpsError(
         "Localisation indisponible",
-        "La géolocalisation n'est pas supportée par ce navigateur."
+        "La géolocalisation n'est pas supportée par ce navigateur.",
       );
       setGpsFollow(false);
       return;
@@ -331,7 +459,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         "Localisation indisponible",
         `La géolocalisation n'est pas disponible dans ce contexte.${
           details ? `\n${details}` : ""
-        }`
+        }`,
       );
       return;
     }
@@ -427,7 +555,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
 
   useEffect(() => {
     if (mapRef.current || !mapContainer.current) return;
-    loadMap().then(maplibregl => {
+    loadMap().then((maplibregl) => {
       maplibreRef.current = maplibregl;
       const map = new maplibregl.Map({
         container: mapContainer.current as HTMLDivElement,
@@ -436,7 +564,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         zoom: 5,
       });
       mapRef.current = map;
-      map.on("error", event => {
+      map.on("error", (event) => {
         const err: any = event?.error;
         const status = err?.status ?? err?.statusCode;
         const message = typeof err?.message === "string" ? err.message : "";
@@ -447,7 +575,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       });
 
       map.on("load", () => {
-        RASTER_LAYERS.forEach(layer => {
+        RASTER_LAYERS.forEach((layer) => {
           const sourceId = `raster-${layer.id}`;
           if (!map.getSource || map.getSource(sourceId)) return;
           map.addSource(sourceId, {
@@ -472,7 +600,10 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         applyRasterVisibility(map, selected);
         const boundsToFit = effectiveBounds;
         if (boundsToFit) {
-          const maxZoom = RASTER_LAYERS.reduce((acc, layer) => Math.max(acc, layer.maxzoom), 0);
+          const maxZoom = RASTER_LAYERS.reduce(
+            (acc, layer) => Math.max(acc, layer.maxzoom),
+            0,
+          );
           map.fitBounds(boundsToFit, {
             padding: 48,
             maxZoom: maxZoom || 16,
@@ -503,7 +634,12 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       mapRef.current = null;
       setMapReady(false);
     };
-  }, [applyRasterVisibility, handleMapClick, recenterOnPosition, setUserPosition]);
+  }, [
+    applyRasterVisibility,
+    handleMapClick,
+    recenterOnPosition,
+    setUserPosition,
+  ]);
 
   return (
     <motion.section
@@ -513,14 +649,20 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
       className="flex h-dvh max-h-dvh flex-col overflow-hidden p-3"
     >
       <div className="mb-3 flex shrink-0 items-center gap-2">
-        <Button variant="ghost" size="icon" onClick={onBack} className={BTN_GHOST_ICON} aria-label={t("Retour")}>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={onBack}
+          className={BTN_GHOST_ICON}
+          aria-label={t("Retour")}
+        >
           <ChevronLeft className="w-5 h-5" />
         </Button>
         <div className="relative flex-1">
           <Input
             value={search}
-            onChange={e => setSearch(e.target.value)}
-            onKeyDown={e => {
+            onChange={(e) => setSearch(e.target.value)}
+            onKeyDown={(e) => {
               if (e.key === "Enter") {
                 handleGeocode();
               }
@@ -533,7 +675,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           </div>
           {results.length > 0 && (
             <div className="absolute top-full left-0 right-0 mt-1 bg-secondary dark:bg-secondary border border-secondary dark:border-secondary rounded-xl z-10">
-              {results.map(z => (
+              {results.map((z) => (
                 <button
                   key={z.id}
                   onClick={() => {
@@ -549,7 +691,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           )}
         </div>
         <Button
-          onClick={() => setGpsFollow(v => !v)}
+          onClick={() => setGpsFollow((v) => !v)}
           className={BTN}
           variant={gpsFollow ? "primary" : "secondary"}
         >
@@ -581,7 +723,10 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
           <div className="flex flex-col sm:flex-row sm:items-center gap-2">
             {LEGEND.map((l, i) => (
               <div key={i} className="flex items-center gap-1">
-                <div className="w-3 h-3 rounded" style={{ backgroundColor: l.color }} />
+                <div
+                  className="w-3 h-3 rounded"
+                  style={{ backgroundColor: l.color }}
+                />
                 <span className={`text-[10px] ${T_MUTED}`}>{l.label}</span>
               </div>
             ))}
@@ -590,7 +735,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         {toasts.length > 0 && (
           <div className="absolute left-3 top-56 sm:top-48 flex flex-col space-y-2">
             <AnimatePresence initial={false}>
-              {toasts.map(toast => (
+              {toasts.map((toast) => (
                 <Toast
                   key={toast.id}
                   message={toast.text}
@@ -599,7 +744,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
                     if (toast.zone) {
                       onZone(toast.zone);
                     }
-                    setToasts(curr => curr.filter(t => t.id !== toast.id));
+                    removeToast(toast.id);
                   }}
                 />
               ))}
@@ -611,7 +756,7 @@ export default function MapScene({ onZone, gpsFollow, setGpsFollow, onBack }: { 
         <div className="relative -mx-3 sm:-mx-6 px-3 sm:px-6">
           <div className="relative overflow-hidden rounded-[28px] border border-white/40 dark:border-white/10 bg-gradient-to-br from-white/95 via-white/75 to-white/95 dark:from-slate-900/80 dark:via-slate-900/65 dark:to-slate-900/80 backdrop-blur-2xl shadow-[0_28px_60px_-30px_rgba(15,23,42,0.55)]">
             <div className="flex gap-3 overflow-x-auto snap-x snap-mandatory flex-nowrap no-scrollbar px-5 py-4">
-              {MUSHROOMS.map(m => (
+              {MUSHROOMS.map((m) => (
                 <Button
                   key={m.id}
                   onClick={() => toggleShroom(m.id)}
