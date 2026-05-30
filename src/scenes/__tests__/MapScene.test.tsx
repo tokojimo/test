@@ -59,6 +59,64 @@ vi.mock('../../services/openstreetmap', () => {
 
 describe('MapScene', () => {
 
+
+  it('keeps GPS inactive until the user explicitly taps the GPS button', () => {
+    const watchPosition = vi.fn();
+    const setGpsFollow = vi.fn();
+
+    Object.defineProperty(window, 'isSecureContext', {
+      configurable: true,
+      value: true,
+    });
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        watchPosition,
+        clearWatch: vi.fn(),
+      },
+    });
+
+    render(
+      <AppProvider>
+        <MapScene onZone={() => {}} gpsFollow={false} setGpsFollow={setGpsFollow} onBack={() => {}} />
+      </AppProvider>
+    );
+
+    expect(watchPosition).not.toHaveBeenCalled();
+
+    fireEvent.click(screen.getByRole('button', { name: 'GPS' }));
+
+    expect(setGpsFollow).toHaveBeenCalledWith(expect.any(Function));
+    expect(watchPosition).not.toHaveBeenCalled();
+  });
+
+  it('explains that GPS needs HTTPS or localhost instead of starting a watcher in an insecure context', async () => {
+    const watchPosition = vi.fn();
+    const setGpsFollow = vi.fn();
+
+    Object.defineProperty(window, 'isSecureContext', {
+      configurable: true,
+      value: false,
+    });
+    Object.defineProperty(navigator, 'geolocation', {
+      configurable: true,
+      value: {
+        watchPosition,
+        clearWatch: vi.fn(),
+      },
+    });
+
+    render(
+      <AppProvider>
+        <MapScene onZone={() => {}} gpsFollow={true} setGpsFollow={setGpsFollow} onBack={() => {}} />
+      </AppProvider>
+    );
+
+    expect(await screen.findByRole('button', { name: /HTTPS ou sur localhost/ })).toBeInTheDocument();
+    expect(watchPosition).not.toHaveBeenCalled();
+    expect(setGpsFollow).toHaveBeenCalledWith(false);
+  });
+
   it('keeps only the three most recently activated mushroom maps', () => {
     const selection = ['cepe_de_bordeaux', 'girolle', 'morille_commune'];
 

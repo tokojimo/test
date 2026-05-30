@@ -1,3 +1,9 @@
+const NODE_CANVAS_MODULE = '@napi-rs/canvas';
+
+async function loadNodeCanvas() {
+  return import(/* @vite-ignore */ NODE_CANVAS_MODULE);
+}
+
 export async function getStaticMapUrl(
   lat: number,
   lng: number,
@@ -72,7 +78,7 @@ async function loadTile(url: string): Promise<any> {
   ) {
     return loadImageBrowser(arr);
   } else {
-    const { loadImage } = await import(/* @vite-ignore */ '@napi-rs/canvas');
+    const { loadImage } = await loadNodeCanvas();
     return loadImage(Buffer.from(arr));
   }
 }
@@ -89,7 +95,7 @@ async function createCanvas(width: number, height: number): Promise<any> {
       // jsdom may not implement canvas, fall back to node canvas
     }
   }
-  const { createCanvas } = await import(/* @vite-ignore */ '@napi-rs/canvas');
+  const { createCanvas } = await loadNodeCanvas();
   return createCanvas(width, height);
 }
 

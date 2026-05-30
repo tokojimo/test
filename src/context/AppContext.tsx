@@ -18,7 +18,7 @@ type Action =
   | { type: "removeSpot"; id: number };
 
 const initialState: AppState = {
-  prefs: { units: "métriques", gps: true, lang: "fr" },
+  prefs: { units: "métriques", gps: false, lang: "fr" },
   alerts: { optimum: true, newZone: false },
   mySpots: [],
 };
