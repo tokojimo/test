@@ -1,9 +1,9 @@
 import React from 'react';
-import { render, screen, fireEvent } from '@testing-library/react';
+import { act, render, screen, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { vi, describe, it, expect } from 'vitest';
 
-import MapScene from '../MapScene';
+import MapScene, { getNextMushroomSelection } from '../MapScene';
 import { AppProvider } from '@/context/AppContext';
 import { reverseGeocode } from '../../services/openstreetmap';
 
@@ -58,6 +58,41 @@ vi.mock('../../services/openstreetmap', () => {
   });
 
 describe('MapScene', () => {
+
+  it('keeps only the three most recently activated mushroom maps', () => {
+    const selection = ['cepe_de_bordeaux', 'girolle', 'morille_commune'];
+
+    expect(getNextMushroomSelection(selection, 'morille_conique')).toEqual([
+      'girolle',
+      'morille_commune',
+      'morille_conique',
+    ]);
+  });
+
+  it('deactivates the first selected mushroom button when a fourth is activated', () => {
+    render(
+      <AppProvider>
+        <MapScene onZone={() => {}} gpsFollow={false} setGpsFollow={() => {}} onBack={() => {}} />
+      </AppProvider>
+    );
+
+    const cepe = screen.getByRole('button', { name: 'Cèpe de Bordeaux' });
+    const girolle = screen.getByRole('button', { name: 'Girolle (Chanterelle)' });
+    const morille = screen.getByRole('button', { name: 'Morille commune' });
+    const morilleConique = screen.getByRole('button', { name: 'Morille conique' });
+
+    expect(cepe).toHaveAttribute('aria-pressed', 'true');
+
+    fireEvent.click(girolle);
+    fireEvent.click(morille);
+    fireEvent.click(morilleConique);
+
+    expect(cepe).toHaveAttribute('aria-pressed', 'false');
+    expect(girolle).toHaveAttribute('aria-pressed', 'true');
+    expect(morille).toHaveAttribute('aria-pressed', 'true');
+    expect(morilleConique).toHaveAttribute('aria-pressed', 'true');
+  });
+
   it('opens zone when toast is clicked', async () => {
     const onZone = vi.fn();
     render(
@@ -67,8 +102,11 @@ describe('MapScene', () => {
     );
 
     // Wait for map to initialize then simulate a click near a known zone
-    await new Promise(r => setTimeout(r, 0));
-    mapInstance.handlers.click({ lngLat: { lat: 45.7, lng: 5.9 } });
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 0));
+      mapInstance.handlers.click({ lngLat: { lat: 45.7, lng: 5.9 } });
+      await Promise.resolve();
+    });
 
     const toast = await screen.findByRole('button', { name: /Testville/ });
     fireEvent.click(toast);
@@ -86,8 +124,11 @@ describe('MapScene', () => {
       </AppProvider>
     );
 
-    await new Promise(r => setTimeout(r, 0));
-    mapInstance.handlers.click({ lngLat: { lat: 0, lng: 0 } });
+    await act(async () => {
+      await new Promise(r => setTimeout(r, 0));
+      mapInstance.handlers.click({ lngLat: { lat: 0, lng: 0 } });
+      await Promise.resolve();
+    });
 
     const toast = await screen.findByRole('button', { name: /Pas de champignons ici/ });
     expect(toast).toBeInTheDocument();
