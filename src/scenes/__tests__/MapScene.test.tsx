@@ -203,6 +203,9 @@ describe("MapScene", () => {
       expect(gpsMarker).toBeDefined();
       expect(gpsMarker.lngLatSet).toBe(true);
       expect(gpsMarker.addToCalls).toBe(1);
+      expect(
+        gpsMarker.options.element.querySelector('img[alt="Position GPS"]'),
+      ).toHaveAttribute("src", expect.stringContaining("logo_panier"));
     });
   });
 
