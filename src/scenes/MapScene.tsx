@@ -527,8 +527,7 @@ export default function MapScene({
       const positionLogo = document.createElement("img");
       positionLogo.src = logoPanier;
       positionLogo.alt = "Position GPS";
-      positionLogo.className =
-        "h-8 w-8 rounded-full border-2 border-white bg-white object-contain p-0.5 shadow-[0_0_0_6px_rgba(34,197,94,0.28)]";
+      positionLogo.className = "h-8 w-8 object-contain";
 
       container.appendChild(direction);
       container.appendChild(positionLogo);
