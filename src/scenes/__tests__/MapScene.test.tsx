@@ -233,7 +233,7 @@ describe("MapScene", () => {
 
     const cepe = screen.getByRole("button", { name: "Cèpe de Bordeaux" });
     const girolle = screen.getByRole("button", {
-      name: "Girolle (Chanterelle)",
+      name: "Girolle",
     });
     const morille = screen.getByRole("button", { name: "Morille commune" });
     const morilleConique = screen.getByRole("button", {
