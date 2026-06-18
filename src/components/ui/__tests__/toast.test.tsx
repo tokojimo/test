@@ -1,5 +1,5 @@
 import React from 'react';
-import { render, screen, fireEvent, act } from '@testing-library/react';
+import { render, screen, fireEvent, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { Toaster } from '../Toaster';
@@ -21,7 +21,7 @@ describe('toast system', () => {
     useReducedMotionMock.mockReturnValue(false);
   });
 
-  it('respects order and max stack', () => {
+  it('respects order and max stack', async () => {
     render(<Toaster />);
     act(() => {
       toast.show({ message: 'A' });
@@ -29,10 +29,12 @@ describe('toast system', () => {
       toast.show({ message: 'C' });
       toast.show({ message: 'D' });
     });
-    const items = screen.getAllByRole('status');
-    expect(items).toHaveLength(3);
-    expect(items[0]).toHaveTextContent('D');
-    expect(items[2]).toHaveTextContent('B');
+    await waitFor(() => {
+      const items = screen.getAllByRole('status');
+      expect(items).toHaveLength(3);
+      expect(items[0]).toHaveTextContent('D');
+      expect(items[2]).toHaveTextContent('B');
+    });
   });
 
   it('auto dismisses with pause on hover', () => {
