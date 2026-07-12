@@ -54,7 +54,7 @@ function AppContent() {
   const [toasts, setToasts] = useState<Toast[]>([]);
   const [gpsFollow, setGpsFollow] = useState(false);
 
-  const { dispatch } = useAppContext();
+  const { state, dispatch } = useAppContext();
   const { t } = useT();
   const navigate = useNavigate();
   const location = useLocation();
@@ -136,6 +136,8 @@ function AppContent() {
                   onBack={goBack}
                   gpsFollow={gpsFollow}
                   setGpsFollow={setGpsFollow}
+                  mapFocus={selectedZone}
+                  savedSpots={state.mySpots}
                   onZone={(z) => {
                     setSelectedZone(z);
                     goTo(Scene.Zone);
@@ -149,6 +151,15 @@ function AppContent() {
                 <ZoneScene
                   zone={selectedZone}
                   onAdd={async () => {
+                    if (!selectedZone) return;
+                    const locationKey = selectedZone.coords.join(",");
+                    const alreadySaved = state.mySpots.some(
+                      (spot) => spot.location === locationKey || spot.name === selectedZone.name,
+                    );
+                    if (alreadySaved) {
+                      pushToast({ type: "success", text: "Coin déjà enregistré" });
+                      return;
+                    }
                     const today = todayISO();
                     const cover = selectedZone?.coords
                       ? await getStaticMapUrl(
@@ -159,7 +170,7 @@ function AppContent() {
                           13
                         )
                       : MUSHROOMS[1].photo;
-                    const location = selectedZone?.coords?.join(",");
+                    const location = locationKey;
                     dispatch({
                       type: "addSpot",
                       spot: {
@@ -182,7 +193,7 @@ function AppContent() {
                         ],
                       } as Spot,
                     });
-                    pushToast({ type: "success", text: t("Coin ajouté") });
+                    pushToast({ type: "success", text: "Coin enregistré" });
                   }}
                   onOpenShroom={(id) => {
                     setSelectedMushroom(
@@ -191,6 +202,10 @@ function AppContent() {
                     goTo(Scene.Mushroom);
                   }}
                   onBack={goBack}
+                  onOpenMap={(zone) => {
+                    setSelectedZone(zone);
+                    goTo(Scene.Map);
+                  }}
                 />
               }
             />

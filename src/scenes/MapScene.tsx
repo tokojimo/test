@@ -19,7 +19,7 @@ import logoPanier from "@/assets/logo_panier.png";
 import { loadMap, geocode, reverseGeocode } from "@/services/openstreetmap";
 import { RASTER_LAYERS, effectiveBounds } from "@/config/rasterLayers";
 import { useT } from "../i18n";
-import type { Zone } from "../types";
+import type { Spot, Zone } from "../types";
 
 const MAX_ACTIVE_MUSHROOM_MAPS = 3;
 const MAX_VISIBLE_MAP_NOTIFICATIONS = 3;
@@ -70,11 +70,15 @@ export default function MapScene({
   gpsFollow,
   setGpsFollow,
   onBack,
+  mapFocus,
+  savedSpots,
 }: {
   onZone: (z: Zone) => void;
   gpsFollow: boolean;
   setGpsFollow: React.Dispatch<React.SetStateAction<boolean>>;
   onBack: () => void;
+  mapFocus?: Zone | null;
+  savedSpots?: Spot[];
 }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -88,6 +92,7 @@ export default function MapScene({
   >([]);
   const watchIdRef = useRef<number | null>(null);
   const positionMarkerRef = useRef<any>(null);
+  const savedSpotMarkersRef = useRef<any[]>([]);
   const positionMarkerDirectionRef = useRef<HTMLDivElement | null>(null);
   const lastKnownPositionRef = useRef<{ lat: number; lng: number } | null>(
     null,
@@ -131,13 +136,7 @@ export default function MapScene({
     Map<number, ReturnType<typeof setTimeout>>
   >(new Map());
   const toastReplaceTimersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
-  const [markers, setMarkers] = useState<
-    {
-      id: number;
-      lat: number;
-      lng: number;
-    }[]
-  >([]);
+
   useEffect(() => {
     toastsRef.current = toasts;
   }, [toasts]);
@@ -323,16 +322,13 @@ export default function MapScene({
       const timeout = setTimeout(() => {
         marker.remove();
         markersRef.current = markersRef.current.filter((m) => m.id !== id);
-        setMarkers((curr) => curr.filter((m) => m.id !== id));
       }, 45000);
       markersRef.current.push({ id, marker, timeout });
-      setMarkers((curr) => [{ id, lat, lng }, ...curr].slice(0, 3));
       if (markersRef.current.length > 3) {
         const oldest = markersRef.current.shift();
         if (oldest) {
           clearTimeout(oldest.timeout);
           oldest.marker.remove();
-          setMarkers((curr) => curr.filter((m) => m.id !== oldest.id));
         }
       }
 
@@ -378,6 +374,50 @@ export default function MapScene({
       toastReplaceTimersRef.current = [];
     };
   }, []);
+
+  useEffect(() => {
+    const map = mapRef.current;
+    const maplibregl = maplibreRef.current;
+    if (!map || !maplibregl || !mapReady) return;
+
+    savedSpotMarkersRef.current.forEach((marker) => marker.remove());
+    savedSpotMarkersRef.current = [];
+
+    (savedSpots ?? []).forEach((spot) => {
+      if (!spot.location) return;
+      const [latText, lngText] = spot.location.split(",");
+      const lat = Number(latText);
+      const lng = Number(lngText);
+      if (!Number.isFinite(lat) || !Number.isFinite(lng)) return;
+
+      const el = document.createElement("button");
+      el.type = "button";
+      el.className =
+        "group relative flex h-9 w-9 items-center justify-center rounded-full bg-white/90 shadow-lg ring-2 ring-forest/60 transition hover:scale-110";
+      el.setAttribute("aria-label", spot.name || "Coin à champignon");
+      el.innerHTML = `<img src="${logo}" alt="" class="h-6 w-6 object-contain" />`;
+      el.addEventListener("click", (event) => {
+        event.stopPropagation();
+        map.flyTo({ center: [lng, lat], zoom: 15 });
+      });
+
+      const marker = new maplibregl.Marker({ element: el, anchor: "center" })
+        .setLngLat([lng, lat])
+        .addTo(map);
+      savedSpotMarkersRef.current.push(marker);
+    });
+
+    return () => {
+      savedSpotMarkersRef.current.forEach((marker) => marker.remove());
+      savedSpotMarkersRef.current = [];
+    };
+  }, [mapReady, savedSpots]);
+
+  useEffect(() => {
+    if (!mapReady || !mapRef.current || !mapFocus?.coords) return;
+    const [lat, lng] = mapFocus.coords;
+    mapRef.current.flyTo({ center: [lng, lat], zoom: 15 });
+  }, [mapFocus, mapReady]);
 
   useEffect(() => {
     if (!gpsFollow) {
