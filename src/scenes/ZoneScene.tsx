@@ -6,7 +6,6 @@ import {
   CloudSun,
   Droplets,
   Leaf,
-  MapPin,
   Maximize2,
   Route,
   ShieldCheck,
@@ -53,7 +52,7 @@ export default function ZoneScene({
   const scrollCarousel = (direction: -1 | 1) => {
     const node = carouselRef.current;
     if (!node) return;
-    const next = Math.max(0, Math.min(1, activeSlide + direction));
+    const next = (activeSlide + direction + 2) % 2;
     node.scrollTo({ left: next * node.clientWidth, behavior: "smooth" });
     setActiveSlide(next);
   };
@@ -115,20 +114,17 @@ export default function ZoneScene({
             </button>
             <span className="h-12 w-12" aria-hidden />
           </div>
-          <div className="text-center">
+          <div className="-mt-4 text-center sm:-mt-8">
             <h1 className="font-serif text-5xl font-black leading-none tracking-tight text-[#00472d] sm:text-7xl">{zone.name}</h1>
-            <div className="mt-5 flex items-center justify-center text-base text-[#12223b] sm:text-lg">
-              <span className="inline-flex items-center gap-2"><MapPin className="h-5 w-5" /> {zone.name}</span>
-            </div>
           </div>
         </header>
 
         <section className="relative">
-          <button type="button" onClick={() => scrollCarousel(-1)} aria-label="Carte précédente" className="absolute -left-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-3 text-[#00472d] shadow-lg sm:-left-6">
-            <ChevronLeft className="h-6 w-6" />
+          <button type="button" onClick={() => scrollCarousel(-1)} aria-label="Carte précédente" className="absolute -left-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-forest/15 bg-white p-3.5 text-[#00472d] shadow-[0_14px_34px_-12px_rgba(15,35,58,0.7)] ring-4 ring-white/70 transition hover:scale-105 hover:bg-emerald-50 sm:-left-8">
+            <ChevronLeft className="h-7 w-7 stroke-[3]" />
           </button>
-          <button type="button" onClick={() => scrollCarousel(1)} aria-label="Carte suivante" className="absolute -right-3 top-1/2 z-10 -translate-y-1/2 rounded-full bg-white p-3 text-[#00472d] shadow-lg sm:-right-6">
-            <ChevronRight className="h-6 w-6" />
+          <button type="button" onClick={() => scrollCarousel(1)} aria-label="Carte suivante" className="absolute -right-4 top-1/2 z-10 -translate-y-1/2 rounded-full border border-forest/15 bg-white p-3.5 text-[#00472d] shadow-[0_14px_34px_-12px_rgba(15,35,58,0.7)] ring-4 ring-white/70 transition hover:scale-105 hover:bg-emerald-50 sm:-right-8">
+            <ChevronRight className="h-7 w-7 stroke-[3]" />
           </button>
           <div ref={carouselRef} className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
             <div className="grid min-w-full snap-center gap-5 rounded-3xl border border-border bg-white p-5 shadow-sm md:grid-cols-2 md:p-6">
@@ -147,13 +143,13 @@ export default function ZoneScene({
             </div>
 
             <div className="grid min-w-full snap-center gap-5 rounded-3xl border border-border bg-white p-5 shadow-sm md:grid-cols-2 md:p-6">
-              <div className="flex flex-col items-center justify-center text-center">
-                <p className="text-lg font-semibold text-forest">Potentiel du jour</p>
-                <div className="mt-1 text-6xl font-black leading-none text-forest sm:text-7xl">{displayedScore}<span className="text-3xl">%</span></div>
-                <p className="mt-2 text-sm text-foreground/70">Score de base {Math.max(0, displayedScore - 6)}% · Météo +6 pts</p>
-                <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-forest/10 px-4 py-2 text-xs font-medium text-forest"><Leaf className="h-4 w-4" /> Conditions favorables</span>
+              <div className="flex flex-col items-center justify-center text-center md:border-r md:border-border/80 md:pr-6">
+                <p className="text-xl font-extrabold uppercase tracking-[0.18em] text-forest sm:text-2xl">Potentiel du jour</p>
+                <div className="mt-2 text-7xl font-black leading-none text-forest sm:text-8xl">{displayedScore}<span className="text-4xl sm:text-5xl">%</span></div>
+                <p className="mt-3 text-base font-semibold text-foreground/70 sm:text-lg">Score de base {Math.max(0, displayedScore - 6)}% · Météo +6 pts</p>
+                <span className="mt-5 inline-flex items-center gap-2 rounded-full bg-forest/10 px-5 py-2.5 text-sm font-bold text-forest"><Leaf className="h-5 w-5" /> Conditions favorables</span>
               </div>
-              <div className="flex flex-col justify-center rounded-2xl border border-border p-5">
+              <div className="flex flex-col justify-center rounded-2xl p-5 md:pl-6">
                 <div className="grid grid-cols-[auto_1fr] items-center gap-5 border-b border-border pb-5">
                   <CloudSun className="h-20 w-20 text-amber-400" />
                   <div>

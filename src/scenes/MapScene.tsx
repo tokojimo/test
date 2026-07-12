@@ -93,6 +93,7 @@ export default function MapScene({
   const watchIdRef = useRef<number | null>(null);
   const positionMarkerRef = useRef<any>(null);
   const savedSpotMarkersRef = useRef<any[]>([]);
+  const focusedZoneMarkerRef = useRef<any>(null);
   const positionMarkerDirectionRef = useRef<HTMLDivElement | null>(null);
   const lastKnownPositionRef = useRef<{ lat: number; lng: number } | null>(
     null,
@@ -414,9 +415,23 @@ export default function MapScene({
   }, [mapReady, savedSpots]);
 
   useEffect(() => {
-    if (!mapReady || !mapRef.current || !mapFocus?.coords) return;
+    if (!mapReady || !mapRef.current || !maplibreRef.current || !mapFocus?.coords) return;
     const [lat, lng] = mapFocus.coords;
     mapRef.current.flyTo({ center: [lng, lat], zoom: 15 });
+
+    focusedZoneMarkerRef.current?.remove();
+    const el = document.createElement("img");
+    el.src = logo;
+    el.alt = mapFocus.name;
+    el.className = "w-6 h-6 pointer-events-none";
+    focusedZoneMarkerRef.current = new maplibreRef.current.Marker({ element: el })
+      .setLngLat([lng, lat])
+      .addTo(mapRef.current);
+
+    return () => {
+      focusedZoneMarkerRef.current?.remove();
+      focusedZoneMarkerRef.current = null;
+    };
   }, [mapFocus, mapReady]);
 
   useEffect(() => {
