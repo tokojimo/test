@@ -25,7 +25,7 @@ import { ToastProvider } from "./components/settings/Toasts";
 import { useT } from "./i18n";
 import { Scene } from "./routes";
 import Callback from "./routes/auth/Callback";
-import History from "@/routes/spots/History";
+
 
 export default function MycoExplorerApp() {
   return (
@@ -94,6 +94,30 @@ function AppContent() {
   }, [downloading, goTo, pushToast, t]);
 
 
+
+  const selectedSpotZone = useMemo<Zone | null>(() => {
+    if (!selectedSpot?.location) return null;
+    const [latText, lngText] = selectedSpot.location.split(",");
+    const lat = Number(latText);
+    const lng = Number(lngText);
+    if (!Number.isFinite(lat) || !Number.isFinite(lng)) return null;
+
+    const species = selectedSpot.species?.length ? selectedSpot.species : ["morille_commune", "girolle", "cepe_de_bordeaux"];
+    const scores = species.reduce<Record<string, number>>((acc, speciesId, index) => {
+      acc[speciesId] = Math.max(45, Math.min(96, 78 - index * 8));
+      return acc;
+    }, {});
+
+    return {
+      id: `spot-${selectedSpot.id}`,
+      name: selectedSpot.name,
+      score: Math.max(...Object.values(scores), selectedSpot.rating ? selectedSpot.rating * 16 : 78),
+      species: scores,
+      trend: "Conditions favorables",
+      coords: [lat, lng],
+    };
+  }, [selectedSpot]);
+
   const filteredMushrooms = useMemo(
     () => MUSHROOMS.filter((m) => m.name.toLowerCase().includes(search.toLowerCase())),
     [search]
@@ -141,6 +165,10 @@ function AppContent() {
                   onZone={(z) => {
                     setSelectedZone(z);
                     goTo(Scene.Zone);
+                  }}
+                  onOpenSpot={(spot) => {
+                    setSelectedSpot(spot);
+                    goTo(Scene.Spot);
                   }}
                 />
               }
@@ -221,7 +249,24 @@ function AppContent() {
                 />
               }
             />
-            <Route path={Scene.Spot} element={<History />} />
+            <Route
+              path={Scene.Spot}
+              element={
+                <ZoneScene
+                  zone={selectedSpotZone}
+                  onAdd={() => pushToast({ type: "success", text: "Coin déjà enregistré" })}
+                  onOpenShroom={(id) => {
+                    setSelectedMushroom(MUSHROOMS.find((m) => m.id === id) || null);
+                    goTo(Scene.Mushroom);
+                  }}
+                  onBack={goBack}
+                  onOpenMap={(zone) => {
+                    setSelectedZone(zone);
+                    goTo(Scene.Map);
+                  }}
+                />
+              }
+            />
             <Route
               path={Scene.Picker}
               element={

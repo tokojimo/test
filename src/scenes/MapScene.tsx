@@ -72,6 +72,7 @@ export default function MapScene({
   onBack,
   mapFocus,
   savedSpots,
+  onOpenSpot,
 }: {
   onZone: (z: Zone) => void;
   gpsFollow: boolean;
@@ -79,6 +80,7 @@ export default function MapScene({
   onBack: () => void;
   mapFocus?: Zone | null;
   savedSpots?: Spot[];
+  onOpenSpot?: (spot: Spot) => void;
 }) {
   const mapContainer = useRef<HTMLDivElement>(null);
   const mapRef = useRef<any>(null);
@@ -400,6 +402,7 @@ export default function MapScene({
       el.addEventListener("click", (event) => {
         event.stopPropagation();
         map.flyTo({ center: [lng, lat], zoom: 15 });
+        onOpenSpot?.(spot);
       });
 
       const marker = new maplibregl.Marker({ element: el, anchor: "center" })
@@ -412,7 +415,7 @@ export default function MapScene({
       savedSpotMarkersRef.current.forEach((marker) => marker.remove());
       savedSpotMarkersRef.current = [];
     };
-  }, [mapReady, savedSpots]);
+  }, [mapReady, onOpenSpot, savedSpots]);
 
   useEffect(() => {
     if (!mapReady || !mapRef.current || !maplibreRef.current || !mapFocus?.coords) return;
