@@ -1,4 +1,4 @@
-import React, { useMemo, useRef } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { motion } from "framer-motion";
 import {
   ChevronLeft,
@@ -8,8 +8,6 @@ import {
   Leaf,
   MapPin,
   Maximize2,
-  Navigation,
-  Plus,
   Route,
   ShieldCheck,
   Wind,
@@ -38,16 +36,38 @@ export default function ZoneScene({
   onAdd,
   onOpenShroom,
   onBack,
+  onOpenMap,
 }: {
-  zone: Zone;
+  zone: Zone | null;
   onAdd: () => void;
   onOpenShroom: (id: string) => void;
   onBack: () => void;
+  onOpenMap: (zone: Zone) => void;
 }) {
   const { t } = useT();
   const { state } = useAppContext();
   const carouselRef = useRef<HTMLDivElement>(null);
+  const [activeSlide, setActiveSlide] = useState(0);
   const data = useMemo(() => generateForecast(state.prefs.lang), [zone?.id, state.prefs.lang]);
+
+  const scrollCarousel = (direction: -1 | 1) => {
+    const node = carouselRef.current;
+    if (!node) return;
+    const next = Math.max(0, Math.min(1, activeSlide + direction));
+    node.scrollTo({ left: next * node.clientWidth, behavior: "smooth" });
+    setActiveSlide(next);
+  };
+
+  useEffect(() => {
+    const node = carouselRef.current;
+    if (!node) return;
+    const handleScroll = () => {
+      const next = Math.round(node.scrollLeft / Math.max(1, node.clientWidth));
+      setActiveSlide(Math.max(0, Math.min(1, next)));
+    };
+    node.addEventListener("scroll", handleScroll, { passive: true });
+    return () => node.removeEventListener("scroll", handleScroll);
+  }, []);
 
   if (!zone) {
     return <div className="p-6 text-slate-900">{t("Sélectionnez une zone…")}</div>;
@@ -69,24 +89,16 @@ export default function ZoneScene({
   const currentForecast = forecastData[todayIndex];
   const likelySpecies = Object.entries(zone.species as Record<string, number>)
     .filter(([, score]) => score > 0)
+    .sort(([, a], [, b]) => b - a)
     .slice(0, 3)
     .map(([id, score]) => ({
       mushroom: MUSHROOMS.find((m) => m.id === id),
       score,
     }))
     .filter((entry) => entry.mushroom);
-  const trendLabel = zone.trend || "Score stable";
   const [lat, lng] = zone.coords;
-  const formattedCoords = `${lat.toFixed(5)}, ${lng.toFixed(5)}`;
   const staticMapUrl = getStaticMapUrl(lat, lng, 520, 260, 13);
-  const openMap = () => {
-    window.open(`https://www.openstreetmap.org/?mlat=${lat}&mlon=${lng}#map=15/${lat}/${lng}`, "_blank");
-  };
-  const scrollCarousel = (direction: -1 | 1) => {
-    const node = carouselRef.current;
-    if (!node) return;
-    node.scrollBy({ left: direction * node.clientWidth, behavior: "smooth" });
-  };
+  const openMap = () => onOpenMap(zone);
 
   return (
     <motion.section
@@ -101,16 +113,12 @@ export default function ZoneScene({
             <button onClick={onBack} aria-label={t("Retour")} className="rounded-full p-2 transition hover:bg-emerald-50">
               <ChevronLeft className="h-8 w-8" />
             </button>
-            <button onClick={onAdd} aria-label={t("Enregistrer")} className="rounded-full p-2 transition hover:bg-emerald-50">
-              <Plus className="h-8 w-8" />
-            </button>
+            <span className="h-12 w-12" aria-hidden />
           </div>
-          <div>
-            <h1 className="font-serif text-6xl font-black leading-none tracking-tight text-[#00472d] sm:text-7xl">{zone.name}</h1>
-            <div className="mt-6 flex flex-wrap items-center gap-4 text-base text-[#12223b] sm:text-lg">
+          <div className="text-center">
+            <h1 className="font-serif text-5xl font-black leading-none tracking-tight text-[#00472d] sm:text-7xl">{zone.name}</h1>
+            <div className="mt-5 flex items-center justify-center text-base text-[#12223b] sm:text-lg">
               <span className="inline-flex items-center gap-2"><MapPin className="h-5 w-5" /> {zone.name}</span>
-              <span>•</span>
-              <span className="inline-flex items-center gap-2"><Navigation className="h-5 w-5" /> {formattedCoords}</span>
             </div>
           </div>
         </header>
@@ -123,9 +131,8 @@ export default function ZoneScene({
             <ChevronRight className="h-6 w-6" />
           </button>
           <div ref={carouselRef} className="flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-smooth pb-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
-            <div className="grid min-w-full snap-center gap-5 rounded-3xl border border-border bg-paper p-5 shadow-sm md:grid-cols-2 md:p-6">
+            <div className="grid min-w-full snap-center gap-5 rounded-3xl border border-border bg-white p-5 shadow-sm md:grid-cols-2 md:p-6">
               <div className="flex flex-col items-center justify-center text-center">
-                <p className="text-lg font-semibold text-forest">{trendLabel}</p>
                 <div className="mt-1 text-6xl font-black leading-none text-forest sm:text-7xl">{displayedScore}<span className="text-3xl">%</span></div>
                 <p className="mt-2 max-w-xs text-base leading-tight text-foreground/80">Estimation générale<br />de la zone</p>
                 <span className="mt-4 inline-flex items-center gap-2 rounded-full bg-forest/10 px-4 py-2 text-xs font-medium text-forest"><Leaf className="h-4 w-4" /> Version gratuite</span>
@@ -139,7 +146,7 @@ export default function ZoneScene({
               </div>
             </div>
 
-            <div className="grid min-w-full snap-center gap-5 rounded-3xl border border-border bg-paper p-5 shadow-sm md:grid-cols-2 md:p-6">
+            <div className="grid min-w-full snap-center gap-5 rounded-3xl border border-border bg-white p-5 shadow-sm md:grid-cols-2 md:p-6">
               <div className="flex flex-col items-center justify-center text-center">
                 <p className="text-lg font-semibold text-forest">Potentiel du jour</p>
                 <div className="mt-1 text-6xl font-black leading-none text-forest sm:text-7xl">{displayedScore}<span className="text-3xl">%</span></div>
@@ -162,15 +169,15 @@ export default function ZoneScene({
             </div>
           </div>
           <div className="mt-3 flex justify-center gap-3">
-            <span className="h-2.5 w-2.5 rounded-full bg-forest" />
-            <span className="h-2.5 w-2.5 rounded-full bg-border" />
+            {[0, 1].map((index) => (
+              <span key={index} className={`h-2.5 w-2.5 rounded-full transition-colors ${activeSlide === index ? "bg-forest" : "bg-border"}`} />
+            ))}
           </div>
         </section>
 
         <section className="rounded-[1.75rem] border border-[#eee6da] bg-white/90 p-5 shadow-[0_18px_50px_-36px_rgba(15,23,42,0.65)] sm:p-8">
           <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
             <h2 className="text-2xl font-extrabold text-[#00472d]">Évolution sur 10 jours</h2>
-            <span className="inline-flex items-center gap-2 rounded-full bg-[#eaf2e3] px-5 py-2 text-sm font-semibold text-[#00472d]"><Leaf className="h-5 w-5" /> Prévision jusqu'à 11h</span>
           </div>
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
@@ -217,7 +224,7 @@ export default function ZoneScene({
 
         <footer className="flex flex-wrap items-center gap-3">
           <button onClick={openDirections} className="inline-flex items-center justify-center gap-2 rounded-full bg-forest px-5 py-3 text-sm font-semibold text-paper shadow-sm transition hover:bg-moss focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><Route className="h-5 w-5" /> Me guider</button>
-          <button onClick={onAdd} className="inline-flex items-center justify-center gap-2 rounded-full bg-forest px-5 py-3 text-sm font-semibold text-paper shadow-sm transition hover:bg-moss focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"><Plus className="h-5 w-5" /> Ajouter à mes coins</button>
+          <button onClick={onAdd} className="inline-flex items-center justify-center rounded-full bg-forest px-5 py-3 text-sm font-semibold text-paper shadow-sm transition hover:bg-moss focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent">Ajouter à mes coins</button>
           <p className="basis-full text-xs text-foreground/50">Source météo : Météo-France · Mise à jour le 12/07 à 08:00</p>
         </footer>
       </div>
